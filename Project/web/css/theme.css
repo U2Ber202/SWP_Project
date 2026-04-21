@@ -1,0 +1,371 @@
+:root {
+    /* Chế độ Tối (Mặc định hiện tại) */
+    --bg: #0f172a;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border: rgba(255, 255, 255, 0.1);
+    --glass: rgba(255, 255, 255, 0.03);
+    --primary: #ea580c;
+    --primary-dark: #c2410c;
+    --nav-bg: rgba(15, 23, 42, 0.8);
+    --dropdown-bg: #1e293b;
+}
+
+[data-theme="light"] {
+    /* Chế độ Sáng */
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --glass: rgba(0, 0, 0, 0.02);
+    --nav-bg: rgba(255, 255, 255, 0.8);
+    --dropdown-bg: #ffffff;
+}
+
+body {
+    background-color: var(--bg) !important;
+    color: var(--text-main) !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Áp dụng biến cho các thành phần chung */
+.card, .detail-card, .product-card, .admin-wrapper, .modal-content, .filter-card {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border) !important;
+    color: var(--text-main) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.site-nav {
+    background: var(--nav-bg) !important;
+    border-color: var(--border) !important;
+}
+
+.dropdown-menu {
+    background-color: var(--dropdown-bg) !important;
+    border-color: var(--border) !important;
+}
+
+.dropdown-item {
+    color: var(--text-main) !important;
+}
+
+.dropdown-item:hover {
+    background-color: var(--glass) !important;
+}
+
+.form-control, .nav-search {
+    background-color: var(--glass) !important;
+    border-color: var(--border) !important;
+    color: var(--text-main) !important;
+}
+
+.breadcrumb-item.active {
+    color: var(--text-main) !important;
+}
+
+/* Nút chuyển đổi giao diện */
+.theme-toggle-btn {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 15px;
+}
+
+.theme-toggle-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+html[data-theme="light"] body {
+    background-color: var(--bg) !important;
+    color: var(--text-main) !important;
+}
+
+html[data-theme="light"] .text-white,
+html[data-theme="light"] .text-light {
+    color: var(--text-main) !important;
+}
+
+html[data-theme="light"] .bg-dark,
+html[data-theme="light"] .dropdown-menu-dark,
+html[data-theme="light"] .table-dark {
+    background-color: var(--card-bg) !important;
+    color: var(--text-main) !important;
+}
+
+html[data-theme="light"] .border-secondary,
+html[data-theme="light"] .border-light,
+html[data-theme="light"] .border-dark {
+    border-color: var(--border) !important;
+}
+
+html[data-theme="light"] .btn-outline-light {
+    color: var(--text-main) !important;
+    border-color: var(--border) !important;
+}
+
+html[data-theme="light"] .btn-outline-light:hover {
+    background-color: var(--glass) !important;
+}
+
+html[data-theme="light"] .form-control,
+html[data-theme="light"] textarea,
+html[data-theme="light"] select {
+    color: var(--text-main) !important;
+}
+
+html[data-theme="light"] select option {
+    background-color: var(--card-bg) !important;
+    color: var(--text-main) !important;
+}
+
+html[data-theme="light"] .site-nav .navbar-brand,
+html[data-theme="light"] .site-nav .nav-link,
+html[data-theme="light"] .cart-btn {
+    color: var(--text-main) !important;
+}
+
+html[data-theme="light"] .nav-search::placeholder,
+html[data-theme="light"] .form-control::placeholder {
+    color: var(--text-muted) !important;
+}
+
+
+html[data-theme="light"] {
+    color-scheme: light;
+}
+
+html[data-theme="light"] body,
+html[data-theme="light"] .hero,
+html[data-theme="light"] .store-hero {
+    background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%) !important;
+    color: var(--text-main) !important;
+}
+
+html[data-theme="light"] .hero::after,
+html[data-theme="light"] .store-hero::after {
+    opacity: 0.08 !important;
+}
+
+html[data-theme="light"] .card,
+html[data-theme="light"] .detail-card,
+html[data-theme="light"] .product-card,
+html[data-theme="light"] .hero-card,
+html[data-theme="light"] .filter-card,
+html[data-theme="light"] .admin-setting-card,
+html[data-theme="light"] .transaction-table,
+html[data-theme="light"] .related-card,
+html[data-theme="light"] .edit-card,
+html[data-theme="light"] .modal-content {
+    background: #ffffff !important;
+    color: #1e293b !important;
+    border: 1px solid #dbe3ee !important;
+    box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="light"] .card-header,
+html[data-theme="light"] .edit-card-header,
+html[data-theme="light"] .modal-header,
+html[data-theme="light"] .table thead th,
+html[data-theme="light"] .transaction-table th {
+    background: #f8fafc !important;
+    color: #334155 !important;
+    border-color: #e2e8f0 !important;
+}
+
+html[data-theme="light"] .table,
+html[data-theme="light"] .table td,
+html[data-theme="light"] .table th,
+html[data-theme="light"] .table-hover tbody tr:hover,
+html[data-theme="light"] .table-dark,
+html[data-theme="light"] .table-dark td,
+html[data-theme="light"] .table-dark th {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #e2e8f0 !important;
+}
+
+html[data-theme="light"] .form-control,
+html[data-theme="light"] .nav-search,
+html[data-theme="light"] textarea,
+html[data-theme="light"] select,
+html[data-theme="light"] .custom-select {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="light"] .form-control:focus,
+html[data-theme="light"] textarea:focus,
+html[data-theme="light"] select:focus,
+html[data-theme="light"] .nav-search:focus {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #fb923c !important;
+    box-shadow: 0 0 0 0.2rem rgba(251, 146, 60, 0.15) !important;
+}
+
+html[data-theme="light"] .form-control[readonly] {
+    background: #f8fafc !important;
+    color: #475569 !important;
+}
+
+html[data-theme="light"] .site-nav,
+html[data-theme="light"] .navbar,
+html[data-theme="light"] .navbar-dark,
+html[data-theme="light"] .bg-dark {
+    background: rgba(255, 255, 255, 0.94) !important;
+    color: #1e293b !important;
+    border-color: #e2e8f0 !important;
+    backdrop-filter: blur(14px);
+}
+
+html[data-theme="light"] .site-nav .navbar-brand,
+html[data-theme="light"] .site-nav .nav-link,
+html[data-theme="light"] .navbar-dark .navbar-brand,
+html[data-theme="light"] .navbar-dark .navbar-nav .nav-link,
+html[data-theme="light"] .navbar-dark .navbar-text,
+html[data-theme="light"] .navbar-dark .navbar-toggler {
+    color: #334155 !important;
+}
+
+html[data-theme="light"] .site-nav .nav-link:hover,
+html[data-theme="light"] .site-nav .nav-link.active,
+html[data-theme="light"] .navbar-dark .navbar-nav .nav-link:hover,
+html[data-theme="light"] .navbar-dark .navbar-nav .nav-link.active {
+    color: var(--primary) !important;
+}
+
+html[data-theme="light"] .dropdown-menu,
+html[data-theme="light"] .dropdown-menu-dark {
+    background: #ffffff !important;
+    color: #1e293b !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="light"] .dropdown-item,
+html[data-theme="light"] .dropdown-menu-dark .dropdown-item,
+html[data-theme="light"] .dropdown-item-text,
+html[data-theme="light"] .dropdown-header {
+    color: #334155 !important;
+}
+
+html[data-theme="light"] .dropdown-item:hover,
+html[data-theme="light"] .dropdown-item:focus {
+    background: #f8fafc !important;
+    color: var(--primary) !important;
+}
+
+html[data-theme="light"] .btn-outline-light,
+html[data-theme="light"] .btn-light,
+html[data-theme="light"] .cart-btn {
+    background: #ffffff !important;
+    color: #334155 !important;
+    border-color: #cbd5e1 !important;
+}
+
+html[data-theme="light"] .btn-outline-light:hover,
+html[data-theme="light"] .btn-light:hover,
+html[data-theme="light"] .cart-btn:hover {
+    background: #fff7ed !important;
+    color: #c2410c !important;
+    border-color: #fb923c !important;
+}
+
+html[data-theme="light"] .btn-primary,
+html[data-theme="light"] .btn-brand,
+html[data-theme="light"] .btn-add {
+    color: #ffffff !important;
+}
+
+html[data-theme="light"] .text-white,
+html[data-theme="light"] .text-light,
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] h5,
+html[data-theme="light"] h6,
+html[data-theme="light"] .font-weight-bold,
+html[data-theme="light"] .fw-bold,
+html[data-theme="light"] strong,
+html[data-theme="light"] label,
+html[data-theme="light"] .breadcrumb-item.active {
+    color: #0f172a !important;
+}
+
+html[data-theme="light"] p,
+html[data-theme="light"] span,
+html[data-theme="light"] li,
+html[data-theme="light"] td,
+html[data-theme="light"] th,
+html[data-theme="light"] a:not(.btn):not(.dropdown-item):not(.navbar-brand) {
+    color: inherit;
+}
+
+html[data-theme="light"] .text-muted,
+html[data-theme="light"] .text-muted-custom,
+html[data-theme="light"] small,
+html[data-theme="light"] .small,
+html[data-theme="light"] .helper-text {
+    color: #64748b !important;
+}
+
+html[data-theme="light"] .alert,
+html[data-theme="light"] .badge,
+html[data-theme="light"] .stock-info,
+html[data-theme="light"] .muted-box,
+html[data-theme="light"] .bg-dark-50 {
+    border-color: #e2e8f0 !important;
+}
+
+html[data-theme="light"] .alert-success {
+    background: #ecfdf3 !important;
+    color: #166534 !important;
+    border: 1px solid #bbf7d0 !important;
+}
+
+html[data-theme="light"] .alert-danger {
+    background: #fef2f2 !important;
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+}
+
+html[data-theme="light"] .alert-warning {
+    background: #fff7ed !important;
+    color: #9a3412 !important;
+    border: 1px solid #fed7aa !important;
+}
+
+html[data-theme="light"] .badge-light,
+html[data-theme="light"] .badge-light-custom {
+    background: #f8fafc !important;
+    color: #334155 !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+html[data-theme="light"] .product-card:hover,
+html[data-theme="light"] .related-card:hover {
+    border-color: #fb923c !important;
+    box-shadow: 0 18px 36px rgba(251, 146, 60, 0.16) !important;
+}
+
+html[data-theme="light"] img {
+    filter: none;
+}
