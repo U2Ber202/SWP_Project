@@ -1,0 +1,35 @@
+# --- IntelliJ & IDEs ---
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+gen/
+
+# --- Compiled Java ---
+*.class
+*.log
+hs_err_pid*
+replay_pid*
+
+# --- Package Files (The "Results") ---
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# --- Build Tools ---
+target/
+build/
+.gradle/
+.mtj.tmp/
+
+# --- BlueJ ---
+*.ctxt
+
+# --- OS Junk ---
+.DS_Store
+Thumbs.db
