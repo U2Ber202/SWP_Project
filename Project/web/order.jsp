@@ -171,7 +171,7 @@
                                                 <th>Ghi Chú</th>
                                                 <th>Ngày Đặt</th>
                                                 <th>Trạng Thái Vận Chuyển</th>
-                                                <th>Shipper</th>
+                                                <th>Quản lý ship hàng</th>
                                                 <th class="text-center">Thao Tác</th>
 
                                             </tr>
@@ -222,7 +222,7 @@
                                                                 <c:when
                                                                     test="${shipping != null and shipping.status == 'Shipped'}">
                                                                     <span class="text-muted-custom">Đã giao, khoá gán
-                                                                        shipper</span>
+                                                                        quản lý ship hàng</span>
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <form action="orders" method="post"

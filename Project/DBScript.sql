@@ -25,7 +25,7 @@ GO
 INSERT INTO [dbo].[Role] ([role_key], [role_name], [description]) VALUES
 ('admin', N'Quản trị', N'Toàn quyền quản trị hệ thống'),
 ('owner', N'Chủ cửa hàng', N'Quản lý một cửa hàng'),
-('shipper', N'Nhân viên giao nhận', N'Quản lý và cập nhật trạng thái giao hàng'),
+('shipper', N'Quản lý ship hàng', N'Quản lý và cập nhật trạng thái giao hàng'),
 ('warehouse_manager', N'Quản lý kho', N'Nhập kho theo size và cập nhật tồn kho cho cửa hàng'),
 ('customer', N'Khách hàng', N'Tài khoản mua hàng thông thường');
 GO

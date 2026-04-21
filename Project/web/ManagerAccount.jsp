@@ -285,7 +285,7 @@
                                                                 class="badge badge-warning px-3 py-2 rounded-pill">Chủ
                                                                 cửa hàng</span></c:when>
                                                         <c:when test="${p.role == 'shipper'}"><span
-                                                                class="badge badge-primary px-3 py-2 rounded-pill">Shipper</span>
+                                                                class="badge badge-primary px-3 py-2 rounded-pill">Quản lý ship hàng</span>
                                                         </c:when>
                                                         <c:when test="${p.role == 'warehouse_manager'}"><span
                                                                 class="badge badge-secondary px-3 py-2 rounded-pill">Quản

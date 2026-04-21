@@ -169,7 +169,7 @@
                         <c:choose>
                             <c:when test="${sessionScope.acc.role == 'admin'}">Quản trị</c:when>
                             <c:when test="${sessionScope.acc.role == 'owner'}">Chủ shop</c:when>
-                            <c:when test="${sessionScope.acc.role == 'shipper'}">Shipper</c:when>
+                            <c:when test="${sessionScope.acc.role == 'shipper'}">Quản lý ship hàng</c:when>
                             <c:when test="${sessionScope.acc.role == 'warehouse_manager'}">Kho</c:when>
                             <c:otherwise>Khách</c:otherwise>
                         </c:choose>

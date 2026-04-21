@@ -315,7 +315,7 @@
 
                                     <div class="card mb-5">
                                         <div class="card-header">
-                                            <i class="fa-solid fa-user-plus text-warning mr-2"></i>Tạo tài khoản shipper
+                                            <i class="fa-solid fa-user-plus text-warning mr-2"></i>Tạo tài khoản quản lý ship hàng
                                             cho cửa hàng
                                         </div>
                                         <div class="card-body p-4">
@@ -323,34 +323,34 @@
                                                 <input type="hidden" name="action" value="createShipper">
                                                 <div class="form-row">
                                                     <div class="form-group col-md-3">
-                                                        <label>Tên đăng nhập shipper</label>
+                                                        <label>Tên đăng nhập quản lý ship hàng</label>
                                                         <input class="form-control" name="shipperUser"
                                                             value="${shipperFormUser}" required>
                                                     </div>
                                                     <div class="form-group col-md-2">
-                                                        <label>Email shipper</label>
+                                                        <label>Email quản lý ship hàng</label>
                                                         <input class="form-control" type="email" name="shipperEmail"
                                                             value="${shipperFormEmail}" required>
                                                     </div>
                                                     <div class="form-group col-md-3">
-                                                        <label>Họ tên shipper</label>
+                                                        <label>Họ tên quản lý ship hàng</label>
                                                         <input class="form-control" name="shipperFullname"
                                                             value="${shipperFormFullname}" required>
                                                     </div>
                                                     <div class="form-group col-md-2">
-                                                        <label>Số điện thoại shipper</label>
+                                                        <label>Số điện thoại quản lý ship hàng</label>
                                                         <input class="form-control" name="shipperPhone"
                                                             value="${shipperFormPhone}" required>
                                                     </div>
                                                     <div class="form-group col-md-2">
-                                                        <label>Mật khẩu shipper</label>
+                                                        <label>Mật khẩu quản lý ship hàng</label>
                                                         <input class="form-control" type="password" name="shipperPass"
                                                             required>
                                                     </div>
                                                 </div>
-                                                <button class="btn btn-brand" type="submit">Tạo shipper</button>
-                                                <div class="helper-text mt-3">Sau khi tạo shipper, chủ cửa hàng vào
-                                                    trang đơn hàng để gán đơn cho shipper.</div>
+                                                <button class="btn btn-brand" type="submit">Tạo quản lý ship hàng</button>
+                                                <div class="helper-text mt-3">Sau khi tạo quản lý ship hàng, chủ cửa hàng vào
+                                                    trang đơn hàng để gán đơn cho quản lý ship hàng.</div>
                                             </form>
                                         </div>
                                     </div>
