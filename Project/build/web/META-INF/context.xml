@@ -10,7 +10,7 @@
         username="sa"
         password="123"
         driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-        url="jdbc:sqlserver://localhost\\BUIHUY:1433;databaseName=PRJ301;encrypt=true;trustServerCertificate=true"
+        url="jdbc:sqlserver://localhost\\DESKTOP-QRBN2TT:1433;databaseName=PRJ301;encrypt=true;trustServerCertificate=true"
         validationQuery="SELECT 1"
         testOnBorrow="true"/>
 

@@ -47,11 +47,12 @@ public class SendMail {
         });
 
         try {
-            Message message = new MimeMessage(session);
+//            Message message = new MimeMessage(session);
+            MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject(subject);
-            message.setText(content);
+            message.setSubject(subject, "UTF-8");         // ← fix subject encoding
+            message.setText(content, "UTF-8");            // ← fix body encoding (plain text)
             Transport.send(message);
             return true;
         } catch (MessagingException | IllegalStateException ex) {

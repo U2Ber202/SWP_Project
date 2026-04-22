@@ -120,10 +120,20 @@ public class StoreDAO extends DBContext {
         executeUpdate("DELETE FROM Store WHERE store_id = ?", id);
     }
 
+    // Kiểm tra tên cửa hàng đã tồn tại chưa (dùng khi THÊM MỚI)
+    public boolean isStoreNameExist(String storeName) {
+        return exists("SELECT 1 FROM Store WHERE LOWER(TRIM(store_name)) = LOWER(TRIM(?))", storeName);
+    }
+
+// Kiểm tra tên cửa hàng đã tồn tại ở store KHÁC chưa (dùng khi CẬP NHẬT)
+    public boolean isStoreNameExistForAnotherStore(String storeName, int storeId) {
+        return exists("SELECT 1 FROM Store WHERE LOWER(TRIM(store_name)) = LOWER(TRIM(?)) AND store_id <> ?", storeName, storeId);
+    }
+
+    
     private List<Store> getStoresBySql(String sql, Object... params) {
         List<Store> stores = new ArrayList<>();
-        try (Connection connection = getConnection();
-                PreparedStatement stm = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(sql)) {
             bindParams(stm, params);
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
@@ -137,8 +147,7 @@ public class StoreDAO extends DBContext {
     }
 
     private Store getSingleStore(String sql, Object... params) {
-        try (Connection connection = getConnection();
-                PreparedStatement stm = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(sql)) {
             bindParams(stm, params);
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
@@ -152,8 +161,7 @@ public class StoreDAO extends DBContext {
     }
 
     private boolean exists(String sql, Object... params) {
-        try (Connection connection = getConnection();
-                PreparedStatement stm = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(sql)) {
             bindParams(stm, params);
             try (ResultSet rs = stm.executeQuery()) {
                 return rs.next();
@@ -165,8 +173,7 @@ public class StoreDAO extends DBContext {
     }
 
     private int executeUpdate(String sql, Object... params) {
-        try (Connection connection = getConnection();
-                PreparedStatement stm = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(sql)) {
             bindParams(stm, params);
             return stm.executeUpdate();
         } catch (SQLException ex) {

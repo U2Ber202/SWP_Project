@@ -46,6 +46,9 @@ public class ManageStoreController extends HttpServlet {
 
             if (ValidationUtil.isBlank(storeName) || ownerId == null) {
                 error = "Tên cửa hàng và chủ sở hữu không được để trống.";
+            } else if (storeDAO.isStoreNameExist(storeName)) {                           // ← THÊM
+                error = "Tên cửa hàng bị trùng. Vui lòng nhập tên cửa hàng khác";
+
             } else {
                 Account owner = accountDAO.getAccountById(ownerId);
                 Account warehouseManager = warehouseManagerId == null ? null : accountDAO.getAccountById(warehouseManagerId);
@@ -87,6 +90,9 @@ public class ManageStoreController extends HttpServlet {
                 Account warehouseManager = warehouseManagerId == null ? null : accountDAO.getAccountById(warehouseManagerId);
                 if (store == null) {
                     error = "Cửa hàng không tồn tại.";
+                } else if (storeDAO.isStoreNameExistForAnotherStore(storeName, storeId)) {   // ← THÊM
+                    error = "Tên cửa hàng bị trùng. Vui lòng nhập tên cửa hàng khác";
+
                 } else if (owner == null || !RoleHelper.isOwner(owner)) {
                     error = "Chủ sở hữu phải là tài khoản Owner hợp lệ.";
                 } else if (warehouseManagerId != null && (warehouseManager == null || !RoleHelper.isWarehouseManager(warehouseManager))) {
@@ -104,19 +110,26 @@ public class ManageStoreController extends HttpServlet {
             }
         }
 
-
         List<Store> allStores = storeDAO.getAllStores();
         final int PAGE_SIZE = 10;
         int page = 1;
         try {
             String p = request.getParameter("page");
-            if (p != null) page = Integer.parseInt(p);
-        } catch (Exception e) { page = 1; }
+            if (p != null) {
+                page = Integer.parseInt(p);
+            }
+        } catch (Exception e) {
+            page = 1;
+        }
 
         int totalStores = allStores.size();
         int totalPage = (int) Math.ceil((double) totalStores / PAGE_SIZE);
-        if (page > totalPage && totalPage > 0) page = totalPage;
-        if (page < 1) page = 1;
+        if (page > totalPage && totalPage > 0) {
+            page = totalPage;
+        }
+        if (page < 1) {
+            page = 1;
+        }
 
         int fromIndex = (page - 1) * PAGE_SIZE;
         int toIndex = Math.min(fromIndex + PAGE_SIZE, totalStores);
