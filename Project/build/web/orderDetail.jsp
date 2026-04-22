@@ -29,7 +29,6 @@
                 font-family: 'Be Vietnam Pro', sans-serif;
                 background-color: var(--bg) !important;
                 color: #f1f5f9;
-                padding-top: 40px;
                 padding-bottom: 40px;
             }
 
@@ -221,9 +220,18 @@
                 </div>
                 
                 <div class="footer-actions">
-                    <a href="orders" class="btn btn-custom-secondary">
-                        <i class="fa-solid fa-arrow-left me-2"></i>Quay Lại Danh Sách
-                    </a>
+                    <c:choose>
+                        <c:when test="${sessionScope.acc.role == 'customer'}">
+                            <a href="purchaseHistory" class="btn btn-custom-secondary">
+                                <i class="fa-solid fa-arrow-left me-2"></i>Quay lại đơn mua
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="orders" class="btn btn-custom-secondary">
+                                <i class="fa-solid fa-arrow-left me-2"></i>Quay Lại Danh Sách
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
 
             </div>

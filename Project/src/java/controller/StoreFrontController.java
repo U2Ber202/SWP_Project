@@ -1,6 +1,7 @@
 package controller;
 
 import dal.CategoryDAO;
+import dal.NewsDAO;
 import dal.ProductDAO;
 import dal.StoreDAO;
 import java.io.IOException;
@@ -39,10 +40,12 @@ public class StoreFrontController extends HttpServlet {
         
         List<Product> products = productDAO.getProductsByStoreId(storeId);
         List<Category> categories = categoryDAO.getCategoriesByStore(storeId);
+        List<model.News> listNews = new NewsDAO().getOnlyStoreNews(storeId);
         
         request.setAttribute("store", store);
         request.setAttribute("listProducts", products);
         request.setAttribute("listCategories", categories);
+        request.setAttribute("listNews", listNews);
         
         request.getRequestDispatcher("StoreFront.jsp").forward(request, response);
     }

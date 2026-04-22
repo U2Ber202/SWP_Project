@@ -26,9 +26,9 @@
 
                 body {
                     font-family: 'Be Vietnam Pro', sans-serif;
-                    background-color: var(--bg);
+                    background-color: var(--bg) !important;
                     color: #f1f5f9;
-                    padding: 32px 0 48px;
+                    padding-bottom: 48px;
                 }
 
                 .panel {
@@ -109,10 +109,11 @@
                 }
 
                 .modal-content {
-                    background: #1e293b;
+                    background: #0f172a; /* Darker and more solid */
                     color: #f1f5f9;
                     border: 1px solid var(--border);
-                    border-radius: 20px;
+                    border-radius: 24px;
+                    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
                 }
 
                 .modal-header,
@@ -176,6 +177,7 @@
                                         <tr>
                                             <th class="pl-4">ID</th>
                                             <th>Tên cửa hàng</th>
+                                            <th>Trạng thái</th>
                                             <th>Chủ sở hữu (Owner)</th>
                                             <th>Quản lý kho</th>
                                             <th class="text-center pr-4">Thao tác</th>
@@ -186,6 +188,16 @@
                                             <tr>
                                                 <td class="pl-4">#${s.id}</td>
                                                 <td class="font-weight-bold">${s.name}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${s.active}">
+                                                            <span class="badge badge-success px-3 py-2" style="border-radius: 10px;">Active</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="badge badge-secondary px-3 py-2" style="border-radius: 10px;">Inactive</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 <td>
                                                     <c:forEach items="${listAccounts}" var="acc">
                                                         <c:if test="${acc.uid == s.ownerId}">${acc.user}</c:if>
@@ -202,13 +214,15 @@
                                                         <!--                                            <a href="manager?storeId={s.id}" class="btn btn-sm btn-outline-info mr-2" title="Xem Kho/Sản phẩm"><i class="fa-solid fa-boxes-stacked"></i></a>
                                             <a href="stockHistory?storeId={s.id}" class="btn btn-sm btn-outline-primary mr-2" title="Xem Lịch sử kho"><i class="fa-solid fa-clock-rotate-left"></i></a>
                                             <a href="store-front?id=${s.id}" class="btn btn-sm btn-outline-success mr-2" title="Xem Shop công khai"><i class="fa-solid fa-eye"></i></a>-->
+                                                        <a href="#toggleStoreModal${s.id}"
+                                                            class="btn btn-sm ${s.active ? 'btn-outline-secondary' : 'btn-outline-success'} mr-2" 
+                                                            data-toggle="modal" title="${s.active ? 'Ngừng hoạt động' : 'Kích hoạt'}">
+                                                            <i class="fa-solid ${s.active ? 'fa-toggle-on' : 'fa-toggle-off'}"></i>
+                                                        </a>
                                                         <a href="#editStoreModal${s.id}"
-                                                            class="btn btn-sm btn-outline-warning mr-2"
+                                                            class="btn btn-sm btn-outline-warning"
                                                             data-toggle="modal" title="Sửa store"><i
                                                                 class="fa-solid fa-pen-to-square"></i></a>
-                                                        <a href="#deleteStoreModal${s.id}"
-                                                            class="btn btn-sm btn-outline-danger" data-toggle="modal"
-                                                            title="Xóa store"><i class="fa-solid fa-trash-can"></i></a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -255,7 +269,8 @@
                                             <div class="form-group">
                                                 <label>Tên cửa hàng</label>
                                                 <input type="text" name="storeName" class="form-control"
-                                                    value="${s.name}" required>
+                                                    value="${s.name}" minlength="5" maxlength="40" required>
+                                                <small class="text-muted">Từ 5 đến 40 ký tự</small>
                                             </div>
                                             <div class="form-group">
                                                 <label>Chủ sở hữu (Owner)</label>
@@ -287,22 +302,29 @@
                             </div>
                         </div>
 
-                        <div id="deleteStoreModal${s.id}" class="modal fade">
+                        <div id="toggleStoreModal${s.id}" class="modal fade">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <form action="manageStore" method="post">
-                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="action" value="toggleStatus">
                                         <input type="hidden" name="storeId" value="${s.id}">
                                         <div class="modal-header">
-                                            <h5 class="modal-title text-danger">Xóa cửa hàng</h5>
+                                            <h5 class="modal-title ${s.active ? 'text-warning' : 'text-success'}">
+                                                ${s.active ? 'Ngừng hoạt động cửa hàng' : 'Kích hoạt cửa hàng'}
+                                            </h5>
                                             <button type="button" class="close text-white"
                                                 data-dismiss="modal">&times;</button>
                                         </div>
-                                        <div class="modal-body">Bạn chắc chắn muốn xóa <strong>${s.name}</strong>?</div>
+                                        <div class="modal-body">
+                                            Bạn chắc chắn muốn <strong>${s.active ? 'ngừng hoạt động' : 'kích hoạt'}</strong> cửa hàng <strong>${s.name}</strong>?<br>
+                                            <span class="text-muted small">Hệ thống sẽ gửi thông báo đến Email của Owner và Quản lý kho.</span>
+                                        </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary-custom"
                                                 data-dismiss="modal">Hủy</button>
-                                            <button type="submit" class="btn btn-danger">Xóa</button>
+                                            <button type="submit" class="btn ${s.active ? 'btn-warning' : 'btn-success'} text-white">
+                                                ${s.active ? 'Ngừng hoạt động' : 'Kích hoạt'}
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
@@ -323,7 +345,9 @@
                                     <div class="modal-body">
                                         <div class="form-group">
                                             <label>Tên cửa hàng</label>
-                                            <input type="text" name="storeName" class="form-control" required>
+                                            <input type="text" name="storeName" class="form-control" 
+                                                minlength="5" maxlength="40" required>
+                                            <small class="text-muted">Từ 5 đến 40 ký tự</small>
                                         </div>
                                         <div class="form-group">
                                             <label>Chủ sở hữu (Owner)</label>

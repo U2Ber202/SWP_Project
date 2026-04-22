@@ -34,22 +34,29 @@ public class ManagerAccountController extends HttpServlet {
             String user = ValidationUtil.normalize(request.getParameter("user"));
             String pass = ValidationUtil.normalize(request.getParameter("pass"));
             String email = ValidationUtil.normalize(request.getParameter("email")).toLowerCase();
+            String fullname = ValidationUtil.normalize(request.getParameter("fullname"));
+            String phone = ValidationUtil.normalize(request.getParameter("phone"));
 
             request.setAttribute("formUser", user);
             request.setAttribute("formEmail", email);
+            request.setAttribute("formFullname", fullname);
+            request.setAttribute("formPhone", phone);
 
-            if (ValidationUtil.isBlank(user) || ValidationUtil.isBlank(pass) || ValidationUtil.isBlank(email)) {
-                error = "Tên đăng nhập, email và mật khẩu không được dể trống.";
+            if (ValidationUtil.isBlank(user) || ValidationUtil.isBlank(pass) || ValidationUtil.isBlank(email)
+                    || ValidationUtil.isBlank(fullname) || ValidationUtil.isBlank(phone)) {
+                error = "Tên đăng nhập, họ tên, số điện thoại, email và mật khẩu không được dể trống.";
             } else if (!ValidationUtil.isValidEmail(email)) {
                 error = "Email không hợp lệ, vui lòng nhập đúng định dạng có ký tự @.";
+            } else if (!ValidationUtil.isValidPhone(phone)) {
+                error = "Số điện thoại không hợp lệ.";
             } else if (!ValidationUtil.isStrongPassword(pass)) {
                 error = "Mật khẩu phải có ít nhất 6 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.";
             } else if (accountDAO.checkAccountExist(user) != null) {
-                error = "Tên đăng nhạp đã tồn tại.";
+                error = "Tên đăng nhập đã tồn tại.";
             } else if (accountDAO.getAccountByEmail(email) != null) {
                 error = "Email đã được sử dụng.";
             } else {
-                accountDAO.insertOwnerAccount(user, pass, email);
+                accountDAO.insertOwnerAccount(user, pass, email, fullname, phone);
                 message = "Tạo tài khoản owner thành công. Admin có thể gán tài khoản này cho cửa hàng.";
             }
             request.setAttribute("accountCreateRole", "owner");

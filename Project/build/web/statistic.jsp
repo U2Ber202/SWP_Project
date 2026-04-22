@@ -6,7 +6,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Thống Kê Doanh Số | V-SNKR Admin</title>
+        <title>Báo cáo doanh thu | V-SNKR Admin</title>
         
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         
@@ -15,7 +15,6 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
         
         <style>
-            /* Đồng bộ biến màu sắc với toàn hệ thống */
             :root {
                 --primary: #ea580c;
                 --primary-dark: #c2410c;
@@ -26,14 +25,12 @@
             }
 
             body {
-                font-family: 'Be Vietnam Pro', sans-serif;
+                font-family: 'Outfit', sans-serif;
                 background-color: var(--bg) !important;
                 color: #f1f5f9;
-                padding-top: 40px;
                 padding-bottom: 40px;
             }
 
-            /* Main Card Wrapper - Glassmorphism */
             .admin-wrapper {
                 background: var(--card-bg);
                 backdrop-filter: blur(12px);
@@ -43,7 +40,6 @@
                 overflow: hidden;
             }
 
-            /* Header */
             .admin-header {
                 background: rgba(0, 0, 0, 0.2);
                 color: #fff;
@@ -67,7 +63,6 @@
                 margin-right: 10px;
             }
 
-            /* Nút bấm quay lại */
             .btn-custom-secondary {
                 background-color: transparent;
                 color: #94a3b8;
@@ -87,7 +82,6 @@
                 border-color: var(--border);
             }
 
-            /* Dashboard Body */
             .dashboard-body {
                 padding: 40px 30px;
             }
@@ -103,7 +97,6 @@
                 padding-left: 12px;
             }
 
-            /* Thẻ thống kê (Stat Cards) dạng kính */
             .stat-card {
                 background: rgba(0, 0, 0, 0.2);
                 border-radius: 16px;
@@ -114,13 +107,6 @@
                 border: 1px solid var(--border);
                 transition: all 0.3s ease;
                 height: 100%;
-            }
-
-            .stat-card:hover {
-                transform: translateY(-5px);
-                background: rgba(0, 0, 0, 0.3);
-                border-color: var(--primary);
-                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             }
 
             .stat-icon {
@@ -155,24 +141,27 @@
                 margin: 0;
             }
 
-            /* Icon Color Variations cho nền tối */
-            .bg-light-primary { background: rgba(234, 88, 12, 0.15); color: #fb923c; }
             .bg-light-success { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
-            .bg-light-info { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
-            .bg-light-warning { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
-            
             .text-success-custom { color: #4ade80 !important; }
+            
+            .table {
+                color: #f1f5f9;
+            }
+            .table-hover tbody tr:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+                color: white;
+            }
         </style>
         <script src="js/theme.js"></script>
         <link rel="stylesheet" href="css/theme.css">
     </head>
     <body>
-
-        <div class="container">
+        <%@ include file="components/navBarComponent.jsp" %>
+        <div class="container" style="margin-top: 100px;">
             <div class="admin-wrapper mb-4">
                 
                 <div class="admin-header">
-                    <h2><i class="fa-solid fa-chart-pie"></i> Bảng <b>Thống Kê</b></h2>
+                    <h2><i class="fa-solid fa-chart-line"></i> Báo cáo <b>Doanh Thu</b></h2>
                     <a href="home" class="btn-custom-secondary">
                         <i class="fa-solid fa-house me-2"></i> Trang Chủ
                     </a>
@@ -180,66 +169,94 @@
 
                 <div class="dashboard-body">
                     
-                    <h3 class="section-title">Kết Quả Kinh Doanh Hôm Nay</h3>
-                    <div class="row mb-5">
-                        <div class="col-md-6 mb-4 mb-md-0">
-                            <div class="stat-card">
-                                <div class="stat-icon bg-light-primary">
-                                    <i class="fa-solid fa-cart-shopping"></i>
-                                </div>
-                                <div class="stat-details">
-                                    <p class="stat-title">Đơn hàng mới</p>
-                                    <h3 class="stat-value">
-                                        ${not empty totalOrders ? totalOrders : 0}
-                                    </h3>
-                                </div>
+                    <!-- Filter Section -->
+                    <div class="mb-5">
+                        <form action="statistic" method="get" class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small text-uppercase fw-bold">Từ ngày</label>
+                                <input type="date" name="startDate" class="form-control bg-dark text-white border-secondary" value="${startDate}" required>
                             </div>
-                        </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small text-uppercase fw-bold">Đến ngày</label>
+                                <input type="date" name="endDate" class="form-control bg-dark text-white border-secondary" value="${endDate}" required>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary w-100" style="background: var(--primary); border: none; height: 38px; font-weight: 600;">
+                                    <i class="fa-solid fa-filter me-2"></i> Lọc báo cáo
+                                </button>
+                            </div>
+                        </form>
+                    </div>
 
-                        <div class="col-md-6">
-                            <div class="stat-card">
+                    <!-- Summary Section -->
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <div class="stat-card" style="border-left: 5px solid var(--primary);">
                                 <div class="stat-icon bg-light-success">
-                                    <i class="fa-solid fa-money-bill-wave"></i>
+                                    <i class="fa-solid fa-money-bill-trend-up"></i>
                                 </div>
                                 <div class="stat-details">
-                                    <p class="stat-title">Doanh thu trong ngày</p>
-                                    <h3 class="stat-value text-success-custom">
-                                        <fmt:formatNumber value="${not empty totalSales ? totalSales : 0}" pattern="#,###"/> đ
+                                    <p class="stat-title">Tổng doanh thu trong kỳ</p>
+                                    <h3 class="stat-value text-success-custom" style="font-size: 2.5rem;">
+                                        <fmt:formatNumber value="${totalRevenue}" pattern="#,###"/> đ
                                     </h3>
+                                    <p class="text-muted mb-0">
+                                        Thời gian: 
+                                        <fmt:formatDate value="${startDate}" pattern="dd/MM/yyyy"/> - 
+                                        <fmt:formatDate value="${endDate}" pattern="dd/MM/yyyy"/>
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <h3 class="section-title">Tổng Kết Tháng Này</h3>
-                    <div class="row">
-                        <div class="col-md-6 mb-4 mb-md-0">
-                            <div class="stat-card">
-                                <div class="stat-icon bg-light-info">
-                                    <i class="fa-solid fa-boxes-stacked"></i>
-                                </div>
-                                <div class="stat-details">
-                                    <p class="stat-title">Tổng đơn hàng</p>
-                                    <h3 class="stat-value">
-                                        ${not empty totalOrdersMonth ? totalOrdersMonth : 0}
-                                    </h3>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="stat-card">
-                                <div class="stat-icon bg-light-warning">
-                                    <i class="fa-solid fa-vault"></i>
-                                </div>
-                                <div class="stat-details">
-                                    <p class="stat-title">Tổng doanh thu</p>
-                                    <h3 class="stat-value text-success-custom">
-                                        <fmt:formatNumber value="${not empty totalSalesMonth ? totalSalesMonth : 0}" pattern="#,###"/> đ
-                                    </h3>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Detailed Table -->
+                    <h3 class="section-title">Chi tiết doanh thu từng ngày</h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr style="background: rgba(255,255,255,0.05);">
+                                    <th class="py-3 px-4">Ngày</th>
+                                    <th class="py-3 px-4">Định dạng</th>
+                                    <th class="py-3 px-4 text-end">Doanh thu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:choose>
+                                    <c:when test="${not empty listRevenue}">
+                                        <c:forEach items="${listRevenue}" var="item">
+                                            <tr style="border-bottom: 1px solid var(--border);">
+                                                <td class="py-3 px-4">
+                                                    <fmt:formatDate value="${item.date}" pattern="EEEE"/>
+                                                </td>
+                                                <td class="py-3 px-4">
+                                                    <fmt:formatDate value="${item.date}" pattern="dd/MM/yyyy"/>
+                                                </td>
+                                                <td class="py-3 px-4 text-end fw-bold">
+                                                    <fmt:formatNumber value="${item.revenue}" pattern="#,###"/> đ
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <tr>
+                                            <td colspan="3" class="text-center py-5 text-muted">
+                                                <i class="fa-solid fa-folder-open fa-3x mb-3 d-block"></i>
+                                                Không có dữ liệu doanh thu trong khoảng thời gian này.
+                                            </td>
+                                        </tr>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tbody>
+                            <tfoot style="background: rgba(255,255,255,0.05); border-top: 2px solid var(--primary);">
+                                <tr>
+                                    <td colspan="2" class="py-3 px-4 fw-bold">TỔNG CỘNG</td>
+                                    <td class="py-3 px-4 text-end fw-bold text-success-custom">
+                                        <fmt:formatNumber value="${totalRevenue}" pattern="#,###"/> đ
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
 
                 </div>

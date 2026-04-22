@@ -26,7 +26,6 @@
                     font-family: 'Be Vietnam Pro', sans-serif;
                     background-color: var(--bg) !important;
                     color: #f1f5f9;
-                    padding-top: 40px;
                     padding-bottom: 40px;
                 }
 

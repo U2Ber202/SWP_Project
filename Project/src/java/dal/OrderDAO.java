@@ -101,6 +101,32 @@ public class OrderDAO extends DBContext {
                 + "WHERE o.id = ? AND s.shipper_id = ?", orderId, shipperId);
     }
 
+    public int getStoreIdByOrderId(int orderId) {
+        // First try to get it from Orders table
+        String sql1 = "SELECT store_id FROM [Orders] WHERE id = ?";
+        try (Connection conn = getConnection(); PreparedStatement st = conn.prepareStatement(sql1)) {
+            st.setInt(1, orderId);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    int sid = rs.getInt("store_id");
+                    if (sid > 0) return sid;
+                }
+            }
+        } catch (SQLException e) {}
+
+        // If not found, look through Products in OrderDetail
+        String sql2 = "SELECT TOP 1 p.store_id FROM OrderDetail od "
+                      + "JOIN Product p ON od.productName = p.name " // Using name or other unique field
+                      + "WHERE od.order_id = ?";
+        try (Connection conn = getConnection(); PreparedStatement st = conn.prepareStatement(sql2)) {
+            st.setInt(1, orderId);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) return rs.getInt("store_id");
+            }
+        } catch (SQLException e) {}
+        return 0;
+    }
+
     private List<Order> getOrdersBySql(String sql, Object... params) {
         List<Order> orders = new ArrayList<>();
         try (Connection connection = getConnection();

@@ -102,6 +102,27 @@
                     </c:forEach>
                 </div>
             </div>
+        <c:if test="${not empty listNews}">
+            <section class="py-5 border-top" style="border-color: var(--border) !important;">
+                <div class="container">
+                    <h2 class="font-weight-bold mb-4">Tin tức từ Shop</h2>
+                    <div class="row">
+                        <c:forEach items="${listNews}" var="n">
+                            <div class="col-lg-3 col-md-6 mb-4">
+                                <div class="card product-card" style="height: auto;">
+                                    <img src="${n.image}" class="card-img-top" alt="${n.title}" style="height: 150px;">
+                                    <div class="card-body p-3">
+                                        <h6 class="font-weight-bold text-white text-truncate">${n.title}</h6>
+                                        <p class="small text-muted text-truncate">${n.content}</p>
+                                        <a href="newsDetail?id=${n.id}" class="btn btn-link p-0 text-warning">Xem thêm <i class="fas fa-arrow-right ml-1"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </div>
+            </section>
+        </c:if>
         </section>
 
         <%@ include file="components/footerComponent.jsp" %>
