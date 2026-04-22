@@ -286,6 +286,33 @@
                         </div>
                     </c:if>
 
+                    <c:if test="${not empty listNews}">
+                        <section class="py-4">
+                            <div class="container">
+                                <h3 class="section-title font-weight-bold">Tin tức mới nhất</h3>
+                                <div class="row">
+                                    <c:forEach items="${listNews}" var="n">
+                                        <div class="col-lg-3 col-md-6 mb-4">
+                                            <div class="card product-card" style="height: auto; border-radius: 15px;">
+                                                <div class="position-relative">
+                                                    <img src="${n.image}" class="card-img-top" alt="${n.title}" style="height: 160px; border-radius: 15px 15px 0 0;">
+                                                    <c:if test="${not empty n.storeId}">
+                                                        <span class="badge badge-warning position-absolute p-1 px-2" style="top: 10px; right: 10px; font-size: 0.7rem;">Shop News</span>
+                                                    </c:if>
+                                                </div>
+                                                <div class="card-body p-3">
+                                                    <h6 class="font-weight-bold text-white text-truncate mb-1 font-size-sm">${n.title}</h6>
+                                                    <p class="small text-muted text-truncate mb-2">${n.content}</p>
+                                                    <a href="newsDetail?id=${n.id}" class="btn btn-link p-0 text-warning silver small">Đọc tiếp <i class="fas fa-arrow-right ml-1"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                        </section>
+                    </c:if>
+
                     <section class="py-5" id="shop">
                         <div class="container">
 
@@ -488,8 +515,8 @@
                                     </div>
                                 </div>
                             </c:if>
-                        </div>
-                    </section>
+                    </div>
+                </section>
 
                     <%@ include file="components/footerComponent.jsp" %>
 

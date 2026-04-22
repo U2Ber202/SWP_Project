@@ -36,6 +36,11 @@ public class StoreDAO extends DBContext {
         } catch (SQLException ex) {
             store.setAverageRating(0.0);
         }
+        try {
+            store.setActive(rs.getBoolean("active"));
+        } catch (SQLException ex) {
+            store.setActive(true);
+        }
         return store;
     }
 
@@ -101,7 +106,7 @@ public class StoreDAO extends DBContext {
     }
 
     public boolean insertStore(String name, int ownerId, Integer warehouseManagerId) {
-        return executeUpdate("INSERT INTO Store (store_name, owner_id, warehouse_manager_id) VALUES (?, ?, ?)", name, ownerId, warehouseManagerId) > 0;
+        return executeUpdate("INSERT INTO Store (store_name, owner_id, warehouse_manager_id, active) VALUES (?, ?, ?, 1)", name, ownerId, warehouseManagerId) > 0;
     }
 
     public boolean updateStore(int id, String name, int ownerId) {
@@ -112,8 +117,16 @@ public class StoreDAO extends DBContext {
         return executeUpdate("UPDATE Store SET store_name = ?, owner_id = ?, warehouse_manager_id = ? WHERE store_id = ?", name, ownerId, warehouseManagerId, id) > 0;
     }
 
+    public boolean toggleStoreStatus(int storeId) {
+        return executeUpdate("UPDATE Store SET active = active ^ 1 WHERE store_id = ?", storeId) > 0;
+    }
+
     public boolean assignShipperToStore(int storeId, int shipperId) {
         return executeUpdate("UPDATE Store SET shipper_id = ? WHERE store_id = ?", shipperId, storeId) > 0;
+    }
+
+    public boolean assignWarehouseManagerToStore(int storeId, int warehouseManagerId) {
+        return executeUpdate("UPDATE Store SET warehouse_manager_id = ? WHERE store_id = ?", warehouseManagerId, storeId) > 0;
     }
 
     public void deleteStore(int id) {

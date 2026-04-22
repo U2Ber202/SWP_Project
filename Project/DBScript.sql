@@ -55,6 +55,7 @@ CREATE TABLE [dbo].[Store] (
     [owner_id] INT NOT NULL,
     [shipper_id] INT NULL,
     [warehouse_manager_id] INT NULL,
+    [active] BIT NOT NULL DEFAULT 1,
     CONSTRAINT [PK_Store] PRIMARY KEY CLUSTERED ([store_id] ASC),
     CONSTRAINT [UQ_Store_owner_id] UNIQUE ([owner_id]),
     CONSTRAINT [UQ_Store_shipper_id] UNIQUE ([shipper_id]),
@@ -415,6 +416,61 @@ VALUES
 GO
 SET IDENTITY_INSERT [dbo].[OrderDetail] OFF;
 GO
-SELECT id, code, discount_percent, max_discount, min_order_value, store_id, expiry_date
-FROM Voucher
-WHERE code = 'GIAM20';
+-- =============================================
+-- 8. Insert News (Tin tức)
+-- =============================================
+CREATE TABLE [dbo].[News] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [title] NVARCHAR(255) NOT NULL,
+    [content] NVARCHAR(MAX) NOT NULL,
+    [image] NVARCHAR(MAX) NULL,
+    [created_at] DATETIME DEFAULT GETDATE(),
+    [store_id] INT NULL, -- NULL = Tin tức hệ thống (Admin), NOT NULL = Tin tức của Store
+    CONSTRAINT [PK_News] PRIMARY KEY ([id]),
+    CONSTRAINT [FK_News_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id]) ON DELETE CASCADE
+);
+GO
+
+INSERT INTO [dbo].[News] ([title], [content], [image], [store_id]) VALUES
+(N'Chào mừng V-SNKR ra mắt!', N'Hệ thống sàn thương mại điện tử chuyên Sneaker chính thức đi vào hoạt động.', 'https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2070&auto=format&fit=crop', NULL),
+(N'Khuyến mãi khai trương Shop Alpha', N'Giảm giá toàn bộ sản phẩm tại Alpha Sneakers trong tuần lễ đầu tiên.', 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop', 1);
+GO
+
+-- =============================================
+-- 9. Insert Contact (Liên hệ hỗ trợ đơn hàng)
+-- =============================================
+CREATE TABLE [dbo].[Contact] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [account_id] INT NOT NULL,
+    [order_id] INT NOT NULL,
+    [store_id] INT NOT NULL,
+    [message] NVARCHAR(MAX) NOT NULL,
+    [response_message] NVARCHAR(MAX) NULL,
+    [responded_at] DATETIME NULL,
+    [created_at] DATETIME DEFAULT GETDATE(),
+    [status] NVARCHAR(50) DEFAULT N'Chờ xử lý', -- Chờ xử lý, Đã phản hồi
+    CONSTRAINT [PK_Contact] PRIMARY KEY ([id]),
+    CONSTRAINT [FK_Contact_Account] FOREIGN KEY ([account_id]) REFERENCES [dbo].[Account]([uID]),
+    CONSTRAINT [FK_Contact_Orders] FOREIGN KEY ([order_id]) REFERENCES [dbo].[Orders]([id]),
+    CONSTRAINT [FK_Contact_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id])
+);
+GO
+
+INSERT INTO [dbo].[Contact] ([account_id], [order_id], [store_id], [message]) VALUES
+(4, 3, 1, N'Tôi nhận hàng rồi nhưng size hơi chật, shop hỗ trợ đổi trả được không?');
+GO
+-- =============================================
+-- 10. Staff Action History (Lịch sử quản lý nhân viên)
+-- =============================================
+CREATE TABLE [dbo].[StaffActionHistory] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [owner_id] INT NOT NULL,          -- Người thực hiện (Owner)
+    [staff_id] INT NOT NULL,          -- Nhân viên bị tác động
+    [action_type] NVARCHAR(50) NOT NULL, -- 'ADD' or 'UPDATE'
+    [details] NVARCHAR(MAX) NULL,     -- Chi tiết thay đổi
+    [action_at] DATETIME DEFAULT GETDATE(),
+    CONSTRAINT [PK_StaffActionHistory] PRIMARY KEY ([id]),
+    CONSTRAINT [FK_History_Owner] FOREIGN KEY ([owner_id]) REFERENCES [dbo].[Account]([uID]),
+    CONSTRAINT [FK_History_Staff] FOREIGN KEY ([staff_id]) REFERENCES [dbo].[Account]([uID])
+);
+GO

@@ -24,12 +24,12 @@
                 --border: rgba(255, 255, 255, 0.1);
             }
 
-            body {
-                font-family: 'Be Vietnam Pro', sans-serif;
-                background-color: var(--bg);
-                color: #f1f5f9;
-                padding: 32px 0 48px;
-            }
+                body {
+                    font-family: 'Be Vietnam Pro', sans-serif;
+                    background-color: var(--bg) !important;
+                    color: #f1f5f9;
+                    padding-bottom: 48px;
+                }
 
             .panel {
                 background: var(--card-bg);
@@ -108,12 +108,13 @@
                 color: white;
             }
 
-            .modal-content {
-                background: #1e293b;
-                color: #f1f5f9;
-                border: 1px solid var(--border);
-                border-radius: 20px;
-            }
+                .modal-content {
+                    background: #0f172a; /* Darker and more solid */
+                    color: #f1f5f9;
+                    border: 1px solid var(--border);
+                    border-radius: 24px;
+                    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+                }
 
             .modal-header,
             .modal-footer {
@@ -164,31 +165,67 @@
             </div>
 
 
-            <div class="panel">
-                <div class="panel-header d-flex justify-content-between align-items-center flex-wrap">
-                    <h2 class="panel-title mb-0">Danh sách cửa hàng</h2>
-                    <span class="text-muted small mt-2 mt-md-0">${listStores.size()} cửa hàng đang tồn
-                        tại</span>
-                </div>
-                <div class="panel-body p-0">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th class="pl-4">ID</th>
-                                <th>Tên cửa hàng</th>
-                                <th>Chủ sở hữu (Owner)</th>
-                                <th>Quản lý kho</th>
-                                <th class="text-center pr-4">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach items="${listStores}" var="s">
-                                <tr>
-                                    <td class="pl-4">#${s.id}</td>
-                                    <td class="font-weight-bold">${s.name}</td>
-                                    <td>
-                                        <c:forEach items="${listAccounts}" var="acc">
-                                            <c:if test="${acc.uid == s.ownerId}">${acc.user}</c:if>
+                        <div class="panel">
+                            <div class="panel-header d-flex justify-content-between align-items-center flex-wrap">
+                                <h2 class="panel-title mb-0">Danh sách cửa hàng</h2>
+                                <span class="text-muted small mt-2 mt-md-0">${listStores.size()} cửa hàng đang tồn
+                                    tại</span>
+                            </div>
+                            <div class="panel-body p-0">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="pl-4">ID</th>
+                                            <th>Tên cửa hàng</th>
+                                            <th>Trạng thái</th>
+                                            <th>Chủ sở hữu (Owner)</th>
+                                            <th>Quản lý kho</th>
+                                            <th class="text-center pr-4">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach items="${listStores}" var="s">
+                                            <tr>
+                                                <td class="pl-4">#${s.id}</td>
+                                                <td class="font-weight-bold">${s.name}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${s.active}">
+                                                            <span class="badge badge-success px-3 py-2" style="border-radius: 10px;">Active</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="badge badge-secondary px-3 py-2" style="border-radius: 10px;">Inactive</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td>
+                                                    <c:forEach items="${listAccounts}" var="acc">
+                                                        <c:if test="${acc.uid == s.ownerId}">${acc.user}</c:if>
+                                                    </c:forEach>
+                                                </td>
+                                                <td>
+                                                    <c:forEach items="${warehouseManagersByStore[s.id]}" var="wm">
+                                                        <c:if test="${wm.uid == s.warehouseManagerId}">${wm.user}</c:if>
+                                                    </c:forEach>
+                                                    <c:if test="${s.warehouseManagerId == 0}">Chưa gán</c:if>
+                                                </td>
+                                                <td class="text-center pr-4">
+                                                    <div class="btn-group">
+                                                        <!--                                            <a href="manager?storeId={s.id}" class="btn btn-sm btn-outline-info mr-2" title="Xem Kho/Sản phẩm"><i class="fa-solid fa-boxes-stacked"></i></a>
+                                            <a href="stockHistory?storeId={s.id}" class="btn btn-sm btn-outline-primary mr-2" title="Xem Lịch sử kho"><i class="fa-solid fa-clock-rotate-left"></i></a>
+                                            <a href="store-front?id=${s.id}" class="btn btn-sm btn-outline-success mr-2" title="Xem Shop công khai"><i class="fa-solid fa-eye"></i></a>-->
+                                                        <a href="#toggleStoreModal${s.id}"
+                                                            class="btn btn-sm ${s.active ? 'btn-outline-secondary' : 'btn-outline-success'} mr-2" 
+                                                            data-toggle="modal" title="${s.active ? 'Ngừng hoạt động' : 'Kích hoạt'}">
+                                                            <i class="fa-solid ${s.active ? 'fa-toggle-on' : 'fa-toggle-off'}"></i>
+                                                        </a>
+                                                        <a href="#editStoreModal${s.id}"
+                                                            class="btn btn-sm btn-outline-warning"
+                                                            data-toggle="modal" title="Sửa store"><i
+                                                                class="fa-solid fa-pen-to-square"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         </c:forEach>
                                     </td>
                                     <td>
@@ -212,7 +249,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                            </c:forEach>
+                            <%--</c:forEach>--%>
                         </tbody>
                     </table>
                 </div>
@@ -336,41 +373,136 @@
                                     <span>${error}</span>
                                 </div>
                             </c:if>
-                            <div class="form-group">
-                                <label>Tên cửa hàng</label>
-                                <input type="text" name="storeName" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Chủ sở hữu (Owner)</label>
-                                <select name="ownerId" class="custom-select" required>
-                                    <option value="" disabled selected>Chọn tài khoản owner</option>
-                                    <c:forEach items="${listAccounts}" var="acc">
-                                        <option value="${acc.uid}">${acc.user} (ID: ${acc.uid})</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                            <div class="form-group mb-0">
-                                <label>Quản lý kho</label>
-                                <select name="warehouseManagerId" class="custom-select">
-                                    <option value="" selected>Chưa gán quản lý kho</option>
-                                    <c:forEach items="${listWarehouseManagers}" var="wm">
-                                        <option value="${wm.uid}">${wm.user} (ID: ${wm.uid})</option>
-                                    </c:forEach>
-                                </select>
+                        </div>
+
+                    </div>
+
+                    <c:forEach items="${listStores}" var="s">
+                        <div id="editStoreModal${s.id}" class="modal fade">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form action="manageStore" method="post">
+                                        <input type="hidden" name="action" value="update">
+                                        <input type="hidden" name="storeId" value="${s.id}">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Cập nhật cửa hàng</h5>
+                                            <button type="button" class="close text-white"
+                                                data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label>Tên cửa hàng</label>
+                                                <input type="text" name="storeName" class="form-control"
+                                                    value="${s.name}" minlength="5" maxlength="40" required>
+                                                <small class="text-muted">Từ 5 đến 40 ký tự</small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Chủ sở hữu (Owner)</label>
+                                                <select name="ownerId" class="custom-select" required>
+                                                    <c:forEach items="${listAccounts}" var="acc">
+                                                        <option value="${acc.uid}" ${acc.uid==s.ownerId ? 'selected'
+                                                            : '' }>${acc.user} (ID: ${acc.uid})</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                            <div class="form-group mb-0">
+                                                <label>Quản lý kho</label>
+                                                <select name="warehouseManagerId" class="custom-select">
+                                                    <option value="">Chưa gán quản lý kho</option>
+                                                    <c:forEach items="${warehouseManagersByStore[s.id]}" var="wm">
+                                                        <option value="${wm.uid}" ${wm.uid==s.warehouseManagerId
+                                                            ? 'selected' : '' }>${wm.user} (ID: ${wm.uid})</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary-custom"
+                                                data-dismiss="modal">Hủy</button>
+                                            <button type="submit" class="btn btn-primary-custom">Lưu</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary-custom"
-                                    data-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary-custom">Thêm</button>
+
+                        <div id="toggleStoreModal${s.id}" class="modal fade">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <form action="manageStore" method="post">
+                                        <input type="hidden" name="action" value="toggleStatus">
+                                        <input type="hidden" name="storeId" value="${s.id}">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title ${s.active ? 'text-warning' : 'text-success'}">
+                                                ${s.active ? 'Ngừng hoạt động cửa hàng' : 'Kích hoạt cửa hàng'}
+                                            </h5>
+                                            <button type="button" class="close text-white"
+                                                data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Bạn chắc chắn muốn <strong>${s.active ? 'ngừng hoạt động' : 'kích hoạt'}</strong> cửa hàng <strong>${s.name}</strong>?<br>
+                                            <span class="text-muted small">Hệ thống sẽ gửi thông báo đến Email của Owner và Quản lý kho.</span>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary-custom"
+                                                data-dismiss="modal">Hủy</button>
+                                            <button type="submit" class="btn ${s.active ? 'btn-warning' : 'btn-success'} text-white">
+                                                ${s.active ? 'Ngừng hoạt động' : 'Kích hoạt'}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    </body>
+                    <div id="addStoreModal" class="modal fade">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form action="manageStore" method="post">
+                                    <input type="hidden" name="action" value="add">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Thêm cửa hàng mới</h5>
+                                        <button type="button" class="close text-white"
+                                            data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label>Tên cửa hàng</label>
+                                            <input type="text" name="storeName" class="form-control" 
+                                                minlength="5" maxlength="40" required>
+                                            <small class="text-muted">Từ 5 đến 40 ký tự</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Chủ sở hữu (Owner)</label>
+                                            <select name="ownerId" class="custom-select" required>
+                                                <option value="" disabled selected>Chọn tài khoản owner</option>
+                                                <c:forEach items="${listAccounts}" var="acc">
+                                                    <option value="${acc.uid}">${acc.user} (ID: ${acc.uid})</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-0">
+                                            <label>Quản lý kho</label>
+                                            <select name="warehouseManagerId" class="custom-select">
+                                                <option value="" selected>Chưa gán quản lý kho</option>
+                                                <c:forEach items="${listWarehouseManagers}" var="wm">
+                                                    <option value="${wm.uid}">${wm.user} (ID: ${wm.uid})</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary-custom"
+                                            data-dismiss="modal">Hủy</button>
+                                        <button type="submit" class="btn btn-primary-custom">Thêm</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
 
 </html>

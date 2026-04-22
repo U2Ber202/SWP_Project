@@ -8,6 +8,7 @@ public class Store {
     private int warehouseManagerId;
     private int productCount;
     private double averageRating;
+    private boolean active;
 
     public Store() {
     }
@@ -16,6 +17,7 @@ public class Store {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
+        this.active = true;
     }
 
     public Store(int id, String name, int ownerId, int shipperId) {
@@ -23,6 +25,7 @@ public class Store {
         this.name = name;
         this.ownerId = ownerId;
         this.shipperId = shipperId;
+        this.active = true;
     }
 
     public int getId() {
@@ -79,5 +82,13 @@ public class Store {
 
     public void setAverageRating(double averageRating) {
         this.averageRating = averageRating;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

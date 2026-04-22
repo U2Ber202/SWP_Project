@@ -23,8 +23,8 @@ public class OrderDetail extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Account acc = (Account) request.getSession().getAttribute("acc");
-        if (!RoleHelper.canManageShipping(acc)) {
-            response.sendRedirect("home");
+        if (acc == null) {
+            response.sendRedirect("login.jsp");
             return;
         }
 
@@ -36,6 +36,7 @@ public class OrderDetail extends HttpServlet {
 
         OrderDAO orderDAO = new OrderDAO();
         Order order;
+        
         if (RoleHelper.isOwner(acc)) {
             Store store = new StoreDAO().getStoreByOwnerId(acc.getUid());
             if (store == null) {
@@ -43,16 +44,30 @@ public class OrderDetail extends HttpServlet {
                 return;
             }
             order = orderDAO.getOrderByIdAndStoreId(orderId, store.getId());
-        } else {
+        } else if (RoleHelper.isAdmin(acc)) {
+            order = orderDAO.getOrderById(orderId);
+        } else if (RoleHelper.isShipper(acc)) {
             order = orderDAO.getOrderByIdAndShipperId(orderId, acc.getUid());
+        } else {
+            // Customer role
+            order = orderDAO.getOrderById(orderId);
+            if (order != null && order.getAccountId() != acc.getUid()) {
+                order = null; // Security: cannot view others' orders
+            }
         }
+
         if (order == null) {
-            response.sendRedirect("orders");
+            if (RoleHelper.isCustomer(acc)) {
+                response.sendRedirect("purchaseHistory");
+            } else {
+                response.sendRedirect("orders");
+            }
             return;
         }
 
         List<model.OrderDetail> orderDetails = new OrderDetailDAO().getAllOrderDetailById(orderId);
         request.setAttribute("orderDetails", orderDetails);
+        request.setAttribute("order", order);
         request.setAttribute("orderId", orderId);
         request.getRequestDispatcher("orderDetail.jsp").forward(request, response);
     }

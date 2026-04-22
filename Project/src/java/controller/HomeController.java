@@ -2,6 +2,7 @@ package controller;
 
 import dal.CategoryDAO;
 import dal.HomeSettingDAO;
+import dal.NewsDAO;
 import dal.ProductDAO;
 import dal.ShippingDAO;
 import dal.StoreDAO;
@@ -102,12 +103,40 @@ public class HomeController extends HttpServlet {
         int totalPage = Math.max(1, (int) Math.ceil((double) totalProducts / PAGE_SIZE));
         page = Math.min(page, totalPage);
         List<Product> listProducts = paginateProducts(matchedProducts, page, PAGE_SIZE);
+        
+        NewsDAO newsDAO = new NewsDAO();
+        List<model.News> listNews;
+        
+        if (acc == null || RoleHelper.isAdmin(acc) || RoleHelper.isCustomer(acc)) {
+            listNews = newsDAO.getAllNews();
+        } else {
+            // Staff roles: Owner, Warehouse Manager, Shipper
+            Integer storeId = null;
+            if (RoleHelper.isOwner(acc)) {
+                Store s = new StoreDAO().getStoreByOwnerId(acc.getUid());
+                if (s != null) storeId = s.getId();
+            } else if (RoleHelper.isWarehouseManager(acc)) {
+                Store s = new StoreDAO().getStoreByWarehouseManagerId(acc.getUid());
+                if (s != null) storeId = s.getId();
+            } else if (RoleHelper.isShipper(acc)) {
+                storeId = new dal.ShippingDAO().getStoreIdByShipperId(acc.getUid());
+            }
+            
+            if (storeId != null) {
+                listNews = newsDAO.getNewsByStore(storeId);
+            } else {
+                listNews = newsDAO.getSystemNews();
+            }
+        }
+        
+        if (listNews.size() > 4) listNews = listNews.subList(0, 4);
 
         request.setAttribute("listCategories", listCategories != null ? listCategories : new ArrayList<>());
         request.setAttribute("listStores", (scopedStore != null) ? java.util.Arrays.asList(scopedStore) : (storeDAO.getAllStores() != null ? storeDAO.getAllStores() : new ArrayList<>()));
         request.setAttribute("featuredProducts", featuredProducts != null ? featuredProducts : new ArrayList<>());
         request.setAttribute("homeSetting", homeSetting != null ? homeSetting : new HomeSettingDAO().createDefaultSetting());
         request.setAttribute("activeSliders", new dal.SliderDAO().getActiveSliders());
+        request.setAttribute("listNews", listNews);
         request.setAttribute("page", page);
         request.setAttribute("totalPage", totalPage);
         request.setAttribute("listProducts", listProducts != null ? listProducts : new ArrayList<>());

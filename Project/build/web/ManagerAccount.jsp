@@ -30,7 +30,6 @@
                     font-family: 'Be Vietnam Pro', sans-serif;
                     background-color: var(--bg) !important;
                     color: #f1f5f9;
-                    padding-top: 40px;
                     padding-bottom: 40px;
                 }
 
@@ -204,37 +203,49 @@
                                 <form action="managerAccount" method="post">
                                     <input type="hidden" name="action" value="createOwner">
                                     <div class="row">
-                                        <div class="col-md-4 mb-3 mb-md-0">
+                                        <div class="col-md-4 mb-3">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i
-                                                            class="fa-solid fa-user"></i></span>
+                                                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                                                 </div>
-                                                <input type="text" class="form-control" name="user"
-                                                    placeholder="Tên đăng nhập" value="${formUser}" required>
+                                                <input type="text" class="form-control" name="user" placeholder="Tên đăng nhập" value="${formUser}" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-3 mb-md-0">
+                                        <div class="col-md-4 mb-3">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i
-                                                            class="fa-solid fa-envelope"></i></span>
+                                                    <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
                                                 </div>
-                                                <input type="email" class="form-control" name="email"
-                                                    placeholder="Địa chỉ Email" value="${formEmail}" required>
+                                                <input type="email" class="form-control" name="email" placeholder="Địa chỉ Email" value="${formEmail}" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-2 mb-3 mb-md-0">
+                                        <div class="col-md-4 mb-3">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i
-                                                            class="fa-solid fa-lock"></i></span>
+                                                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
                                                 </div>
-                                                <input type="password" class="form-control" name="pass"
-                                                    placeholder="Mật khẩu" required>
+                                                <input type="password" class="form-control" name="pass" placeholder="Mật khẩu" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-5 mb-3">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
+                                                </div>
+                                                <input type="text" class="form-control" name="fullname" placeholder="Họ và tên" value="${formFullname}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5 mb-3">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                                                </div>
+                                                <input type="text" class="form-control" name="phone" placeholder="Số điện thoại" value="${formPhone}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 mb-3">
                                             <button type="submit" class="btn btn-custom-primary">Tạo Chủ sở hữu</button>
                                         </div>
                                     </div>
