@@ -7,10 +7,10 @@
         maxTotal="30"
         maxIdle="10"
         maxWaitMillis="10000"
-        username="U2Ber"
-        password="@Huyen17022002"
+        username="sa"
+        password="123"
         driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-        url="jdbc:sqlserver://U2BER\\SQLEXPRESS:1433;databaseName=PRJ301;encrypt=true;trustServerCertificate=true"
+        url="jdbc:sqlserver://localhost\\BUIHUY:1433;databaseName=PRJ301;encrypt=true;trustServerCertificate=true"
         validationQuery="SELECT 1"
         testOnBorrow="true"/>
 
@@ -22,6 +22,6 @@
     <Environment name="VNPAY_TMN_CODE" type="java.lang.String" value="GOP5KRMR" override="false"/>
     <Environment name="VNPAY_SECRET_KEY" type="java.lang.String" value="408AJ0HU19Z0C6N9WT7QPPHEA4E5H5U1" override="false"/>
     <Environment name="VNPAY_PAY_URL" type="java.lang.String" value="https://sandbox.vnpayment.vn/paymentv2/vpcpay.html" override="false"/>
-    <Environment name="VNPAY_RETURN_URL" type="java.lang.String" value="http://localhost:8080/Project_war_exploded/vnpay_return" override="false"/>
+    <Environment name="VNPAY_RETURN_URL" type="java.lang.String" value="http://localhost:8080/Project/vnpay_return" override="false"/>
     <Environment name="VNPAY_API_URL" type="java.lang.String" value="https://sandbox.vnpayment.vn/merchant_webapi/api/transaction" override="false"/>
 </Context>

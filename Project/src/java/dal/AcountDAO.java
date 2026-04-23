@@ -14,9 +14,12 @@ import util.PasswordUtil;
 public class AcountDAO extends DBContext {
 
     private static final Logger LOGGER = Logger.getLogger(AcountDAO.class.getName());
+
     private static final String ACCOUNT_SELECT = "SELECT [uID], [user], [pass], [isAdmin], [active], "
             + "ISNULL([role], CASE WHEN isAdmin = 1 THEN 'admin' ELSE 'customer' END) AS role, "
             + "[fullname], [phone], [email], [address], [token] FROM Account";
+
+
 
     private Account mapAccount(ResultSet rs) throws SQLException {
         Account a = new Account();
@@ -62,21 +65,32 @@ public class AcountDAO extends DBContext {
 
     public List<Account> getWarehouseManagersAvailableForStore(Integer storeId) {
         if (storeId == null) {
+            // For Add Store modal: show only global managers (no history) who are not assigned to any store and are active
             return getAccountsBySql(ACCOUNT_SELECT
-                    + " WHERE ISNULL([role], CASE WHEN isAdmin = 1 THEN 'admin' ELSE 'customer' END) = ?"
+                    + " WHERE [role] = ? AND [active] = 1"
                     + " AND NOT EXISTS (SELECT 1 FROM Store s WHERE s.warehouse_manager_id = Account.uID)"
+                    + " AND NOT EXISTS (SELECT 1 FROM StaffActionHistory h WHERE h.staff_id = Account.uID)"
                     + " ORDER BY uID DESC",
                     Account.ROLE_WAREHOUSE_MANAGER);
         }
 
+        // For Edit Store modal: 
+        // Only show staff who are ACTIVE (active = 1)
+        // AND (Already assigned to this store OR (Not assigned anywhere AND (Global OR belong to this store's owner)))
         return getAccountsBySql(ACCOUNT_SELECT
-                + " WHERE ISNULL([role], CASE WHEN isAdmin = 1 THEN 'admin' ELSE 'customer' END) = ?"
+                + " WHERE [role] = ? AND [active] = 1"
                 + " AND ("
-                + "     NOT EXISTS (SELECT 1 FROM Store s WHERE s.warehouse_manager_id = Account.uID)"
-                + "     OR EXISTS (SELECT 1 FROM Store s WHERE s.warehouse_manager_id = Account.uID AND s.store_id = ?)"
+                + "     EXISTS (SELECT 1 FROM Store s WHERE s.warehouse_manager_id = Account.uID AND s.store_id = ?)"
+                + "     OR ("
+                + "         NOT EXISTS (SELECT 1 FROM Store s WHERE s.warehouse_manager_id = Account.uID)"
+                + "         AND ("
+                + "             NOT EXISTS (SELECT 1 FROM StaffActionHistory h WHERE h.staff_id = Account.uID)"
+                + "             OR EXISTS (SELECT 1 FROM StaffActionHistory h JOIN Store s ON h.owner_id = s.owner_id WHERE h.staff_id = Account.uID AND s.store_id = ?)"
+                + "         )"
+                + "     )"
                 + " )"
                 + " ORDER BY uID DESC",
-                Account.ROLE_WAREHOUSE_MANAGER, storeId);
+                Account.ROLE_WAREHOUSE_MANAGER, storeId, storeId);
     }
 
     public List<Account> getShippersByStoreId(int storeId) {
@@ -84,18 +98,43 @@ public class AcountDAO extends DBContext {
                 + "FROM Account a "
                 + "LEFT JOIN Store s ON s.shipper_id = a.uID "
                 + "LEFT JOIN Shipping sh ON sh.shipper_id = a.uID "
-                + "WHERE a.role = 'shipper' AND (s.store_id = ? OR sh.store_id = ?) "
+                + "WHERE a.role = 'shipper' AND a.active = 1 AND (s.store_id = ? OR sh.store_id = ?) "
                 + "ORDER BY a.uID DESC",
                 storeId, storeId);
     }
 
 
-    public void insertOwnerAccount(String user, String pass, String email) {
-        insertAccountByRole(user, pass, email, null, null, Account.ROLE_OWNER);
+    public void insertOwnerAccount(String user, String pass, String email, String fullname, String phone) {
+        insertAccountByRole(user, pass, email, fullname, phone, Account.ROLE_OWNER);
     }
 
     public void insertShipperAccount(String user, String pass, String email) {
         insertAccountByRole(user, pass, email, null, null, Account.ROLE_SHIPPER);
+    }
+
+    public int insertStaffAndReturnId(String user, String pass, String email, String fullname, String phone, String role) {
+        String sql = "INSERT INTO [Account] ([user], [pass], [isAdmin], [role], [active], [email], [fullname], [phone]) VALUES (?, ?, 0, ?, 1, ?, ?, ?)";
+        try (Connection connection = getConnection();
+             PreparedStatement stm = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+            stm.setString(1, user);
+            stm.setString(2, PasswordUtil.hash(pass));
+            stm.setString(3, role);
+            stm.setString(4, email);
+            stm.setString(5, fullname);
+            stm.setString(6, phone);
+            stm.executeUpdate();
+            try (ResultSet rs = stm.getGeneratedKeys()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+
+    public void updateStaff(int uid, String fullname, String phone, String email, boolean active) {
+        executeUpdate("UPDATE [Account] SET fullname=?, phone=?, email=?, active=? WHERE uID=?",
+                fullname, phone, email, active ? 1 : 0, uid);
     }
 
     public void insertWarehouseManagerAccount(String user, String pass, String email) {
@@ -234,5 +273,20 @@ public class AcountDAO extends DBContext {
         for (int i = 0; i < params.length; i++) {
             stm.setObject(i + 1, params[i]);
         }
+    }
+
+    public List<Account> getStaffByOwner(int ownerId) {
+        String sql = ACCOUNT_SELECT + " WHERE uID IN ("
+                + "    SELECT h.staff_id FROM StaffActionHistory h WHERE h.owner_id = ?"
+                + "    UNION"
+                + "    SELECT s.shipper_id FROM Store s WHERE s.owner_id = ? AND s.shipper_id IS NOT NULL"
+                + "    UNION"
+                + "    SELECT s.warehouse_manager_id FROM Store s WHERE s.owner_id = ? AND s.warehouse_manager_id IS NOT NULL"
+                + "    UNION"
+                + "    SELECT sh.shipper_id FROM Shipping sh JOIN Store s ON sh.store_id = s.store_id WHERE s.owner_id = ? AND sh.shipper_id IS NOT NULL"
+                + "    UNION"
+                + "    SELECT si.created_by FROM StockImport si JOIN Store s ON si.store_id = s.store_id WHERE s.owner_id = ? AND si.created_by IS NOT NULL"
+                + ") AND (role = 'shipper' OR role = 'warehouse_manager')";
+        return getAccountsBySql(sql, ownerId, ownerId, ownerId, ownerId, ownerId);
     }
 }

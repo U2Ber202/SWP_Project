@@ -135,10 +135,12 @@
                 </div>
                 <div class="panel-body">
                     <form action="homeSetting" method="post">
+                        <input type="hidden" name="action" value="updateGeneral">
                         <div class="row">
                             <div class="col-lg-6 mb-4">
+                                <!-- ... existing hero content ... -->
                                 <div class="setting-box">
-                                    <h5 class="mb-4 text-warning"><i class="fas fa-rocket mr-2"></i>Hero Section</h5>
+                                    <h5 class="mb-4 text-warning"><i class="fas fa-rocket mr-2"></i>Hero Section (Mặc định)</h5>
                                     <div class="form-group">
                                         <label>Nhãn nổi bật (Badge)</label>
                                         <input type="text" name="heroBadge" class="form-control" value="${homeSetting.heroBadge}" required placeholder="VD: SỰ KIỆN LỚN">
@@ -216,15 +218,206 @@
                         </div>
                         <div class="d-flex justify-content-end mt-2">
                              <button type="submit" class="btn btn-primary-custom px-5">
-                                 <i class="fas fa-save mr-2"></i>Lưu tất cả thay đổi
+                                 <i class="fas fa-save mr-2"></i>Lưu cấu hình chung
                              </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Slider Management Section -->
+            <div class="panel">
+                <div class="panel-header d-flex justify-content-between align-items-center">
+                    <h2 class="panel-title mb-0"><i class="fas fa-images mr-2 text-warning"></i>Quản lý Sliders (Carousel)</h2>
+                    <button class="btn btn-primary-custom btn-sm" data-toggle="modal" data-target="#addSliderModal">
+                        <i class="fas fa-plus mr-1"></i>Thêm slider mới
+                    </button>
+                </div>
+                <div class="panel-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 text-white" style="background: transparent;">
+                            <thead style="background: rgba(0,0,0,0.1)">
+                                <tr>
+                                    <th class="border-0 pl-4">Ảnh</th>
+                                    <th class="border-0">Tiêu đề & Mô tả</th>
+                                    <th class="border-0">Trạng thái</th>
+                                    <th class="border-0 text-right pr-4">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="${sliders}" var="s">
+                                    <tr style="border-bottom: 1px solid var(--border)">
+                                        <td class="pl-4 align-middle">
+                                            <img src="${s.imageUrl}" alt="Slider" style="width: 120px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);">
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="font-weight-bold text-warning">${s.title}</div>
+                                            <div class="small text-muted text-truncate" style="max-width: 300px;">${s.description}</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <c:choose>
+                                                <c:when test="${s.status}">
+                                                    <span class="badge badge-success px-2 py-1">Đang hiển thị</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge badge-secondary px-2 py-1">Đã ẩn</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td class="pr-4 text-right align-middle">
+                                            <button class="btn btn-sm btn-info mr-1" onclick="editSlider(${s.id}, '${s.title}', '${s.imageUrl}', '${s.backLink}', ${s.status}, '${s.description}')">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" onclick="confirmDeleteSlider(${s.id})">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                <c:if test="${empty sliders}">
+                                    <tr>
+                                        <td colspan="4" class="text-center py-5 text-muted">Chưa có slider nào. Hệ thống sẽ hiển thị Hero section mặc định.</td>
+                                    </tr>
+                                </c:if>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Slider Modal -->
+        <div class="modal fade" id="addSliderModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content border-0" style="background: #1e293b; border-radius: 20px;">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title text-white font-weight-bold">Thêm Slider mới</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="homeSetting" method="post">
+                        <input type="hidden" name="action" value="addSlider">
+                        <div class="modal-body p-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tiêu đề slider</label>
+                                        <input type="text" name="title" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Đường dẫn ảnh (URL)</label>
+                                        <input type="text" name="imageUrl" class="form-control" required placeholder="https://...">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Link khi click (Optional)</label>
+                                        <input type="text" name="backLink" class="form-control" placeholder="#shop">
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="newSliderStatus" name="status" checked>
+                                            <label class="custom-control-label" for="newSliderStatus">Cho phép hiển thị ngay</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Mô tả ngắn</label>
+                                        <textarea name="description" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-secondary-custom" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary-custom">Xác nhận thêm</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
+        <!-- Edit Slider Modal -->
+        <div class="modal fade" id="editSliderModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content border-0" style="background: #1e293b; border-radius: 20px;">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title text-white font-weight-bold">Chỉnh sửa Slider</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="homeSetting" method="post">
+                        <input type="hidden" name="action" value="updateSlider">
+                        <input type="hidden" name="id" id="edit-id">
+                        <div class="modal-body p-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tiêu đề slider</label>
+                                        <input type="text" name="title" id="edit-title" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Đường dẫn ảnh (URL)</label>
+                                        <input type="text" name="imageUrl" id="edit-image" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Link khi click</label>
+                                        <input type="text" name="backLink" id="edit-link" class="form-control">
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="edit-status" name="status">
+                                            <label class="custom-control-label" for="edit-status">Hiển thị slider</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Mô tả ngắn</label>
+                                        <textarea name="description" id="edit-desc" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-secondary-custom" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary-custom">Cập nhật</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <form id="deleteSliderForm" action="homeSetting" method="post" style="display: none;">
+            <input type="hidden" name="action" value="deleteSlider">
+            <input type="hidden" name="id" id="delete-id">
+        </form>
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script>
+            function editSlider(id, title, image, link, status, desc) {
+                $('#edit-id').val(id);
+                $('#edit-title').val(title);
+                $('#edit-image').val(image);
+                $('#edit-link').val(link);
+                $('#edit-status').prop('checked', status);
+                $('#edit-desc').val(desc);
+                $('#editSliderModal').modal('show');
+            }
+
+            function confirmDeleteSlider(id) {
+                if (confirm('Bạn có chắc chắn muốn xóa slider này?')) {
+                    $('#delete-id').val(id);
+                    $('#deleteSliderForm').submit();
+                }
+            }
+        </script>
     </body>
 </html>
+

@@ -25,7 +25,7 @@ GO
 INSERT INTO [dbo].[Role] ([role_key], [role_name], [description]) VALUES
 ('admin', N'Quản trị', N'Toàn quyền quản trị hệ thống'),
 ('owner', N'Chủ cửa hàng', N'Quản lý một cửa hàng'),
-('shipper', N'Nhân viên giao nhận', N'Quản lý và cập nhật trạng thái giao hàng'),
+('shipper', N'Quản lý ship hàng', N'Quản lý và cập nhật trạng thái giao hàng'),
 ('warehouse_manager', N'Quản lý kho', N'Nhập kho theo size và cập nhật tồn kho cho cửa hàng'),
 ('customer', N'Khách hàng', N'Tài khoản mua hàng thông thường');
 GO
@@ -55,6 +55,7 @@ CREATE TABLE [dbo].[Store] (
     [owner_id] INT NOT NULL,
     [shipper_id] INT NULL,
     [warehouse_manager_id] INT NULL,
+    [active] BIT NOT NULL DEFAULT 1,
     CONSTRAINT [PK_Store] PRIMARY KEY CLUSTERED ([store_id] ASC),
     CONSTRAINT [UQ_Store_owner_id] UNIQUE ([owner_id]),
     CONSTRAINT [UQ_Store_shipper_id] UNIQUE ([shipper_id]),
@@ -164,6 +165,7 @@ CREATE TABLE [dbo].[Orders] (
     [create_date] DATE NULL CONSTRAINT [DF_Orders_create_date] DEFAULT (GETDATE()),
     [shipping_id] INT NULL,
     [store_id] INT NULL,
+    [vat_percent] INT DEFAULT 10,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [FK_Orders_Account] FOREIGN KEY ([account_id]) REFERENCES [dbo].[Account]([uID]),
     CONSTRAINT [FK_Orders_Shipping] FOREIGN KEY ([shipping_id]) REFERENCES [dbo].[Shipping]([id]),
@@ -202,6 +204,19 @@ CREATE TABLE [dbo].[HomeSetting] (
     CONSTRAINT [FK_HomeSetting_Product] FOREIGN KEY ([featured_product_id]) REFERENCES [dbo].[Product]([id])
 );
 GO
+
+
+CREATE TABLE [dbo].[Slider] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [title] NVARCHAR(255) NULL,
+    [image_url] NVARCHAR(MAX) NOT NULL,
+    [back_link] NVARCHAR(MAX) NULL,
+    [status] BIT NOT NULL DEFAULT 1,
+    [description] NVARCHAR(1000) NULL,
+    CONSTRAINT [PK_Slider] PRIMARY KEY CLUSTERED ([id] ASC)
+);
+GO
+
 CREATE TABLE [dbo].[Voucher] (
     [id] INT IDENTITY(1,1) NOT NULL,
     [code] VARCHAR(50) NOT NULL,
@@ -209,6 +224,7 @@ CREATE TABLE [dbo].[Voucher] (
     [max_discount] INT NULL,
     [min_order_value] INT NULL,
     [expiry_date] DATE NOT NULL, -- Đã đổi sang kiểu DATE để dễ nhập liệu
+    [start_date] DATE NOT NULL DEFAULT GETDATE(),
     [store_id] INT NOT NULL,
     CONSTRAINT [PK_Voucher] PRIMARY KEY ([id]),
     CONSTRAINT [FK_Voucher_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id])
@@ -270,6 +286,12 @@ INSERT INTO [dbo].[HomeSetting] (
     'newest',
     NULL
 );
+GO
+
+INSERT INTO [dbo].[Slider] (title, image_url, back_link, status, description) VALUES
+(N'Adidas Stan Smith Special', N'https://brand.assets.adidas.com/image/upload/f_auto,q_auto,fl_lossy/if_w_gt_1920,w_1920/enUS/Images/ss24-stansmith-generic-hp-mh-large-animated-v2-d_tcm221-1140306.jpg', N'detail?productId=1', 1, N'Mẫu giày huyền thoại với phong cách tối giản.'),
+(N'Vans Old Skool Collection', N'https://images.vans.com/is/image/Vans/VN000D3HY28-HERO?wid=1600&fmt=jpg', N'detail?productId=2', 1, N'Sự lựa chọn hoàn hảo cho phong cách đường phố.'),
+(N'Khám Phá Converse Chuck 70', N'https://www.converse.com/on/demandware.static/-/Library-Sites-ConverseSharedLibrary/default/dwc6c06a8e/firstspirit/converse-it/media/homepage_1/2024_spring/02_february_2/D-Converse-Chuck-70-De-Luxe-Wedge.jpg', N'detail?productId=3', 1, N'Thiết kế cổ điển kết hợp phong cách hiện đại.');
 GO
 
 INSERT INTO [dbo].[Store] ([store_name], [owner_id], [shipper_id], [warehouse_manager_id]) VALUES
@@ -396,6 +418,61 @@ VALUES
 GO
 SET IDENTITY_INSERT [dbo].[OrderDetail] OFF;
 GO
-SELECT id, code, discount_percent, max_discount, min_order_value, store_id, expiry_date
-FROM Voucher
-WHERE code = 'GIAM20';
+-- =============================================
+-- 8. Insert News (Tin tức)
+-- =============================================
+CREATE TABLE [dbo].[News] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [title] NVARCHAR(255) NOT NULL,
+    [content] NVARCHAR(MAX) NOT NULL,
+    [image] NVARCHAR(MAX) NULL,
+    [created_at] DATETIME DEFAULT GETDATE(),
+    [store_id] INT NULL, -- NULL = Tin tức hệ thống (Admin), NOT NULL = Tin tức của Store
+    CONSTRAINT [PK_News] PRIMARY KEY ([id]),
+    CONSTRAINT [FK_News_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id]) ON DELETE CASCADE
+);
+GO
+
+INSERT INTO [dbo].[News] ([title], [content], [image], [store_id]) VALUES
+(N'Chào mừng V-SNKR ra mắt!', N'Hệ thống sàn thương mại điện tử chuyên Sneaker chính thức đi vào hoạt động.', 'https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2070&auto=format&fit=crop', NULL),
+(N'Khuyến mãi khai trương Shop Alpha', N'Giảm giá toàn bộ sản phẩm tại Alpha Sneakers trong tuần lễ đầu tiên.', 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop', 1);
+GO
+
+-- =============================================
+-- 9. Insert Contact (Liên hệ hỗ trợ đơn hàng)
+-- =============================================
+CREATE TABLE [dbo].[Contact] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [account_id] INT NOT NULL,
+    [order_id] INT NOT NULL,
+    [store_id] INT NOT NULL,
+    [message] NVARCHAR(MAX) NOT NULL,
+    [response_message] NVARCHAR(MAX) NULL,
+    [responded_at] DATETIME NULL,
+    [created_at] DATETIME DEFAULT GETDATE(),
+    [status] NVARCHAR(50) DEFAULT N'Chờ xử lý', -- Chờ xử lý, Đã phản hồi
+    CONSTRAINT [PK_Contact] PRIMARY KEY ([id]),
+    CONSTRAINT [FK_Contact_Account] FOREIGN KEY ([account_id]) REFERENCES [dbo].[Account]([uID]),
+    CONSTRAINT [FK_Contact_Orders] FOREIGN KEY ([order_id]) REFERENCES [dbo].[Orders]([id]),
+    CONSTRAINT [FK_Contact_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id])
+);
+GO
+
+INSERT INTO [dbo].[Contact] ([account_id], [order_id], [store_id], [message]) VALUES
+(4, 3, 1, N'Tôi nhận hàng rồi nhưng size hơi chật, shop hỗ trợ đổi trả được không?');
+GO
+-- =============================================
+-- 10. Staff Action History (Lịch sử quản lý nhân viên)
+-- =============================================
+CREATE TABLE [dbo].[StaffActionHistory] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [owner_id] INT NOT NULL,          -- Người thực hiện (Owner)
+    [staff_id] INT NOT NULL,          -- Nhân viên bị tác động
+    [action_type] NVARCHAR(50) NOT NULL, -- 'ADD' or 'UPDATE'
+    [details] NVARCHAR(MAX) NULL,     -- Chi tiết thay đổi
+    [action_at] DATETIME DEFAULT GETDATE(),
+    CONSTRAINT [PK_StaffActionHistory] PRIMARY KEY ([id]),
+    CONSTRAINT [FK_History_Owner] FOREIGN KEY ([owner_id]) REFERENCES [dbo].[Account]([uID]),
+    CONSTRAINT [FK_History_Staff] FOREIGN KEY ([staff_id]) REFERENCES [dbo].[Account]([uID])
+);
+GO

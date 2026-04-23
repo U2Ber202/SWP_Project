@@ -18,6 +18,11 @@ import model.Store;
 import dal.StoreDAO;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import java.util.ArrayList;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import model.DailyRevenue;
 import util.RoleHelper;
 
 /**
@@ -77,29 +82,48 @@ public class Statistic extends HttpServlet {
             HttpSession session = request.getSession();
             Account acc = (Account) session.getAttribute("acc");
             
-            Satistic s = new Satistic();
+            String startDateStr = request.getParameter("startDate");
+            String endDateStr = request.getParameter("endDate");
             
-            if (RoleHelper.isAdmin(acc)) {
-                s = dao.getAll();
-            } 
-            else if (RoleHelper.isOwner(acc)) {
+            LocalDate now = LocalDate.now();
+            LocalDate firstDayOfMonth = now.with(TemporalAdjusters.firstDayOfMonth());
+            LocalDate lastDayOfMonth = now.with(TemporalAdjusters.lastDayOfMonth());
+            
+            Date startDate = (startDateStr != null && !startDateStr.isEmpty()) 
+                    ? Date.valueOf(startDateStr) 
+                    : Date.valueOf(firstDayOfMonth);
+            Date endDate = (endDateStr != null && !endDateStr.isEmpty()) 
+                    ? Date.valueOf(endDateStr) 
+                    : Date.valueOf(lastDayOfMonth);
+
+            Integer storeId = null;
+            if (RoleHelper.isOwner(acc)) {
                 StoreDAO storeDAO = new StoreDAO();
                 Store store = storeDAO.getStoreByOwnerId(acc.getUid());
                 if (store != null) {
-                    s = dao.getForStore(store.getId());
+                    storeId = store.getId();
                 } else {
-                    s = new Satistic(0,0,0,0);
+                    // Owner but no store?
+                    request.setAttribute("listRevenue", new ArrayList<>());
+                    request.setAttribute("totalRevenue", 0);
+                    request.getRequestDispatcher("statistic.jsp").forward(request, response);
+                    return;
                 }
-            } 
-            else {
+            } else if (!RoleHelper.isAdmin(acc)) {
                 response.sendRedirect("home");
                 return;
             }
             
-            request.setAttribute("totalOrders", s.getTotalOrders());
-            request.setAttribute("totalSales", s.getTotalSales());
-            request.setAttribute("totalOrdersMonth", s.getTotalOrdersMonth());
-            request.setAttribute("totalSalesMonth", s.getTotalSalesMonth());
+            List<DailyRevenue> listRevenue = dao.getRevenueByRange(storeId, startDate, endDate);
+            long totalRevenue = 0;
+            for (DailyRevenue dr : listRevenue) {
+                totalRevenue += dr.getRevenue();
+            }
+            
+            request.setAttribute("startDate", startDate);
+            request.setAttribute("endDate", endDate);
+            request.setAttribute("listRevenue", listRevenue);
+            request.setAttribute("totalRevenue", totalRevenue);
             request.getRequestDispatcher("statistic.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();

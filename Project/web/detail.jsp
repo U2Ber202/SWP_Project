@@ -151,7 +151,12 @@
                                             <div class="mb-4 p-4"
                                                 style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 18px;">
                                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <h6 class="font-weight-bold mb-0">${f.userName}</h6>
+                                                    <div class="d-flex align-items-center">
+                                                        <h6 class="font-weight-bold mb-0 mr-2">${f.userName}</h6>
+                                                        <c:if test="${sessionScope.acc != null && f.accountId == sessionScope.acc.uid}">
+                                                            <span class="badge badge-primary small">Của bạn</span>
+                                                        </c:if>
+                                                    </div>
                                                     <div class="text-warning small">
                                                         <c:forEach begin="1" end="${f.rating}"><i
                                                                 class="fas fa-star"></i></c:forEach>
@@ -159,11 +164,22 @@
                                                                 class="far fa-star"></i></c:forEach>
                                                     </div>
                                                 </div>
-                                                <p class="text-muted small mb-0">${f.content}</p>
-                                                <span class="text-muted" style="font-size: 0.7rem;">
-                                                    <fmt:formatDate value="${f.createDate}"
-                                                        pattern="dd/MM/yyyy HH:mm" />
-                                                </span>
+                                                <p class="text-white small mb-2">${f.content}</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="text-muted" style="font-size: 0.7rem;">
+                                                        <fmt:formatDate value="${f.createDate}"
+                                                            pattern="dd/MM/yyyy HH:mm" />
+                                                    </span>
+                                                    <c:if test="${sessionScope.acc != null && f.accountId == sessionScope.acc.uid}">
+                                                        <div class="small">
+                                                            <button class="btn btn-link btn-sm text-info p-0 mr-2" 
+                                                                    onclick="openEditFeedbackModal('${f.id}', '${f.rating}', '${f.content}')">
+                                                                <i class="fas fa-edit mr-1"></i>Sửa
+                                                            </button>
+                                                            <%-- Customer cannot delete comment as per requirement --%>
+                                                        </div>
+                                                    </c:if>
+                                                </div>
                                             </div>
                                         </c:forEach>
                                         <c:if test="${empty listFeedbacks}">
@@ -174,11 +190,11 @@
                                         </c:if>
                                     </div>
                                     <div class="col-lg-4">
-                                        <c:if test="${sessionScope.acc != null}">
+                                        <c:if test="${sessionScope.acc != null && sessionScope.acc.role == 'customer'}">
                                             <div class="p-4"
                                                 style="background: rgba(234, 88, 12, 0.05); border: 1px dashed var(--primary); border-radius: 18px;">
                                                 <h5 class="font-weight-bold mb-3">Viết đánh giá</h5>
-                                                <form action="addFeedback" method="post">
+                                                <form action="addFeedback" method="post" onsubmit="return validateFeedback()">
                                                     <input type="hidden" name="productId" value="${product.id}">
                                                     <input type="hidden" name="storeId" value="${product.storeId}">
                                                     <div class="form-group">
@@ -193,9 +209,13 @@
                                                         </select>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="small text-muted">Nội dung</label>
-                                                        <textarea name="content" class="form-control" rows="3"
-                                                            placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."
+                                                        <div class="d-flex justify-content-between">
+                                                            <label class="small text-muted">Nội dung</label>
+                                                            <span id="charCount" class="small text-muted">0/50</span>
+                                                        </div>
+                                                        <textarea name="content" id="feedbackContent" class="form-control" rows="3"
+                                                            placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." maxlength="50"
+                                                            oninput="updateCharCount()"
                                                             style="background: var(--bg); border: 1px solid var(--border); color: white;"></textarea>
                                                     </div>
                                                     <button type="submit" class="btn btn-primary btn-block btn-sm">Gửi
@@ -203,14 +223,22 @@
                                                 </form>
                                             </div>
                                         </c:if>
-                                        <c:if test="${sessionScope.acc == null}">
-                                            <div class="p-4 text-center"
-                                                style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 18px;">
-                                                <p class="small text-muted">Vui lòng đăng nhập để viết đánh giá.</p>
-                                                <a href="login" class="btn btn-outline-warning btn-sm">Đăng nhập
-                                                    ngay</a>
-                                            </div>
-                                        </c:if>
+                                        <c:choose>
+                                            <c:when test="${sessionScope.acc == null}">
+                                                <div class="p-4 text-center"
+                                                    style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 18px;">
+                                                    <p class="small text-muted">Vui lòng đăng nhập để viết đánh giá.</p>
+                                                    <a href="login" class="btn btn-outline-warning btn-sm">Đăng nhập ngay</a>
+                                                </div>
+                                            </c:when>
+                                            <c:when test="${sessionScope.acc.role != 'customer'}">
+                                                <div class="p-4 text-center"
+                                                    style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 18px;">
+                                                    <p class="small text-muted">Tài khoản nhân viên/quản trị không thể gửi đánh giá.</p>
+                                                    <i class="fas fa-user-shield fa-2x text-warning opacity-50 mt-2"></i>
+                                                </div>
+                                            </c:when>
+                                        </c:choose>
                                     </div>
                                 </div>
                             </div>
@@ -238,6 +266,75 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="modal fade" id="editFeedbackModal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content text-white" style="background: #1e293b; border-radius: 20px; border: 1px solid var(--border);">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title font-weight-bold">Chỉnh sửa đánh giá</h5>
+                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="editFeedback" method="post">
+                                        <input type="hidden" name="feedbackId" id="editFeedbackId">
+                                        <input type="hidden" name="productId" value="${product.id}">
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label class="small text-muted">Số sao</label>
+                                                <select name="rating" id="editFeedbackRating" class="form-control"
+                                                    style="background: var(--bg); border: 1px solid var(--border); color: white;">
+                                                    <option value="5">5 Sao (Tuyệt vời)</option>
+                                                    <option value="4">4 Sao (Hài lòng)</option>
+                                                    <option value="3">3 Sao (Bình thường)</option>
+                                                    <option value="2">2 Sao (Kém)</option>
+                                                    <option value="1">1 Sao (Rất tệ)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="small text-muted">Nội dung</label>
+                                                <textarea name="content" id="editFeedbackContent" class="form-control" rows="4"
+                                                    maxlength="50"
+                                                    style="background: var(--bg); border: 1px solid var(--border); color: white;"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" style="border-radius: 10px;">Hủy</button>
+                                            <button type="submit" class="btn btn-primary btn-sm px-4">Lưu thay đổi</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+                        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                        <script>
+                            function openEditFeedbackModal(id, rating, content) {
+                                $('#editFeedbackId').val(id);
+                                $('#editFeedbackRating').val(rating);
+                                $('#editFeedbackContent').val(content);
+                                $('#editFeedbackModal').modal('show');
+                            }
+
+                            function updateCharCount() {
+                                const content = document.getElementById('feedbackContent').value;
+                                document.getElementById('charCount').innerText = content.length + '/50';
+                            }
+
+                            function validateFeedback() {
+                                const content = document.getElementById('feedbackContent').value;
+                                if (content.length > 50) {
+                                    alert('Nội dung đánh giá không được vượt quá 50 ký tự.');
+                                    return false;
+                                }
+                                if (content.trim() === '') {
+                                    alert('Vui lòng nhập nội dung đánh giá.');
+                                    return false;
+                                }
+                                return true;
+                            }
+                        </script>
             </body>
 
             </html>

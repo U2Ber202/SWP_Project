@@ -33,3 +33,4 @@ build/
 # --- OS Junk ---
 .DS_Store
 Thumbs.db
+Project/web/WEB-INF/web.xml

@@ -172,7 +172,6 @@ public class ManagerController extends HttpServlet {
             request.setAttribute("stockImportTotalPage", getTotalPage(allStockImports.size(), pageSize));
             request.setAttribute("dailyStockTotalPage", getTotalPage(allDailyStockImports.size(), pageSize));
             request.setAttribute("storeShippers", accountDAO.getShippersByStoreId(store.getId()));
-            request.setAttribute("storeWarehouseManagers", accountDAO.getAccountsByRole(Account.ROLE_WAREHOUSE_MANAGER));
             request.setAttribute("managedStore", store);
             request.setAttribute("sizeQuantitiesMap", productDAO.getSizeQuantitiesByStore(store.getId()));
             if (request.getParameter("stockSuccess") != null) {

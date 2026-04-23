@@ -16,7 +16,6 @@ public class SignupController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
         String user = ValidationUtil.normalize(request.getParameter("user"));
         String pass = ValidationUtil.normalize(request.getParameter("pass"));
         String repass = ValidationUtil.normalize(request.getParameter("repass"));

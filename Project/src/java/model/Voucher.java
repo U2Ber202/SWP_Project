@@ -7,6 +7,7 @@ public class Voucher {
     private Integer maxDiscount;
     private Integer minOrderValue;
     private String expiryDate;
+    private String startDate;
     private int storeId;
     private String storeName;
 
@@ -59,6 +60,14 @@ public class Voucher {
 
     public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
     public int getStoreId() {

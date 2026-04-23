@@ -16,7 +16,7 @@ public class VnPayConfig {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     public static final String vnp_PayUrl = AppConfig.getRequired("VNPAY_PAY_URL", "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html");
-    public static final String vnp_ReturnUrl = AppConfig.getRequired("VNPAY_RETURN_URL", "http://localhost:8080/Project_war_exploded/vnpay_return");
+    public static final String vnp_ReturnUrl = AppConfig.getRequired("VNPAY_RETURN_URL", "http://localhost:8080/Project/vnpay_return");
     public static final String vnp_TmnCode = AppConfig.getRequired("VNPAY_TMN_CODE", null);
     public static final String secretKey = AppConfig.getRequired("VNPAY_SECRET_KEY", null);
     public static final String vnp_ApiUrl = AppConfig.get("VNPAY_API_URL", "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction");

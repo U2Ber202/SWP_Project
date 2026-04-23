@@ -39,21 +39,54 @@ public class FeedbackManagerController extends HttpServlet {
             return;
         }
 
+        if ("statistic".equals(action)) {
+            int storeId = -1;
+            if (!RoleHelper.isAdmin(acc)) {
+                StoreDAO storeDAO = new StoreDAO();
+                Store store = storeDAO.getStoreByOwnerId(acc.getUid());
+                if (store != null) storeId = store.getId();
+            }
+            java.util.Map<Integer, Integer> stats = feedbackDAO.getFeedbackStatistics(storeId);
+            request.setAttribute("stats", stats);
+            request.getRequestDispatcher("FeedbackStatistic.jsp").forward(request, response);
+            return;
+        }
+
+        String ratingParam = request.getParameter("rating");
+        int filterRating = -1;
+        try {
+            if (ratingParam != null && !ratingParam.isEmpty()) {
+                filterRating = Integer.parseInt(ratingParam);
+            }
+        } catch (NumberFormatException e) {
+            filterRating = -1;
+        }
+
         List<Feedback> allFeedbacks;
         if (RoleHelper.isAdmin(acc)) {
-            allFeedbacks = feedbackDAO.getAllFeedback();
+            if (filterRating != -1) {
+                allFeedbacks = feedbackDAO.getAllFeedbackByRating(filterRating);
+            } else {
+                allFeedbacks = feedbackDAO.getAllFeedback();
+            }
             request.setAttribute("feedbackScope", "admin");
         } else {
             StoreDAO storeDAO = new StoreDAO();
             Store store = storeDAO.getStoreByOwnerId(acc.getUid());
             if (store != null) {
-                allFeedbacks = feedbackDAO.getFeedbackByStore(store.getId());
+                if (filterRating != -1) {
+                    allFeedbacks = feedbackDAO.getFeedbackByRating(store.getId(), filterRating);
+                } else {
+                    allFeedbacks = feedbackDAO.getFeedbackByStore(store.getId());
+                }
                 request.setAttribute("store", store);
             } else {
                 allFeedbacks = new java.util.ArrayList<>();
             }
             request.setAttribute("feedbackScope", "owner");
         }
+
+        request.setAttribute("currentRating", filterRating);
 
         final int PAGE_SIZE = 10;
         int page = 1;

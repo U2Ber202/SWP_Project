@@ -89,14 +89,31 @@
                                     <h1 class="h2 font-weight-bold">Quản lý đánh giá khách hàng</h1>
                                     <c:choose>
                                         <c:when test="${feedbackScope == 'admin'}">
-                                            <p class="text-muted mb-0">Hệ thống đang hiển thị tất cả phản hồi của người
-                                                dùng.</p>
+                                            <p class="text-muted mb-0">Hệ thống đang hiển thị tất cả phản hồi của người dùng.</p>
                                         </c:when>
                                         <c:otherwise>
-                                            <p class="text-muted mb-0">Cửa hàng: <span
-                                                    class="text-primary font-weight-bold">${store.name}</span></p>
+                                            <p class="text-muted mb-0">Cửa hàng: <span class="text-primary font-weight-bold">${store.name}</span></p>
                                         </c:otherwise>
                                     </c:choose>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <a href="feedbacks?action=statistic" class="btn btn-outline-primary mr-2" style="border-radius: 12px;">
+                                        <i class="fas fa-chart-pie mr-2"></i>Thống kê
+                                    </a>
+                                    <a href="exportFeedback" class="btn btn-success" style="border-radius: 12px;">
+                                        <i class="fas fa-file-excel mr-2"></i>Xuất Excel
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="btn-group" role="group">
+                                    <a href="feedbacks" class="btn ${currentRating == -1 ? 'btn-primary' : 'btn-outline-primary'} btn-sm mr-2" style="border-radius: 10px;">Tất cả</a>
+                                    <c:forEach begin="1" end="5" var="i">
+                                        <a href="feedbacks?rating=${i}" class="btn ${currentRating == i ? 'btn-primary' : 'btn-outline-primary'} btn-sm mr-2" style="border-radius: 10px;">
+                                            ${i} <i class="fas fa-star small"></i>
+                                        </a>
+                                    </c:forEach>
                                 </div>
                             </div>
 
@@ -133,14 +150,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <form action="feedbacks" method="post"
-                                                    onsubmit="return confirm('Xóa phản hồi này?')">
-                                                    <input type="hidden" name="action" value="delete">
-                                                    <input type="hidden" name="id" value="${f.id}">
-                                                    <button type="submit" class="btn-delete" title="Gỡ bỏ đánh giá">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </form>
+                                                <!-- Delete button removed as per requirement: View only for staff -->
                                             </div>
                                             <div class="mt-3" style="line-height: 1.6; color: var(--text-main);">
                                                 <i class="fas fa-quote-left mr-2 opacity-20"></i> ${f.content}

@@ -22,6 +22,7 @@ public class VoucherDAO extends DBContext {
         v.setMaxDiscount(rs.getObject("max_discount") != null ? rs.getInt("max_discount") : null);
         v.setMinOrderValue(rs.getObject("min_order_value") != null ? rs.getInt("min_order_value") : null);
         v.setExpiryDate(rs.getString("expiry_date"));
+        v.setStartDate(rs.getString("start_date"));
         v.setStoreId(rs.getInt("store_id"));
         try {
             v.setStoreName(rs.getString("store_name"));
@@ -48,7 +49,7 @@ public class VoucherDAO extends DBContext {
     }
 
     public boolean addVoucher(Voucher v) {
-        String sql = "INSERT INTO Voucher (code, discount_percent, max_discount, min_order_value, expiry_date, store_id) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Voucher (code, discount_percent, max_discount, min_order_value, expiry_date, start_date, store_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = getConnection();
                 PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, v.getCode());
@@ -64,7 +65,8 @@ public class VoucherDAO extends DBContext {
                 stm.setNull(4, java.sql.Types.INTEGER);
             }
             stm.setString(5, v.getExpiryDate());
-            stm.setInt(6, v.getStoreId());
+            stm.setString(6, v.getStartDate());
+            stm.setInt(7, v.getStoreId());
             return stm.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -73,7 +75,7 @@ public class VoucherDAO extends DBContext {
     }
 
     public boolean updateVoucher(Voucher v) {
-        String sql = "UPDATE Voucher SET code = ?, discount_percent = ?, max_discount = ?, min_order_value = ?, expiry_date = ?, store_id = ? WHERE id = ?";
+        String sql = "UPDATE Voucher SET code = ?, discount_percent = ?, max_discount = ?, min_order_value = ?, expiry_date = ?, start_date = ?, store_id = ? WHERE id = ?";
         try (Connection connection = getConnection();
                 PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, v.getCode());
@@ -89,8 +91,9 @@ public class VoucherDAO extends DBContext {
                 stm.setNull(4, java.sql.Types.INTEGER);
             }
             stm.setString(5, v.getExpiryDate());
-            stm.setInt(6, v.getStoreId());
-            stm.setInt(7, v.getId());
+            stm.setString(6, v.getStartDate());
+            stm.setInt(7, v.getStoreId());
+            stm.setInt(8, v.getId());
             return stm.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -124,7 +127,7 @@ public class VoucherDAO extends DBContext {
     }
 
     public Voucher getVoucherByCodeAndStoreId(String code, int storeId) {
-        String sql = "SELECT * FROM Voucher WHERE code = ? AND (store_id = ? OR store_id = 0) AND expiry_date >= CAST(GETDATE() AS DATE)";
+        String sql = "SELECT * FROM Voucher WHERE code = ? AND (store_id = ? OR store_id = 0) AND expiry_date >= CAST(GETDATE() AS DATE) AND start_date <= CAST(GETDATE() AS DATE)";
         try (Connection connection = getConnection();
                 PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, code);

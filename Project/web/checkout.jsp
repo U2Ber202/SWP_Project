@@ -283,7 +283,6 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Ví dụ: Nguyễn Văn A" value="${not empty name ? name : defaultName}" required>
                                     </div>
                                 </div>
                                 
@@ -293,7 +292,6 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="phone" name="phone" pattern="^0[0-9]{9}$" title="Vui lòng nhập đúng 10 chữ số bắt đầu bằng số 0" placeholder="09xxxxxxx" value="${not empty phone ? phone : defaultPhone}" required>
                                     </div>
                                 </div>
                                 
@@ -303,7 +301,6 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="address" name="address" placeholder="Số nhà, đường, phường/xã, quận/huyện..." value="${not empty address ? address : defaultAddress}" required>
                                     </div>
                                 </div>
                                 
@@ -319,7 +316,7 @@
                                             <span class="input-group-text"><i class="fa-solid fa-ticket"></i></span>
                                         </div>
                                         <select class="form-control" id="voucher" name="voucherCode">
-                                            <option value="">-- Không sử dụng voucher --</option>
+                                            <option value="">-- Tự động chọn voucher tốt nhất --</option>
                                             <c:forEach items="${storeVouchers}" var="entry">
                                                 <optgroup label="Sản phẩm từ Shop ID: ${entry.key}">
                                                     <c:forEach items="${entry.value}" var="v">
@@ -331,11 +328,33 @@
                                             </c:forEach>
                                         </select>
                                     </div>
+                                    <c:if test="${not empty bestVouchers}">
+                                        <small class="text-success mt-2 d-block">
+                                            <i class="fas fa-magic mr-1"></i> Hệ thống đã tự động tìm thấy voucher tối ưu cho bạn!
+                                        </small>
+                                    </c:if>
                                 </div>
                                 
-                                <div class="total-box text-center">
-                                    <p class="mb-1 text-uppercase font-weight-bold" style="color: #94a3b8; letter-spacing: 1px;">Tổng thanh toán</p>
-                                    <h3 class="font-weight-bold text-danger mb-0"><fmt:formatNumber value="${totalMoney}" pattern="#,### đ"/></h3>
+                                <div class="total-box">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted-custom">Tạm tính:</span>
+                                        <span class="text-white"><fmt:formatNumber value="${totalMoney}" pattern="#,### đ"/></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted-custom">Giảm giá:</span>
+                                        <span class="text-success">-<fmt:formatNumber value="${totalDiscount != null ? totalDiscount : 0}" pattern="#,### đ"/></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted-custom">VAT (10%):</span>
+                                        <span class="text-white"><fmt:formatNumber value="${totalVat != null ? totalVat : (totalMoney * 0.10)}" pattern="#,### đ"/></span>
+                                    </div>
+                                    <hr style="border-color: var(--border);">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-0 text-uppercase font-weight-bold" style="color: #94a3b8; letter-spacing: 1px;">Tổng cộng</p>
+                                        <h3 class="font-weight-bold text-danger mb-0">
+                                            <fmt:formatNumber value="${finalTotal != null ? finalTotal : (totalMoney * 1.10)}" pattern="#,### đ"/>
+                                        </h3>
+                                    </div>
                                 </div>
                                 
                                 <div class="d-grid gap-3">
