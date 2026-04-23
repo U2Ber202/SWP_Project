@@ -170,7 +170,14 @@
                                                         </c:choose>
                                                     </p>
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="badge badge-success px-3 py-2">Active</span>
+                                                        <c:choose>
+                                                            <c:when test="${v.expiryDate < today}">
+                                                                <span class="badge badge-danger px-3 py-2">Expired</span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="badge badge-success px-3 py-2">Active</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                         <div class="d-flex action-buttons">
                                                             <button type="button"
                                                                 class="btn btn-sm btn-outline-warning btn-action"
