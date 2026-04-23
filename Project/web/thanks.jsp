@@ -231,16 +231,22 @@
                             </div>
 
                             <div class="total-box-wrapper">
-                                <c:if test="${totalDiscount > 0}">
-                                    <div class="d-flex justify-content-between mb-2 px-3">
+                                <div class="px-3">
+                                    <div class="d-flex justify-content-between mb-2">
                                         <span class="text-muted-custom">Tạm tính:</span>
                                         <span style="color: #e2e8f0;"><fmt:formatNumber value="${originalTotalPrice}" pattern="#,### đ"/></span>
                                     </div>
-                                    <div class="d-flex justify-content-between mb-3 px-3">
-                                        <span class="text-muted-custom">Giảm giá voucher:</span>
-                                        <span class="text-success">-<fmt:formatNumber value="${totalDiscount}" pattern="#,### đ"/></span>
+                                    <c:if test="${totalDiscount > 0}">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="text-muted-custom">Giảm giá:</span>
+                                            <span class="text-success">-<fmt:formatNumber value="${totalDiscount}" pattern="#,### đ"/></span>
+                                        </div>
+                                    </c:if>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span class="text-muted-custom">VAT (10%):</span>
+                                        <span style="color: #e2e8f0;"><fmt:formatNumber value="${totalVat}" pattern="#,### đ"/></span>
                                     </div>
-                                </c:if>
+                                </div>
                                 <div class="total-box">
                                     <h5 class="total-label">Tổng thanh toán</h5>
                                     <h3 class="total-amount"> <fmt:formatNumber value="${totalPrice}" pattern="#,### đ"/></h3>

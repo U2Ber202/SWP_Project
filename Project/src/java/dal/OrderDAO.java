@@ -24,6 +24,7 @@ public class OrderDAO extends DBContext {
         order.setCreatedDate(rs.getString("create_date"));
         order.setShippingId(rs.getInt("shipping_id"));
         order.setStoreId(rs.getInt("store_id"));
+        order.setVatPercent(rs.getInt("vat_percent"));
         try {
             order.setStatus(rs.getInt("status"));
         } catch (Exception e) {}
@@ -48,7 +49,7 @@ public class OrderDAO extends DBContext {
     }
 
     public int createReturnId(Order order) {
-        String sql = "INSERT INTO [Orders] ([account_id], [totalPrice], [note], [shipping_id], [store_id]) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO [Orders] ([account_id], [totalPrice], [note], [shipping_id], [store_id], [vat_percent]) VALUES (?,?,?,?,?,?)";
         try (Connection connection = getConnection();
                 PreparedStatement stm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stm.setInt(1, order.getAccountId());
@@ -60,6 +61,7 @@ public class OrderDAO extends DBContext {
             } else {
                 stm.setNull(5, java.sql.Types.INTEGER);
             }
+            stm.setInt(6, order.getVatPercent());
             stm.executeUpdate();
             try (ResultSet rs = stm.getGeneratedKeys()) {
                 if (rs.next()) {

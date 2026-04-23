@@ -31,10 +31,17 @@ body {
 }
 
 /* Áp dụng biến cho các thành phần chung */
-.card, .detail-card, .product-card, .admin-wrapper, .modal-content, .filter-card {
+.card, .detail-card, .product-card, .admin-wrapper, .filter-card {
     background-color: var(--card-bg) !important;
     border-color: var(--border) !important;
     color: var(--text-main) !important;
+}
+
+.modal-content {
+    background-color: #1e293b !important; /* Solid background for modals */
+    border-color: var(--border) !important;
+    color: var(--text-main) !important;
+    backdrop-filter: none !important;
 }
 
 .text-muted {

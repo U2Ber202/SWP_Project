@@ -14,6 +14,7 @@ public class Order {
     private int shippingId;
     private int status;
     private int storeId;
+    private int vatPercent;
 
     public Order() {
     }
@@ -23,7 +24,7 @@ public class Order {
         this.totalPrice = totalPrice;
         this.note = note;
         this.shippingId = shippingId;
-       
+        this.vatPercent = 10; // Default VAT
     }
 
     public Order( int accountId, int totalPrice, String note, int shippingId, int storeId) {
@@ -32,6 +33,7 @@ public class Order {
         this.note = note;
         this.shippingId = shippingId;
         this.storeId = storeId;
+        this.vatPercent = 10;
     }
 
     public Order(int id, int accountId, int totalPrice, String note, String createdDate, int shippingId, int status) {
@@ -53,6 +55,19 @@ public class Order {
         this.shippingId = shippingId;
         this.status = status;
         this.storeId = storeId;
+        this.vatPercent = 10;
+    }
+
+    public Order(int id, int accountId, int totalPrice, String note, String createdDate, int shippingId, int status, int storeId, int vatPercent) {
+        this.id = id;
+        this.accountId = accountId;
+        this.totalPrice = totalPrice;
+        this.note = note;
+        this.createdDate = createdDate;
+        this.shippingId = shippingId;
+        this.status = status;
+        this.storeId = storeId;
+        this.vatPercent = vatPercent;
     }
     
 
@@ -123,5 +138,13 @@ public class Order {
 
     public void setStoreId(int storeId) {
         this.storeId = storeId;
+    }
+
+    public int getVatPercent() {
+        return vatPercent;
+    }
+
+    public void setVatPercent(int vatPercent) {
+        this.vatPercent = vatPercent;
     }
 }

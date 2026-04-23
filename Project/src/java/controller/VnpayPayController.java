@@ -45,31 +45,76 @@ public class VnpayPayController extends HttpServlet {
         }
 
         Map<Integer, Map<Integer, Cart>> cartsByStore = CheckOutController.splitCartByStore(carts);
-        int amount = CheckOutController.calculateTotal(carts);
+        int originalTotal = CheckOutController.calculateTotal(carts);
+        int totalDiscount = 0;
         
         String voucherCode = ValidationUtil.normalize(req.getParameter("voucherCode"));
         dal.VoucherDAO voucherDAO = new dal.VoucherDAO();
         
-        if (voucherCode != null && !voucherCode.isEmpty()) {
-            for (Map.Entry<Integer, Map<Integer, Cart>> entry : cartsByStore.entrySet()) {
-                int sid = entry.getKey();
-                Map<Integer, Cart> storeCarts = entry.getValue();
-                model.Voucher voucher = voucherDAO.getVoucherByCodeAndStoreId(voucherCode, sid);
-                
-                if (voucher != null) {
-                    int storePrice = CheckOutController.calculateTotal(storeCarts);
-                    if (voucher.getMinOrderValue() == null || storePrice >= voucher.getMinOrderValue()) {
-                        double rawDiscount = storePrice * (voucher.getDiscountPercent() / 100.0);
-                        int discount = (int) Math.round(rawDiscount);
-                        if (voucher.getMaxDiscount() != null && discount > voucher.getMaxDiscount()) {
-                            discount = voucher.getMaxDiscount();
-                        }
-                        amount -= discount;
+        for (Map.Entry<Integer, Map<Integer, Cart>> entry : cartsByStore.entrySet()) {
+            int storeId = entry.getKey();
+            Map<Integer, Cart> storeCarts = entry.getValue();
+            int storeTotalPrice = CheckOutController.calculateTotal(storeCarts);
+            int storeDiscount = 0;
+
+            // 1. Calculate Auto-gift discount
+            int autoDiscountPercent = 0;
+            if (storeTotalPrice >= 20000000) autoDiscountPercent = 30;
+            else if (storeTotalPrice >= 10000000) autoDiscountPercent = 20;
+            int autoDiscountValue = (int) Math.round(storeTotalPrice * (autoDiscountPercent / 100.0));
+
+            // 2. Calculate Best Voucher discount
+            model.Voucher bestVoucher = null;
+            int voucherDiscountValue = 0;
+            if (voucherCode != null && !voucherCode.isEmpty()) {
+                bestVoucher = voucherDAO.getVoucherByCodeAndStoreId(voucherCode, storeId);
+            } else {
+                // Since findBestVoucher is private in CheckOutController, we can either make it public or re-implement
+                // To avoid breaking CheckOutController, let's just do a quick auto-selection here or just use voucherDAO
+                java.util.List<model.Voucher> available = voucherDAO.getVouchersByStoreId(storeId);
+                int maxVDiscount = -1;
+                java.time.LocalDate today = java.time.LocalDate.now();
+                for (model.Voucher v : available) {
+                    try {
+                        java.time.LocalDate expiry = java.time.LocalDate.parse(v.getExpiryDate());
+                        java.time.LocalDate start = v.getStartDate() != null ? java.time.LocalDate.parse(v.getStartDate()) : today;
+                        if (today.isBefore(start) || today.isAfter(expiry)) continue;
+                    } catch (Exception e) {}
+                    if (v.getMinOrderValue() != null && storeTotalPrice < v.getMinOrderValue()) continue;
+                    int d = (int) Math.round(storeTotalPrice * (v.getDiscountPercent() / 100.0));
+                    if (v.getMaxDiscount() != null && d > v.getMaxDiscount()) d = v.getMaxDiscount();
+                    if (d > maxVDiscount) {
+                        maxVDiscount = d;
+                        bestVoucher = v;
+                    }
+                }
+                voucherDiscountValue = maxVDiscount > 0 ? maxVDiscount : 0;
+            }
+
+            if (bestVoucher != null && voucherDiscountValue == 0) { // If code was provided but maxVDiscount not calculated
+                if (bestVoucher.getMinOrderValue() == null || storeTotalPrice >= bestVoucher.getMinOrderValue()) {
+                    voucherDiscountValue = (int) Math.round(storeTotalPrice * (bestVoucher.getDiscountPercent() / 100.0));
+                    if (bestVoucher.getMaxDiscount() != null && voucherDiscountValue > bestVoucher.getMaxDiscount()) {
+                        voucherDiscountValue = bestVoucher.getMaxDiscount();
                     }
                 }
             }
-            // Lam tron so tien xuong hang chuc de dep so khi gui sang VNPay
-            amount = (amount / 10) * 10;
+
+            // 3. Choose the better discount
+            if (autoDiscountValue >= voucherDiscountValue && autoDiscountValue > 0) {
+                storeDiscount = autoDiscountValue;
+            } else if (voucherDiscountValue > 0) {
+                storeDiscount = voucherDiscountValue;
+            }
+            totalDiscount += storeDiscount;
+        }
+
+        int totalVat = (int) Math.round(originalTotal * 0.10);
+        int amount = originalTotal - totalDiscount + totalVat;
+        
+        // Round for VNPay
+        amount = (amount / 10) * 10;
+        if (voucherCode != null && !voucherCode.isEmpty()) {
             session.setAttribute("appliedVoucherCode", voucherCode);
         }
 

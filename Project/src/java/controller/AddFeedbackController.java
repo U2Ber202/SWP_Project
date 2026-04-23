@@ -36,6 +36,12 @@ public class AddFeedbackController extends HttpServlet {
             response.sendRedirect("detail?productId=" + productIdStr);
             return;
         }
+        
+        if (content.length() > 50) {
+            session.setAttribute("error", "Nội dung đánh giá không được vượt quá 50 ký tự.");
+            response.sendRedirect("detail?productId=" + productIdStr);
+            return;
+        }
 
         try {
             int productId = Integer.parseInt(productIdStr);
@@ -43,6 +49,15 @@ public class AddFeedbackController extends HttpServlet {
             int rating = Integer.parseInt(ratingStr);
             
             FeedbackDAO feedbackDAO = new FeedbackDAO();
+            
+            // Check condition: maximum 2 comments per user per product
+            int feedbackCount = feedbackDAO.countFeedbackByUserOnProduct(acc.getUid(), productId);
+            if (feedbackCount >= 2) {
+                session.setAttribute("error", "Bạn chỉ được phép gửi tối đa 2 đánh giá cho mỗi sản phẩm.");
+                response.sendRedirect("detail?productId=" + productId);
+                return;
+            }
+            
             feedbackDAO.insertFeedback(acc.getUid(), productId, storeId, rating, content);
             
             session.setAttribute("success", "Cảm ơn bạn đã gửi đánh giá!");

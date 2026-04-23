@@ -165,6 +165,7 @@ CREATE TABLE [dbo].[Orders] (
     [create_date] DATE NULL CONSTRAINT [DF_Orders_create_date] DEFAULT (GETDATE()),
     [shipping_id] INT NULL,
     [store_id] INT NULL,
+    [vat_percent] INT DEFAULT 10,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [FK_Orders_Account] FOREIGN KEY ([account_id]) REFERENCES [dbo].[Account]([uID]),
     CONSTRAINT [FK_Orders_Shipping] FOREIGN KEY ([shipping_id]) REFERENCES [dbo].[Shipping]([id]),
@@ -223,6 +224,7 @@ CREATE TABLE [dbo].[Voucher] (
     [max_discount] INT NULL,
     [min_order_value] INT NULL,
     [expiry_date] DATE NOT NULL, -- Đã đổi sang kiểu DATE để dễ nhập liệu
+    [start_date] DATE NOT NULL DEFAULT GETDATE(),
     [store_id] INT NOT NULL,
     CONSTRAINT [PK_Voucher] PRIMARY KEY ([id]),
     CONSTRAINT [FK_Voucher_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id])

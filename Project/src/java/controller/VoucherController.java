@@ -124,15 +124,6 @@ public class VoucherController extends HttpServlet {
                         }
                     }
                 }
-            } else if ("delete".equals(action)) {
-                Integer id = ValidationUtil.parsePositiveInt(request.getParameter("id"));
-                if (id == null) {
-                    session.setAttribute("error", "ID voucher không hợp lệ.");
-                } else if (isAdmin ? voucherDAO.deleteVoucher(id) : voucherDAO.deleteVoucher(id, targetStoreId)) {
-                    session.setAttribute("success", "Xóa voucher thành công.");
-                } else {
-                    session.setAttribute("error", "Không thể xóa voucher này.");
-                }
             }
         } catch (IllegalArgumentException e) {
             session.setAttribute("error", e.getMessage());
@@ -163,6 +154,7 @@ public class VoucherController extends HttpServlet {
         Integer maxDiscount = ValidationUtil.parsePositiveInt(request.getParameter("maxDiscount"));
         Integer minOrderValue = ValidationUtil.parsePositiveInt(request.getParameter("minOrderValue"));
         String expiryDate = ValidationUtil.normalize(request.getParameter("expiryDate"));
+        String startDate = ValidationUtil.normalize(request.getParameter("startDate"));
 
         if (ValidationUtil.isBlank(code)) {
             throw new IllegalArgumentException("Ma voucher khong duoc de trong.");
@@ -173,6 +165,9 @@ public class VoucherController extends HttpServlet {
         if (ValidationUtil.isBlank(expiryDate)) {
             throw new IllegalArgumentException("Ngay het han khong duoc de trong.");
         }
+        if (ValidationUtil.isBlank(startDate)) {
+            startDate = new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
+        }
 
         Voucher voucher = new Voucher();
         voucher.setCode(code);
@@ -180,6 +175,7 @@ public class VoucherController extends HttpServlet {
         voucher.setMaxDiscount(maxDiscount);
         voucher.setMinOrderValue(minOrderValue);
         voucher.setExpiryDate(expiryDate);
+        voucher.setStartDate(startDate);
         voucher.setStoreId(storeId);
         return voucher;
     }

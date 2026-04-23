@@ -73,23 +73,37 @@
                         box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3);
                     }
 
-                    .modal-content {
-                        background: var(--card-bg);
-                        border-radius: 20px;
-                        border: 1px solid var(--border);
+                    .modal-content.opaque-form {
+                        background-color: #1e293b !important; /* Solid dark color */
+                        border: 2px solid #ea580c !important; /* Solid border */
+                        opacity: 1 !important;
+                        backdrop-filter: none !important;
+                        -webkit-backdrop-filter: none !important;
+                        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
                     }
 
                     .form-control {
-                        background: var(--glass);
+                        background: #0f172a !important; /* Solid dark color */
                         border: 1px solid var(--border);
-                        color: var(--text-main);
+                        color: var(--text-main) !important;
                         border-radius: 10px;
+                        opacity: 1 !important;
+                    }
+
+                    [data-theme="light"] .form-control {
+                        background: #ffffff !important;
+                        color: #0f172a !important;
+                    }
+
+                    [data-theme="light"] .modal-content {
+                        background: #ffffff !important;
+                        backdrop-filter: none !important;
                     }
 
                     .form-control:focus {
-                        background: var(--glass);
+                        background: #0f172a !important;
                         border-color: var(--primary);
-                        color: var(--text-main);
+                        color: var(--text-main) !important;
                     }
 
                     .action-buttons {
@@ -150,7 +164,7 @@
                                                                 class="badge store-badge px-3 py-2">${v.storeName}</span>
                                                         </c:if>
                                                     </div>
-                                                    <p class="small text-muted mb-1">Hết hạn: ${v.expiryDate}</p>
+                                                    <p class="small text-muted mb-1">Thời gian: ${v.startDate} đến ${v.expiryDate}</p>
                                                     <p class="small text-muted mb-1">Tối thiểu:
                                                         <c:choose>
                                                             <c:when test="${v.minOrderValue != null}">
@@ -180,21 +194,10 @@
                                                                 data-min-order="${v.minOrderValue}"
                                                                 data-max-discount="${v.maxDiscount}"
                                                                 data-expiry="${v.expiryDate}"
+                                                                data-start="${v.startDate}"
                                                                 data-store-id="${v.storeId}">
                                                                 <i class="fas fa-pen"></i>
                                                             </button>
-                                                            <form action="vouchers" method="post"
-                                                                onsubmit="return confirm('Xóa mã này?')">
-                                                                <input type="hidden" name="action" value="delete">
-                                                                <input type="hidden" name="id" value="${v.id}">
-                                                                <c:if test="${voucherScope == 'admin'}">
-                                                                    <input type="hidden" name="storeId"
-                                                                        value="${v.storeId}">
-                                                                </c:if>
-                                                                <button type="submit"
-                                                                    class="btn btn-sm btn-outline-danger btn-action"><i
-                                                                        class="fas fa-trash"></i></button>
-                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -246,7 +249,7 @@
 
                         <div class="modal fade" id="addVoucherModal" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
+                                <div class="modal-content opaque-form">
                                     <form action="vouchers" method="post">
                                         <input type="hidden" name="action" value="add">
                                         <div class="modal-header border-0">
@@ -285,9 +288,19 @@
                                                 <input type="number" name="maxDiscount" class="form-control" min="1"
                                                     placeholder="Để trống nếu không có">
                                             </div>
-                                            <div class="form-group">
-                                                <label>Ngày hết hạn</label>
-                                                <input type="date" name="expiryDate" class="form-control" required>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label>Ngày bắt đầu</label>
+                                                        <input type="date" name="startDate" class="form-control" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label>Ngày hết hạn</label>
+                                                        <input type="date" name="expiryDate" class="form-control" required>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0">
@@ -302,7 +315,7 @@
 
                         <div class="modal fade" id="editVoucherModal" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
+                                <div class="modal-content opaque-form">
                                     <form action="vouchers" method="post">
                                         <input type="hidden" name="action" value="update">
                                         <input type="hidden" name="id" id="editVoucherId">
@@ -344,10 +357,21 @@
                                                 <input type="number" name="maxDiscount" id="editVoucherMaxDiscount"
                                                     class="form-control" min="1" placeholder="De trong neu khong co">
                                             </div>
-                                            <div class="form-group">
-                                                <label>Ngay het han</label>
-                                                <input type="date" name="expiryDate" id="editVoucherExpiry"
-                                                    class="form-control" required>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label>Ngày bắt đầu</label>
+                                                        <input type="date" name="startDate" id="editVoucherStart"
+                                                            class="form-control" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label>Ngày hết hạn</label>
+                                                        <input type="date" name="expiryDate" id="editVoucherExpiry"
+                                                            class="form-control" required>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0">
@@ -371,6 +395,7 @@
                                 $('#editVoucherMinOrder').val(button.data('min-order') || '');
                                 $('#editVoucherMaxDiscount').val(button.data('max-discount') || '');
                                 $('#editVoucherExpiry').val(button.data('expiry'));
+                                $('#editVoucherStart').val(button.data('start'));
                                 if ($('#editVoucherStoreId').length) {
                                     $('#editVoucherStoreId').val(button.data('store-id'));
                                 }

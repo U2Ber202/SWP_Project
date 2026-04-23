@@ -176,10 +176,7 @@
                                                                     onclick="openEditFeedbackModal('${f.id}', '${f.rating}', '${f.content}')">
                                                                 <i class="fas fa-edit mr-1"></i>Sửa
                                                             </button>
-                                                            <a href="deleteFeedback?feedbackId=${f.id}&productId=${product.id}" 
-                                                               class="text-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa đánh giá này?')">
-                                                                <i class="fas fa-trash mr-1"></i>Xóa
-                                                            </a>
+                                                            <%-- Customer cannot delete comment as per requirement --%>
                                                         </div>
                                                     </c:if>
                                                 </div>
@@ -197,7 +194,7 @@
                                             <div class="p-4"
                                                 style="background: rgba(234, 88, 12, 0.05); border: 1px dashed var(--primary); border-radius: 18px;">
                                                 <h5 class="font-weight-bold mb-3">Viết đánh giá</h5>
-                                                <form action="addFeedback" method="post">
+                                                <form action="addFeedback" method="post" onsubmit="return validateFeedback()">
                                                     <input type="hidden" name="productId" value="${product.id}">
                                                     <input type="hidden" name="storeId" value="${product.storeId}">
                                                     <div class="form-group">
@@ -212,9 +209,13 @@
                                                         </select>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="small text-muted">Nội dung</label>
-                                                        <textarea name="content" class="form-control" rows="3"
-                                                            placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."
+                                                        <div class="d-flex justify-content-between">
+                                                            <label class="small text-muted">Nội dung</label>
+                                                            <span id="charCount" class="small text-muted">0/50</span>
+                                                        </div>
+                                                        <textarea name="content" id="feedbackContent" class="form-control" rows="3"
+                                                            placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." maxlength="50"
+                                                            oninput="updateCharCount()"
                                                             style="background: var(--bg); border: 1px solid var(--border); color: white;"></textarea>
                                                     </div>
                                                     <button type="submit" class="btn btn-primary btn-block btn-sm">Gửi
@@ -292,6 +293,7 @@
                                             <div class="form-group">
                                                 <label class="small text-muted">Nội dung</label>
                                                 <textarea name="content" id="editFeedbackContent" class="form-control" rows="4"
+                                                    maxlength="50"
                                                     style="background: var(--bg); border: 1px solid var(--border); color: white;"></textarea>
                                             </div>
                                         </div>
@@ -313,6 +315,24 @@
                                 $('#editFeedbackRating').val(rating);
                                 $('#editFeedbackContent').val(content);
                                 $('#editFeedbackModal').modal('show');
+                            }
+
+                            function updateCharCount() {
+                                const content = document.getElementById('feedbackContent').value;
+                                document.getElementById('charCount').innerText = content.length + '/50';
+                            }
+
+                            function validateFeedback() {
+                                const content = document.getElementById('feedbackContent').value;
+                                if (content.length > 50) {
+                                    alert('Nội dung đánh giá không được vượt quá 50 ký tự.');
+                                    return false;
+                                }
+                                if (content.trim() === '') {
+                                    alert('Vui lòng nhập nội dung đánh giá.');
+                                    return false;
+                                }
+                                return true;
                             }
                         </script>
             </body>

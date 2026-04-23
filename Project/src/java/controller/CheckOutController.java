@@ -43,12 +43,46 @@ public class CheckOutController extends HttpServlet {
         dal.VoucherDAO vDAO = new dal.VoucherDAO();
         Map<Integer, List<model.Voucher>> storeVouchers = new java.util.HashMap<>();
         Map<Integer, Map<Integer, Cart>> byStore = splitCartByStore(carts);
+        int totalDiscount = 0;
+        Map<Integer, model.Voucher> bestVouchers = new java.util.HashMap<>();
         for(Integer sid : byStore.keySet()) {
-            storeVouchers.put(sid, vDAO.getVouchersByStoreId(sid));
+            int storeTotal = calculateTotal(byStore.get(sid));
+            
+            // 1. Calculate Auto-gift discount
+            int autoDiscountPercent = 0;
+            if (storeTotal >= 20000000) autoDiscountPercent = 30;
+            else if (storeTotal >= 10000000) autoDiscountPercent = 20;
+            int autoDiscountValue = (int) Math.round(storeTotal * (autoDiscountPercent / 100.0));
+
+            // 2. Calculate Best Voucher discount
+            model.Voucher bestV = findBestVoucher(vDAO.getVouchersByStoreId(sid), storeTotal);
+            int voucherDiscountValue = 0;
+            if (bestV != null) {
+                voucherDiscountValue = (int) Math.round(storeTotal * (bestV.getDiscountPercent() / 100.0));
+                if (bestV.getMaxDiscount() != null && voucherDiscountValue > bestV.getMaxDiscount()) {
+                    voucherDiscountValue = bestV.getMaxDiscount();
+                }
+            }
+
+            // 3. Pick the best
+            if (autoDiscountValue >= voucherDiscountValue && autoDiscountValue > 0) {
+                totalDiscount += autoDiscountValue;
+            } else if (voucherDiscountValue > 0) {
+                totalDiscount += voucherDiscountValue;
+                bestVouchers.put(sid, bestV);
+            }
         }
+        
+        int totalVat = (int) Math.round(totalMoney * 0.10);
+        int finalTotal = totalMoney - totalDiscount + totalVat;
         
         request.setAttribute("storeVouchers", storeVouchers);
         request.setAttribute("totalMoney", totalMoney);
+        request.setAttribute("totalDiscount", totalDiscount);
+        request.setAttribute("totalVat", totalVat);
+        request.setAttribute("finalTotal", finalTotal);
+        request.setAttribute("bestVouchers", bestVouchers);
+        
         request.getRequestDispatcher("checkout.jsp").forward(request, response);
     }
 
@@ -110,29 +144,62 @@ public class CheckOutController extends HttpServlet {
             int storeId = entry.getKey();
             Map<Integer, Cart> storeCarts = entry.getValue();
             int storeTotalPrice = calculateTotal(storeCarts);
+            int storeDiscount = 0;
 
-            // Tim voucher hop le cho store nay (hoac voucher he thong)
-            model.Voucher voucher = (voucherCode != null && !voucherCode.isEmpty()) ? voucherDAO.getVoucherByCodeAndStoreId(voucherCode, storeId) : null;
+            // 1. Calculate Auto-gift discount
+            int autoDiscountPercent = 0;
+            if (storeTotalPrice >= 20000000) autoDiscountPercent = 30;
+            else if (storeTotalPrice >= 10000000) autoDiscountPercent = 20;
+            
+            int autoDiscountValue = (int) Math.round(storeTotalPrice * (autoDiscountPercent / 100.0));
 
-            if (voucher != null) {
-                if (voucher.getMinOrderValue() == null || storeTotalPrice >= voucher.getMinOrderValue()) {
-                    int discount = (int) Math.round(storeTotalPrice * (voucher.getDiscountPercent() / 100.0));
-                    if (voucher.getMaxDiscount() != null && discount > voucher.getMaxDiscount()) {
-                        discount = voucher.getMaxDiscount();
-                    }
-                    storeTotalPrice -= discount;
-                    finalTotalPrice -= discount;
-                    totalDiscount += discount;
-                    note = (note == null ? "" : note) + " (Voucher: " + voucherCode + " -" + discount + "d)";
+            // 2. Calculate Best Voucher discount
+            model.Voucher bestVoucher = null;
+            int voucherDiscountValue = 0;
+            if (voucherCode != null && !voucherCode.isEmpty()) {
+                bestVoucher = voucherDAO.getVoucherByCodeAndStoreId(voucherCode, storeId);
+            } else {
+                List<model.Voucher> available = voucherDAO.getVouchersByStoreId(storeId);
+                bestVoucher = findBestVoucher(available, storeTotalPrice);
+            }
+
+            if (bestVoucher != null && (bestVoucher.getMinOrderValue() == null || storeTotalPrice >= bestVoucher.getMinOrderValue())) {
+                voucherDiscountValue = (int) Math.round(storeTotalPrice * (bestVoucher.getDiscountPercent() / 100.0));
+                if (bestVoucher.getMaxDiscount() != null && voucherDiscountValue > bestVoucher.getMaxDiscount()) {
+                    voucherDiscountValue = bestVoucher.getMaxDiscount();
                 }
             }
+
+            // 3. Choose the better discount
+            if (autoDiscountValue >= voucherDiscountValue && autoDiscountValue > 0) {
+                storeDiscount = autoDiscountValue;
+                note = (note == null ? "" : note) + " (Auto-gift: -" + autoDiscountPercent + "%)";
+            } else if (voucherDiscountValue > 0) {
+                storeDiscount = voucherDiscountValue;
+                note = (note == null ? "" : note) + " (Voucher: " + bestVoucher.getCode() + " -" + voucherDiscountValue + "d)";
+            }
+
+            storeTotalPrice -= storeDiscount;
+            
+            // 3. Add VAT (10%)
+            int vatAmount = (int) Math.round(storeTotalPrice * 0.10);
+            storeTotalPrice += vatAmount;
+            
+            totalDiscount += storeDiscount;
+            finalTotalPrice = finalTotalPrice - storeDiscount + vatAmount; // Note: this calculation needs to be careful if multiple stores
 
             Shipping shipping = new Shipping(name, phone, address, storeId);
             int shippingId = shippingDAO.createReturnId(shipping);
             Order order = new Order(account.getUid(), storeTotalPrice, note, shippingId, storeId);
+            order.setVatPercent(10);
             int orderId = orderDAO.createReturnId(order);
             orderDetailDAO.saveCart(orderId, storeCarts);
         }
+        
+        // Recalculate final total properly
+        int originalTotal = calculateTotal(carts);
+        int totalVat = (int) Math.round(originalTotal * 0.10);
+        finalTotalPrice = originalTotal - totalDiscount + totalVat;
 
         session.removeAttribute(CartService.CARTS_SESSION_KEY);
         CartService.clearPendingVnpay(session);
@@ -140,7 +207,8 @@ public class CheckOutController extends HttpServlet {
         request.setAttribute("totalPrice", finalTotalPrice);
         request.setAttribute("originalTotalPrice", originalTotalPrice);
         request.setAttribute("totalDiscount", totalDiscount);
-        request.getRequestDispatcher("thank").forward(request, response);
+        request.setAttribute("totalVat", totalVat);
+        request.getRequestDispatcher("thanks.jsp").forward(request, response);
     }
 
     private void forwardCheckout(HttpServletRequest request, HttpServletResponse response, Map<Integer, Cart> carts)
@@ -158,6 +226,35 @@ public class CheckOutController extends HttpServlet {
             cartsByStore.computeIfAbsent(storeId, key -> new LinkedHashMap<>()).put(entry.getKey(), cart);
         }
         return cartsByStore;
+    }
+
+    private model.Voucher findBestVoucher(List<model.Voucher> vouchers, int orderTotal) {
+        model.Voucher best = null;
+        int maxDiscount = -1;
+        
+        java.time.LocalDate today = java.time.LocalDate.now();
+        
+        for (model.Voucher v : vouchers) {
+            // Check validity (already filtered in DAO for code search, but here we have a list)
+            try {
+                java.time.LocalDate expiry = java.time.LocalDate.parse(v.getExpiryDate());
+                java.time.LocalDate start = v.getStartDate() != null ? java.time.LocalDate.parse(v.getStartDate()) : today;
+                if (today.isBefore(start) || today.isAfter(expiry)) continue;
+            } catch (Exception e) {}
+
+            if (v.getMinOrderValue() != null && orderTotal < v.getMinOrderValue()) continue;
+
+            int discount = (int) Math.round(orderTotal * (v.getDiscountPercent() / 100.0));
+            if (v.getMaxDiscount() != null && discount > v.getMaxDiscount()) {
+                discount = v.getMaxDiscount();
+            }
+
+            if (discount > maxDiscount) {
+                maxDiscount = discount;
+                best = v;
+            }
+        }
+        return best;
     }
 
     static int calculateTotal(Map<Integer, Cart> carts) {
