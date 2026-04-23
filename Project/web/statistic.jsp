@@ -15,19 +15,10 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
         
         <style>
-            :root {
-                --primary: #ea580c;
-                --primary-dark: #c2410c;
-                --bg: #0f172a;
-                --card-bg: #1e293b;
-                --glass: #0f172a;
-                --border: rgba(255, 255, 255, 0.1);
-            }
-
             body {
                 font-family: 'Outfit', sans-serif;
                 background-color: var(--bg) !important;
-                color: #f1f5f9;
+                color: var(--text-main);
                 padding-bottom: 40px;
             }
 
@@ -36,13 +27,13 @@
                 backdrop-filter: none;
                 border: 1px solid var(--border);
                 border-radius: 20px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
                 overflow: hidden;
             }
 
             .admin-header {
-                background: #0f172a;
-                color: #fff;
+                background: var(--bg);
+                color: var(--text-main);
                 padding: 25px 30px;
                 border-bottom: 1px solid var(--border);
                 display: flex;
@@ -77,8 +68,8 @@
             }
 
             .btn-custom-secondary:hover {
-                background-color: var(--glass);
-                color: white;
+                background-color: var(--bg);
+                color: var(--text-main);
                 border-color: var(--border);
             }
 
@@ -88,7 +79,7 @@
 
             .section-title {
                 font-weight: 700;
-                color: #ffffff;
+                color: var(--text-main);
                 text-transform: uppercase;
                 letter-spacing: 1px;
                 margin-bottom: 25px;
@@ -98,7 +89,7 @@
             }
 
             .stat-card {
-                background: #0f172a;
+                background: var(--bg);
                 border-radius: 16px;
                 padding: 25px;
                 display: flex;
@@ -137,7 +128,7 @@
             .stat-value {
                 font-size: 1.8rem;
                 font-weight: 800;
-                color: #ffffff;
+                color: var(--text-main);
                 margin: 0;
             }
 
@@ -145,11 +136,11 @@
             .text-success-custom { color: #4ade80 !important; }
             
             .table {
-                color: #f1f5f9;
+                color: var(--text-main);
             }
             .table-hover tbody tr:hover {
-                background-color: #1e293b;
-                color: white;
+                background-color: var(--glass);
+                color: var(--text-main);
             }
         </style>
         <script src="js/theme.js"></script>
@@ -174,11 +165,11 @@
                         <form action="statistic" method="get" class="row g-3 align-items-end">
                             <div class="col-md-4">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Từ ngày</label>
-                                <input type="date" name="startDate" class="form-control bg-dark text-white border-secondary" value="${startDate}" required>
+                                <input type="date" name="startDate" class="form-control" style="background: var(--bg); color: var(--text-main); border: 1px solid var(--border);" value="${startDate}" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Đến ngày</label>
-                                <input type="date" name="endDate" class="form-control bg-dark text-white border-secondary" value="${endDate}" required>
+                                <input type="date" name="endDate" class="form-control" style="background: var(--bg); color: var(--text-main); border: 1px solid var(--border);" value="${endDate}" required>
                             </div>
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-primary w-100" style="background: var(--primary); border: none; height: 38px; font-weight: 600;">
@@ -202,8 +193,8 @@
                                     </h3>
                                     <p class="text-muted mb-0">
                                         Thời gian: 
-                                        <fmt:formatDate value="${startDate}" pattern="dd/MM/yyyy"/> - 
-                                        <fmt:formatDate value="${endDate}" pattern="dd/MM/yyyy"/>
+                                        <fmt:formatDate value="${startDate}" pattern="dd/MM/YYYY"/> - 
+                                        <fmt:formatDate value="${endDate}" pattern="dd/MM/YYYY"/>
                                     </p>
                                 </div>
                             </div>
@@ -215,9 +206,9 @@
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                <tr style="background: rgba(255,255,255,0.05);">
+                                <tr style="background: var(--bg);">
+                                    <th class="py-3 px-4">Thứ</th>
                                     <th class="py-3 px-4">Ngày</th>
-                                    <th class="py-3 px-4">Định dạng</th>
                                     <th class="py-3 px-4 text-end">Doanh thu</th>
                                 </tr>
                             </thead>
@@ -230,7 +221,7 @@
                                                     <fmt:formatDate value="${item.date}" pattern="EEEE"/>
                                                 </td>
                                                 <td class="py-3 px-4">
-                                                    <fmt:formatDate value="${item.date}" pattern="dd/MM/yyyy"/>
+                                                    <fmt:formatDate value="${item.date}" pattern="dd/MM/YYYY"/>
                                                 </td>
                                                 <td class="py-3 px-4 text-end fw-bold">
                                                     <fmt:formatNumber value="${item.revenue}" pattern="#,###"/> đ
@@ -248,7 +239,7 @@
                                     </c:otherwise>
                                 </c:choose>
                             </tbody>
-                            <tfoot style="background: rgba(255,255,255,0.05); border-top: 2px solid var(--primary);">
+                            <tfoot style="background: var(--bg); border-top: 2px solid var(--primary);">
                                 <tr>
                                     <td colspan="2" class="py-3 px-4 fw-bold">TỔNG CỘNG</td>
                                     <td class="py-3 px-4 text-end fw-bold text-success-custom">

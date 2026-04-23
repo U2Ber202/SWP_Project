@@ -32,15 +32,15 @@ body {
 
 /* Áp dụng biến cho các thành phần chung */
 .card, .detail-card, .product-card, .admin-wrapper, .filter-card, .edit-card, .admin-setting-card {
-    background-color: #1e293b !important; /* Solid background for all form/content containers */
+    background-color: var(--card-bg) !important; /* Use variable instead of hardcoded color */
     border-color: var(--border) !important;
     color: var(--text-main) !important;
     backdrop-filter: none !important;
 }
 
 .modal-content, .modal-header, .modal-body, .modal-footer {
-    background-color: #1e293b !important;
-    background: #1e293b !important; /* Force solid color */
+    background-color: var(--card-bg) !important;
+    background: var(--card-bg) !important; /* Force solid color from variable */
     color: var(--text-main) !important;
     border-color: var(--border) !important;
     backdrop-filter: none !important;
@@ -49,7 +49,7 @@ body {
 }
 
 div.modal-content {
-    background-color: #1e293b !important;
+    background-color: var(--card-bg) !important;
     opacity: 1 !important;
 }
 
@@ -76,7 +76,7 @@ div.modal-content {
 }
 
 .form-control, .nav-search, select, textarea {
-    background-color: #0f172a !important; /* Solid background for inputs */
+    background-color: var(--bg) !important; /* Solid background for inputs using variable */
     border-color: var(--border) !important;
     color: var(--text-main) !important;
     opacity: 1 !important;
@@ -392,23 +392,31 @@ html[data-theme="light"] img {
 .modal-content, .modal-header, .modal-body, .modal-footer,
 .card, .panel, .admin-wrapper, .edit-card, .detail-card, .product-card,
 .filter-card, .admin-setting-card, .transaction-table, .related-card, .bg-solid-dark {
-    background-color: #1e293b !important;
-    background: #1e293b !important;
+    background-color: var(--card-bg) !important;
+    background: var(--card-bg) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     opacity: 1 !important;
 }
 
 .form-control, .nav-search, select, textarea, .custom-select, .bg-theme-input {
-    background-color: #0f172a !important;
-    background: #0f172a !important;
+    background-color: var(--bg) !important;
+    background: var(--bg) !important;
     opacity: 1 !important;
 }
 
+html[data-theme="light"] .form-control, 
+html[data-theme="light"] .nav-search, 
+html[data-theme="light"] select, 
+html[data-theme="light"] textarea {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+}
+
 .site-nav {
-    background-color: #0f172a !important;
-    background: #0f172a !important;
-    backdrop-filter: none !important;
+    background-color: var(--nav-bg) !important;
+    background: var(--nav-bg) !important;
+    backdrop-filter: blur(10px) !important;
     opacity: 1 !important;
 }
 

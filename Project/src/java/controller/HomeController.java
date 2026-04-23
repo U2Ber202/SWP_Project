@@ -108,7 +108,7 @@ public class HomeController extends HttpServlet {
         List<model.News> listNews;
         
         if (acc == null || RoleHelper.isAdmin(acc) || RoleHelper.isCustomer(acc)) {
-            listNews = newsDAO.getAllNews();
+            listNews = newsDAO.getAllVisibleNews();
         } else {
             // Staff roles: Owner, Warehouse Manager, Shipper
             Integer storeId = null;
@@ -123,9 +123,9 @@ public class HomeController extends HttpServlet {
             }
             
             if (storeId != null) {
-                listNews = newsDAO.getNewsByStore(storeId);
+                listNews = newsDAO.getVisibleNewsByStore(storeId);
             } else {
-                listNews = newsDAO.getSystemNews();
+                listNews = newsDAO.getVisibleSystemNews();
             }
         }
         

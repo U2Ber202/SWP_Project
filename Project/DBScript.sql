@@ -428,6 +428,7 @@ CREATE TABLE [dbo].[News] (
     [image] NVARCHAR(MAX) NULL,
     [created_at] DATETIME DEFAULT GETDATE(),
     [store_id] INT NULL, -- NULL = Tin tức hệ thống (Admin), NOT NULL = Tin tức của Store
+    [is_visible] BIT NOT NULL DEFAULT 1,
     CONSTRAINT [PK_News] PRIMARY KEY ([id]),
     CONSTRAINT [FK_News_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id]) ON DELETE CASCADE
 );

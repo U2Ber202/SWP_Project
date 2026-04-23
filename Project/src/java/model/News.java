@@ -11,17 +11,28 @@ public class News {
     private Date createdAt;
     private Integer storeId; // Null for system news
     private String storeName;
+    private boolean isVisible;
 
     public News() {
+        this.isVisible = true; // Default to visible
     }
 
-    public News(int id, String title, String content, String image, Date createdAt, Integer storeId) {
+    public News(int id, String title, String content, String image, Date createdAt, Integer storeId, boolean isVisible) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.image = image;
         this.createdAt = createdAt;
         this.storeId = storeId;
+        this.isVisible = isVisible;
+    }
+
+    public boolean isIsVisible() {
+        return isVisible;
+    }
+
+    public void setIsVisible(boolean isVisible) {
+        this.isVisible = isVisible;
     }
 
     public int getId() {

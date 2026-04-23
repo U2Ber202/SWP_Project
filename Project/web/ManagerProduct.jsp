@@ -29,59 +29,56 @@
                         href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
                     <style>
-                        :root {
-                            --primary: #ea580c;
-                            --primary-dark: #c2410c;
-                            --bg: #0f172a;
-                            --card-bg: #1e293b;
-                            --glass: #0f172a;
-                            --border: rgba(255, 255, 255, 0.1);
-                        }
-
                         body {
                             font-family: 'Be Vietnam Pro', sans-serif;
                             background-color: var(--bg) !important;
-                            color: #f1f5f9;
+                            color: var(--text-main);
                             padding-bottom: 40px;
                         }
 
-                        .card { background: #1e293b !important; 
-                            background: #1e293b !important;
+                        .card { 
+                            background: var(--card-bg) !important;
                             backdrop-filter: none !important;
                             border: 1px solid var(--border) !important;
                             border-radius: 20px;
-                            box-shadow: 0 10px 40px #0f172a;
+                            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
                             overflow: hidden;
                         }
 
                         .card-header {
-                            background: #1e293b !important;
+                            background: var(--card-bg) !important;
                             border-bottom: 1px solid var(--border) !important;
                             font-weight: 600;
-                            color: white;
+                            color: var(--text-main);
                             padding: 20px 30px;
                             font-size: 1.1rem;
                         }
 
                         .form-control {
-                            background: #0f172a !important;
+                            background: var(--bg) !important;
                             border: 1px solid var(--border);
-                            color: white !important;
+                            color: var(--text-main) !important;
                             border-radius: 10px;
-                            padding: 12px 15px;
+                            padding: 8px 15px;
+                            height: 45px !important;
                         }
 
                         .form-control::placeholder {
-                            color: #64748b;
+                            color: var(--text-muted);
+                        }
+
+                        select.form-control {
+                            height: 45px !important;
+                            padding: 0 15px !important;
                         }
 
                         select.form-control option {
-                            background-color: #1e293b;
-                            color: white;
+                            background-color: var(--card-bg);
+                            color: var(--text-main);
                         }
 
                         .form-group label {
-                            color: #94a3b8 !important;
+                            color: var(--text-muted) !important;
                             font-weight: 600;
                             text-transform: uppercase;
                             font-size: 0.85rem;
@@ -99,24 +96,24 @@
                         .btn-outline-light {
                             border-radius: 30px;
                             border: 1px solid var(--border);
-                            color: #e2e8f0;
+                            color: var(--text-main);
                             font-weight: 600;
                             padding: 8px 25px;
                         }
 
                         .table {
-                            color: #f1f5f9;
+                            color: var(--text-main);
                             margin-bottom: 0;
                         }
 
                         .table thead th {
                             border-bottom: 1px solid var(--border);
                             border-top: none;
-                            color: #94a3b8;
+                            color: var(--text-muted);
                             font-weight: 600;
                             text-transform: uppercase;
                             font-size: 0.85rem;
-                            background-color: #0f172a;
+                            background-color: var(--bg);
                             padding: 15px 20px;
                         }
 
@@ -157,7 +154,7 @@
                         }
 
                         .helper-text {
-                            color: #94a3b8;
+                            color: var(--text-muted);
                             font-size: 0.92rem;
                         }
 
@@ -168,15 +165,15 @@
                         }
 
                         .muted-box {
-                            background: rgba(255, 255, 255, 0.04);
+                            background: var(--glass);
                             border: 1px solid var(--border);
                             border-radius: 16px;
                             padding: 16px;
-                            color: #cbd5e1;
+                            color: var(--text-muted);
                         }
 
                         .text-muted-custom {
-                            color: #94a3b8 !important;
+                            color: var(--text-muted) !important;
                         }
 
                         .text-info {
@@ -197,7 +194,7 @@
                             <div class="container py-5">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <div>
-                                        <h2 class="font-weight-bold mb-0 text-white">
+                                        <h2 class="font-weight-bold mb-0 text-main">
                                             <i class="fa-solid fa-boxes-stacked text-warning mr-2"></i>Quản Lý Kho Giày
                                         </h2>
                                         <c:if test="${not empty managedStore}">
@@ -342,7 +339,7 @@
 
                                 <div class="card mb-5">
                                     <div class="card-header border-bottom">
-                                        <h5 class="mb-0 font-weight-bold text-white"><i
+                                        <h5 class="mb-0 font-weight-bold text-main"><i
                                                 class="fa-solid fa-list-ul text-info mr-2"></i>Danh sách sản phẩm hiện
                                             có</h5>
                                     </div>

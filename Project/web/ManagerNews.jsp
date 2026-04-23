@@ -11,19 +11,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        :root {
-            --primary: #ea580c;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --border: rgba(255, 255, 255, 0.1);
-        }
-        body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: #f1f5f9; padding-bottom: 40px; }
-        .admin-wrapper { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px #0f172a; overflow: hidden; }
-        .admin-header { background: #0f172a; padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: var(--text-main); padding-bottom: 40px; }
+        .admin-wrapper { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); overflow: hidden; }
+        .admin-header { background: var(--bg); padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .create-form { background-color: rgba(0, 0, 0, 0.15); padding: 25px 30px; border-bottom: 1px solid var(--border); }
-        .form-control { background: #0f172a !important; border: 1px solid var(--border) !important; color: white !important; border-radius: 8px !important; }
-        .custom-table { margin-bottom: 0; color: #f1f5f9; }
-        .custom-table thead th { border-bottom: 1px solid var(--border); border-top: none; color: #94a3b8; padding: 15px 20px; background-color: #0f172a; text-transform: uppercase; font-size: 0.85rem; }
+        .form-control { background: var(--bg) !important; border: 1px solid var(--border) !important; color: var(--text-main) !important; border-radius: 8px !important; }
+        .custom-table { margin-bottom: 0; color: var(--text-main); }
+        .custom-table thead th { border-bottom: 1px solid var(--border); border-top: none; color: var(--text-muted); padding: 15px 20px; background-color: var(--bg); text-transform: uppercase; font-size: 0.85rem; }
         .custom-table tbody td { padding: 15px 20px; vertical-align: middle; border-top: 1px solid var(--border); }
         .news-img { width: 80px; height: 50px; object-fit: cover; border-radius: 6px; }
         .btn-primary-custom { background-color: var(--primary); border: none; font-weight: 600; border-radius: 8px; }
@@ -78,6 +72,7 @@
                                 <th>Nguồn tin</th>
                             </c:if>
                             <th>Ngày đăng</th>
+                            <th>Trạng thái</th>
                             <th class="text-center">Thao tác</th>
                         </tr>
                     </thead>
@@ -102,14 +97,27 @@
                                     </td>
                                 </c:if>
                                 <td><fmt:formatDate value="${n.createdAt}" pattern="dd/MM/yyyy HH:mm"/></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${n.isVisible}">
+                                            <span class="badge badge-success">Hiển thị</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge badge-secondary">Đã ẩn</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-outline-info mr-2" onclick="editNews(${n.id}, '${n.title}', '${n.image}', '${n.content}')">
+                                    <button class="btn btn-sm btn-outline-info mr-2" onclick="editNews(${n.id}, '${n.title}', '${n.image}', '${n.content}', ${n.isVisible})">
                                         <i class="fa-solid fa-edit"></i>
                                     </button>
-                                    <form action="managerNews" method="post" style="display:inline;" onsubmit="return confirm('Xóa tin này?')">
-                                        <input type="hidden" name="action" value="delete">
+                                    <form action="managerNews" method="post" style="display:inline;">
+                                        <input type="hidden" name="action" value="toggleStatus">
                                         <input type="hidden" name="id" value="${n.id}">
-                                        <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                                        <input type="hidden" name="status" value="${n.isVisible}">
+                                        <button class="btn btn-sm ${n.isVisible ? 'btn-outline-warning' : 'btn-outline-success'}">
+                                            <i class="fa-solid ${n.isVisible ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -123,13 +131,13 @@
     <!-- Edit Modal -->
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-content">
                 <form action="managerNews" method="post">
                     <input type="hidden" name="action" value="edit">
                     <input type="hidden" name="id" id="edit-id">
-                    <div class="modal-header border-secondary">
+                    <div class="modal-header">
                         <h5 class="modal-title">Sửa tin tức</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
@@ -144,8 +152,12 @@
                             <label>Nội dung</label>
                             <textarea class="form-control" name="content" id="edit-content" rows="5" required></textarea>
                         </div>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" name="isVisible" id="edit-isVisible">
+                            <label class="form-check-label" for="edit-isVisible">Hiển thị bài viết</label>
+                        </div>
                     </div>
-                    <div class="modal-footer border-secondary">
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary-custom">Lưu thay đổi</button>
                     </div>
@@ -157,11 +169,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        function editNews(id, title, image, content) {
+        function editNews(id, title, image, content, isVisible) {
             $('#edit-id').val(id);
             $('#edit-title').val(title);
             $('#edit-image').val(image);
             $('#edit-content').val(content);
+            $('#edit-isVisible').prop('checked', isVisible);
             $('#editModal').modal('show');
         }
     </script>

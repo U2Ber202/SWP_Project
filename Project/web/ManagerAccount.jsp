@@ -17,19 +17,10 @@
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
             <style>
-                :root {
-                    --primary: #ea580c;
-                    --primary-dark: #c2410c;
-                    --bg: #0f172a;
-                    --card-bg: #1e293b;
-                    --glass: #0f172a;
-                    --border: rgba(255, 255, 255, 0.1);
-                }
-
                 body {
                     font-family: 'Be Vietnam Pro', sans-serif;
                     background-color: var(--bg) !important;
-                    color: #f1f5f9;
+                    color: var(--text-main);
                     padding-bottom: 40px;
                 }
 
@@ -38,13 +29,13 @@
                     backdrop-filter: none;
                     border: 1px solid var(--border);
                     border-radius: 20px;
-                    box-shadow: 0 10px 40px #0f172a;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
                     overflow: hidden;
                 }
 
                 .admin-header {
-                    background: #0f172a;
-                    color: #fff;
+                    background: var(--bg);
+                    color: var(--text-main);
                     padding: 25px 30px;
                     border-bottom: 1px solid var(--border);
                     display: flex;
@@ -53,30 +44,30 @@
                 }
 
                 .create-section {
-                    background-color: rgba(0, 0, 0, 0.15);
+                    background-color: rgba(0, 0, 0, 0.05);
                     padding: 25px 30px;
                     border-bottom: 1px solid var(--border);
                 }
 
                 .input-group-text {
-                    background-color: #0f172a;
+                    background-color: var(--bg);
                     border: 1px solid var(--border);
                     border-right: none;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     border-radius: 8px 0 0 8px;
                 }
 
                 .form-control {
-                    background: #0f172a !important;
+                    background: var(--bg) !important;
                     border: 1px solid var(--border);
-                    color: white !important;
+                    color: var(--text-main) !important;
                     border-left: none;
                     border-radius: 0 8px 8px 0;
                     box-shadow: none !important;
                 }
 
                 .form-control::placeholder {
-                    color: #64748b;
+                    color: var(--text-muted);
                 }
 
                 .btn-custom-primary {
@@ -91,7 +82,7 @@
 
                 .btn-custom-secondary {
                     background-color: transparent;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     border: 1px solid var(--border);
                     border-radius: 12px;
                     font-weight: 600;
@@ -100,16 +91,16 @@
 
                 .custom-table {
                     margin-bottom: 0;
-                    color: #f1f5f9;
+                    color: var(--text-main);
                 }
 
                 .custom-table thead th {
                     border-bottom: 1px solid var(--border);
                     border-top: none;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     font-weight: 600;
                     padding: 15px 20px;
-                    background-color: #0f172a;
+                    background-color: var(--bg);
                     text-transform: uppercase;
                     font-size: 0.85rem;
                 }
@@ -143,7 +134,7 @@
                 .search-toolbar {
                     padding: 24px 30px 12px;
                     border-bottom: 1px solid var(--border);
-                    background: #0f172a;
+                    background: var(--bg);
                 }
 
                 .search-toolbar .input-group .form-control {

@@ -11,33 +11,25 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
-            :root {
-                --primary: #ea580c;
-                --primary-dark: #c2410c;
-                --bg: #0f172a;
-                --card-bg: #1e293b;
-                --glass: #0f172a;
-                --border: rgba(255, 255, 255, 0.1);
-            }
             body {
                 font-family: 'Be Vietnam Pro', sans-serif;
                 background-color: var(--bg) !important;
-                color: #f1f5f9;
+                color: var(--text-main);
                 padding: 32px 0 48px;
             }
             .panel {
-                background: #1e293b !important;
+                background: var(--card-bg) !important;
                 backdrop-filter: none !important;
                 border: 1px solid var(--border);
                 border-radius: 24px;
-                box-shadow: 0 14px 40px rgba(0,0,0,0.3);
+                box-shadow: 0 14px 40px rgba(0,0,0,0.1);
                 overflow: hidden;
                 margin-bottom: 24px;
             }
             .panel-header {
                 padding: 24px 28px;
                 border-bottom: 1px solid var(--border);
-                background: rgba(0, 0, 0, 0.2) !important;
+                background: rgba(0, 0, 0, 0.05) !important;
             }
             .btn-primary-custom {
                 background: var(--primary) !important;
@@ -48,20 +40,43 @@
                 padding: 10px 24px;
                 transition: all 0.3s ease;
             }
-            .form-control, .custom-select, textarea.form-control {
-                background: #0f172a !important;
+            .form-control, .custom-select {
+                background: var(--bg) !important;
                 border: 1px solid var(--border) !important;
-                color: white !important;
+                color: var(--text-main) !important;
                 border-radius: 12px;
                 opacity: 1 !important;
+                height: 45px !important;
+                padding: 8px 15px;
+            }
+
+            .custom-select {
+                padding: 0 15px !important;
+            }
+
+            textarea.form-control {
+                background: var(--bg) !important;
+                border: 1px solid var(--border) !important;
+                color: var(--text-main) !important;
+                border-radius: 12px;
+                opacity: 1 !important;
+                height: auto !important;
+                padding: 12px 15px;
             }
             
             .setting-box {
-                background: #0f172a !important;
+                background: var(--bg) !important;
                 border: 1px solid var(--border);
                 border-radius: 18px;
                 padding: 24px;
                 height: 100%;
+            }
+            .custom-control-label {
+                color: var(--text-main);
+            }
+            label {
+                color: var(--text-muted);
+                font-weight: 600;
             }
         </style>
         <script src="js/theme.js"></script>
@@ -189,7 +204,7 @@
                 </div>
                 <div class="panel-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 text-white" style="background: transparent;">
+                        <table class="table table-hover mb-0">
                             <thead style="background: rgba(0,0,0,0.1)">
                                 <tr>
                                     <th class="border-0 pl-4">Ảnh</th>
@@ -246,7 +261,7 @@
                 <div class="modal-content">
                     <div class="modal-header border-0 pb-0">
                         <h5 class="modal-title text-white font-weight-bold">Thêm Slider mới</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -299,7 +314,7 @@
                 <div class="modal-content">
                     <div class="modal-header border-0 pb-0">
                         <h5 class="modal-title text-white font-weight-bold">Chỉnh sửa Slider</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>

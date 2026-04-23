@@ -15,19 +15,10 @@
                 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
             <style>
-                :root {
-                    --primary: #ea580c;
-                    --primary-dark: #c2410c;
-                    --bg: #0f172a;
-                    --card-bg: #1e293b;
-                    --glass: #0f172a;
-                    --border: rgba(255, 255, 255, 0.1);
-                }
-
                 body {
                     font-family: 'Be Vietnam Pro', sans-serif;
                     background-color: var(--bg) !important;
-                    color: #f1f5f9;
+                    color: var(--text-main);
                     padding-bottom: 48px;
                 }
 
@@ -36,7 +27,7 @@
                     backdrop-filter: none;
                     border: 1px solid var(--border);
                     border-radius: 24px;
-                    box-shadow: 0 14px 40px #0f172a;
+                    box-shadow: 0 14px 40px rgba(0,0,0,0.1);
                     overflow: hidden;
                     margin-bottom: 24px;
                 }
@@ -44,13 +35,14 @@
                 .panel-header {
                     padding: 24px 28px;
                     border-bottom: 1px solid var(--border);
-                    background: rgba(0, 0, 0, 0.18);
+                    background: rgba(0, 0, 0, 0.05);
                 }
 
                 .panel-title {
                     margin: 0;
                     font-size: 1.35rem;
                     font-weight: 700;
+                    color: var(--text-main);
                 }
 
                 .panel-body {
@@ -68,7 +60,7 @@
 
                 .btn-secondary-custom {
                     background: transparent;
-                    color: #cbd5e1;
+                    color: var(--text-muted);
                     border: 1px solid var(--border);
                     border-radius: 12px;
                     font-weight: 600;
@@ -76,14 +68,14 @@
                 }
 
                 .table {
-                    color: #f1f5f9;
+                    color: var(--text-main);
                     margin-bottom: 0;
                 }
 
                 .table thead th {
                     border-top: none;
                     border-bottom: 1px solid var(--border);
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     text-transform: uppercase;
                     font-size: 0.8rem;
                 }
@@ -95,20 +87,32 @@
                 }
 
                 .form-control,
-                .custom-select,
-                textarea.form-control {
-                    background: #0f172a;
+                .custom-select {
+                    background: var(--bg);
                     border: 1px solid var(--border);
-                    color: white;
+                    color: var(--text-main);
                     border-radius: 12px;
+                    height: 45px !important;
+                    padding: 8px 15px;
+                }
+
+                .custom-select {
+                    padding: 0 15px !important;
+                }
+
+                textarea.form-control {
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    color: var(--text-main);
+                    border-radius: 12px;
+                    height: auto !important;
+                    padding: 12px 15px;
                 }
 
                 .custom-select option {
-                    background: #1e293b;
-                    color: white;
+                    background: var(--card-bg);
+                    color: var(--text-main);
                 }
-
-                
 
                 .modal-header,
                 .modal-footer {
@@ -121,7 +125,7 @@
                 }
 
                 .setting-box {
-                    background: #0f172a;
+                    background: var(--bg);
                     border: 1px solid var(--border);
                     border-radius: 18px;
                     padding: 18px;
@@ -129,11 +133,11 @@
                 }
 
                 .custom-control-label {
-                    color: #e2e8f0;
+                    color: var(--text-main);
                 }
 
                 label {
-                    color: #cbd5e1;
+                    color: var(--text-muted);
                     font-weight: 600;
                 }
             </style>
@@ -256,7 +260,7 @@
                                         <input type="hidden" name="storeId" value="${s.id}">
                                         <div class="modal-header">
                                             <h5 class="modal-title">Cập nhật cửa hàng</h5>
-                                            <button type="button" class="close text-white"
+                                            <button type="button" class="close"
                                                 data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
@@ -306,7 +310,7 @@
                                             <h5 class="modal-title ${s.active ? 'text-warning' : 'text-success'}">
                                                 ${s.active ? 'Ngừng hoạt động cửa hàng' : 'Kích hoạt cửa hàng'}
                                             </h5>
-                                            <button type="button" class="close text-white"
+                                            <button type="button" class="close"
                                                 data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
@@ -333,7 +337,7 @@
                                     <input type="hidden" name="action" value="add">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Thêm cửa hàng mới</h5>
-                                        <button type="button" class="close text-white"
+                                        <button type="button" class="close"
                                             data-dismiss="modal">&times;</button>
                                     </div>
                                     <div class="modal-body">

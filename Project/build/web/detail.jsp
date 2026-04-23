@@ -25,13 +25,6 @@
                     href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
                     rel="stylesheet">
                 <style>
-                    :root {
-                        --primary: #ea580c;
-                        --bg: #0f172a;
-                        --card-bg: #1e293b;
-                        --border: rgba(255, 255, 255, 0.1);
-                    }
-
                     body {
                         background: var(--bg);
                         color: var(--text-main);
@@ -106,7 +99,7 @@
                                             <ol class="breadcrumb bg-solid-dark p-0">
                                                 <li class="breadcrumb-item"><a href="home"
                                                         class="text-muted small">Trang chủ</a></li>
-                                                <li class="breadcrumb-item active text-white small" aria-current="page">
+                                                <li class="breadcrumb-item active small" aria-current="page">
                                                     ${product.name}</li>
                                             </ol>
                                         </nav>
@@ -164,7 +157,7 @@
                                                                 class="far fa-star"></i></c:forEach>
                                                     </div>
                                                 </div>
-                                                <p class="text-white small mb-2">${f.content}</p>
+                                                <p class="text-main small mb-2">${f.content}</p>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <span class="text-muted" style="font-size: 0.7rem;">
                                                         <fmt:formatDate value="${f.createDate}"
@@ -199,8 +192,7 @@
                                                     <input type="hidden" name="storeId" value="${product.storeId}">
                                                     <div class="form-group">
                                                         <label class="small text-muted">Số sao</label>
-                                                        <select name="rating" class="form-control"
-                                                            style="background: var(--bg); border: 1px solid var(--border); color: white;">
+                                                        <select name="rating" class="form-control">
                                                             <option value="5">5 Sao (Tuyệt vời)</option>
                                                             <option value="4">4 Sao (Hài lòng)</option>
                                                             <option value="3">3 Sao (Bình thường)</option>
@@ -215,8 +207,7 @@
                                                         </div>
                                                         <textarea name="content" id="feedbackContent" class="form-control" rows="3"
                                                             placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." maxlength="50"
-                                                            oninput="updateCharCount()"
-                                                            style="background: var(--bg); border: 1px solid var(--border); color: white;"></textarea>
+                                                            oninput="updateCharCount()"></textarea>
                                                     </div>
                                                     <button type="submit" class="btn btn-primary btn-block btn-sm">Gửi
                                                         đánh giá</button>
@@ -268,10 +259,10 @@
                         </div>
                         <div class="modal fade" id="editFeedbackModal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
-                                <div class="modal-content text-white" class="modal-content">
-                                    <div class="modal-header border-0">
+                                <div class="modal-content">
+                                    <div class="modal-header">
                                         <h5 class="modal-title font-weight-bold">Chỉnh sửa đánh giá</h5>
-                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
@@ -281,8 +272,7 @@
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label class="small text-muted">Số sao</label>
-                                                <select name="rating" id="editFeedbackRating" class="form-control"
-                                                    style="background: var(--bg); border: 1px solid var(--border); color: white;">
+                                                <select name="rating" id="editFeedbackRating" class="form-control">
                                                     <option value="5">5 Sao (Tuyệt vời)</option>
                                                     <option value="4">4 Sao (Hài lòng)</option>
                                                     <option value="3">3 Sao (Bình thường)</option>
@@ -293,8 +283,7 @@
                                             <div class="form-group">
                                                 <label class="small text-muted">Nội dung</label>
                                                 <textarea name="content" id="editFeedbackContent" class="form-control" rows="4"
-                                                    maxlength="50"
-                                                    style="background: var(--bg); border: 1px solid var(--border); color: white;"></textarea>
+                                                    maxlength="50"></textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0">

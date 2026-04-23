@@ -6,9 +6,9 @@
             @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
 
             .site-nav {
-                background: #0f172a !important;
-                backdrop-filter: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                background: var(--nav-bg) !important;
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid var(--border);
                 padding: 0.8rem 0;
                 font-family: 'Be Vietnam Pro', sans-serif;
             }
@@ -16,26 +16,26 @@
             .site-nav .navbar-brand {
                 font-size: 1.5rem;
                 letter-spacing: -0.5px;
-                color: white !important;
+                color: var(--text-main) !important;
             }
 
             .site-nav .nav-link {
                 font-weight: 500;
-                color: #94a3b8 !important;
+                color: var(--text-muted) !important;
                 transition: all 0.3s ease;
                 padding: 0.5rem 1rem !important;
             }
 
             .site-nav .nav-link:hover,
             .site-nav .nav-link.active {
-                color: #f97316 !important;
+                color: var(--primary) !important;
             }
 
             .cart-btn {
                 position: relative;
-                background: #1e293b;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                color: white !important;
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                color: var(--text-main) !important;
                 border-radius: 12px;
                 padding: 0.5rem 1rem;
                 transition: all 0.3s ease;
@@ -43,15 +43,15 @@
 
             .cart-btn:hover {
                 background: rgba(249, 115, 22, 0.1);
-                border-color: #f97316;
-                color: #f97316 !important;
+                border-color: var(--primary);
+                color: var(--primary) !important;
             }
 
             .cart-badge {
                 position: absolute;
                 top: -8px;
                 right: -8px;
-                background: #ea580c;
+                background: var(--primary);
                 color: white;
                 font-size: 0.7rem;
                 font-weight: 700;
@@ -61,9 +61,9 @@
             }
 
             .nav-search {
-                background: #0f172a !important;
-                border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                color: white !important;
+                background: var(--bg) !important;
+                border: 1px solid var(--border) !important;
+                color: var(--text-main) !important;
                 border-radius: 10px !important;
                 padding-left: 1rem !important;
             }
@@ -81,8 +81,8 @@
             }
 
             .theme-toggle-btn {
-                background: #1e293b;
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: var(--card-bg);
+                border: 1px solid var(--border);
                 color: var(--text-main);
                 width: 38px;
                 height: 38px;
@@ -95,14 +95,14 @@
             }
 
             .theme-toggle-btn:hover {
-                background: rgba(255, 255, 255, 0.1);
-                border-color: #f97316;
-                color: #f97316;
+                background: var(--glass);
+                border-color: var(--primary);
+                color: var(--primary);
                 transform: rotate(15deg);
             }
 
             .hover-white {
-                color: #94a3b8;
+                color: var(--text-muted);
                 transition: all 0.3s ease;
                 display: inline-flex;
                 align-items: center;
@@ -110,7 +110,7 @@
             }
 
             .hover-white:hover {
-                color: white !important;
+                color: var(--text-main) !important;
                 transform: scale(1.1);
             }
 
@@ -123,6 +123,20 @@
             .nav-btn-custom:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
+            }
+            
+            .dropdown-menu-dark {
+                background-color: var(--dropdown-bg) !important;
+                border-color: var(--border) !important;
+            }
+            
+            .dropdown-item {
+                color: var(--text-main) !important;
+            }
+            
+            .dropdown-item:hover {
+                background-color: var(--glass) !important;
+                color: var(--primary) !important;
             }
         </style>
 
@@ -143,62 +157,62 @@
                                     role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-gauge-high mr-1"></i> Dashboard
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-dark bg-dark border-secondary shadow-lg"
+                                <div class="dropdown-menu dropdown-menu-dark shadow-lg"
                                     aria-labelledby="dashboardDropdown">
                                     <c:if test="${sessionScope.acc.role == 'owner'}">
-                                        <a class="dropdown-item text-white" href="profile"><i
+                                        <a class="dropdown-item" href="profile"><i
                                                 class="fas fa-user-circle mr-2"></i>Hồ sơ</a>
-                                        <a class="dropdown-item text-white" href="purchaseHistory"><i
+                                        <a class="dropdown-item" href="purchaseHistory"><i
                                                 class="fas fa-shopping-bag mr-2"></i>Đơn mua</a>
                                         <div class="dropdown-divider border-secondary"></div>
-                                        <a class="dropdown-item text-white" href="store-front?id=${ownerStore.id}"><i
+                                        <a class="dropdown-item" href="store-front?id=${ownerStore.id}"><i
                                                 class="fas fa-store mr-2"></i>Xem Shop</a>
                                         <div class="dropdown-divider border-secondary"></div>
-                                        <a class="dropdown-item text-white" href="managerCategory"><i
+                                        <a class="dropdown-item" href="managerCategory"><i
                                                 class="fas fa-tags mr-2"></i>Danh mục</a>
-                                        <a class="dropdown-item text-white" href="manager"><i
+                                        <a class="dropdown-item" href="manager"><i
                                                 class="fas fa-boxes-stacked mr-2"></i>Kho hàng</a>
-                                        <a class="dropdown-item text-white" href="vouchers"><i
+                                        <a class="dropdown-item" href="vouchers"><i
                                                 class="fas fa-ticket mr-2"></i>Mã giảm giá</a>
-                                        <a class="dropdown-item text-white" href="orders"><i
+                                        <a class="dropdown-item" href="orders"><i
                                                 class="fas fa-clipboard-list mr-2"></i>Đơn hàng</a>
-                                        <a class="dropdown-item text-white" href="managerContact"><i
+                                        <a class="dropdown-item" href="managerContact"><i
                                                 class="fas fa-headset mr-2"></i>Hỗ trợ đơn hàng</a>
-                                        <a class="dropdown-item text-white" href="managerNews"><i
+                                        <a class="dropdown-item" href="managerNews"><i
                                                 class="fas fa-newspaper mr-2"></i>Tin tức shop</a>
-                                        <a class="dropdown-item text-white" href="managerStaff"><i
+                                        <a class="dropdown-item" href="managerStaff"><i
                                                 class="fas fa-users-cog mr-2"></i>Nhân sự shop</a>
-                                        <a class="dropdown-item text-white" href="feedbacks"><i
-                                                class="fas fa-comments mr-2"></i>Đánh giá</a>
-                                        <a class="dropdown-item text-white" href="statistic"><i
+                                        <a class="dropdown-item" href="feedbacks"><i
+                                                class="fas fa-comments mr-2"></i>Phản hồi</a>
+                                        <a class="dropdown-item" href="statistic"><i
                                                 class="fas fa-chart-line mr-2"></i>Thống kê</a>
                                     </c:if>
                                     <c:if test="${sessionScope.acc.role == 'shipper'}">
-                                        <a class="dropdown-item text-white" href="orders"><i
+                                        <a class="dropdown-item" href="orders"><i
                                                 class="fas fa-truck mr-2"></i>Đơn giao hàng</a>
                                     </c:if>
                                     <c:if test="${sessionScope.acc.role == 'warehouse_manager'}">
-                                        <a class="dropdown-item text-white" href="manager"><i
+                                        <a class="dropdown-item" href="manager"><i
                                                 class="fas fa-warehouse mr-2"></i>Quản lý kho</a>
-                                        <a class="dropdown-item text-white" href="stockHistory"><i
+                                        <a class="dropdown-item" href="stockHistory"><i
                                                 class="fas fa-history mr-2"></i>Lịch sử kho</a>
                                     </c:if>
                                     <c:if test="${sessionScope.acc.role == 'admin'}">
-                                        <a class="dropdown-item text-white" href="managerAccount"><i
+                                        <a class="dropdown-item" href="managerAccount"><i
                                                 class="fas fa-users mr-2"></i>Tài khoản</a>
-                                        <a class="dropdown-item text-white" href="manageStore"><i
+                                        <a class="dropdown-item" href="manageStore"><i
                                                 class="fas fa-store-alt mr-2"></i>Cửa hàng</a>
-                                        <a class="dropdown-item text-white" href="homeSetting"><i
+                                        <a class="dropdown-item" href="homeSetting"><i
                                                 class="fas fa-window-maximize mr-2"></i>Cài đặt Home</a>
-                                        <a class="dropdown-item text-white" href="managerNews"><i
+                                        <a class="dropdown-item" href="managerNews"><i
                                                 class="fas fa-newspaper mr-2"></i>Tin tức hệ thống</a>
-                                        <a class="dropdown-item text-white" href="managerContact"><i
+                                        <a class="dropdown-item" href="managerContact"><i
                                                 class="fas fa-headset mr-2"></i>Kiếu nại/Liên hệ</a>
-                                        <a class="dropdown-item text-white" href="vouchers"><i
+                                        <a class="dropdown-item" href="vouchers"><i
                                                 class="fas fa-ticket mr-2"></i>Voucher hệ thống</a>
-                                        <a class="dropdown-item text-white" href="feedbacks"><i
+                                        <a class="dropdown-item" href="feedbacks"><i
                                                 class="fas fa-comments mr-2"></i>Phản hồi hệ thống</a>
-                                        <a class="dropdown-item text-white" href="statistic"><i
+                                        <a class="dropdown-item" href="statistic"><i
                                                 class="fas fa-chart-pie mr-2"></i>Tổng quan</a>
                                     </c:if>
                                 </div>
@@ -275,36 +289,3 @@
             </div>
         </nav>
         <jsp:include page="/components/toastNotification.jsp" />
-
-
-<script>
-    // Global Force Opaque Script for Modals
-    (function() {
-        function forceOpaque() {
-            const modals = document.querySelectorAll('.modal-content');
-            modals.forEach(modal => {
-                modal.style.setProperty('background-color', '#1e293b', 'important');
-                modal.style.setProperty('background', '#1e293b', 'important');
-                modal.style.setProperty('backdrop-filter', 'none', 'important');
-                modal.style.setProperty('opacity', '1', 'important');
-            });
-            
-            const inputs = document.querySelectorAll('.modal-content .form-control, .modal-content select, .modal-content textarea');
-            inputs.forEach(input => {
-                input.style.setProperty('background-color', '#0f172a', 'important');
-                input.style.setProperty('opacity', '1', 'important');
-            });
-        }
-
-        // Run on load
-        document.addEventListener('DOMContentLoaded', forceOpaque);
-        
-        // Run when any modal is shown (Bootstrap 4 event)
-        $(document).on('shown.bs.modal', function () {
-            forceOpaque();
-        });
-
-        // Periodic check for dynamic content
-        setInterval(forceOpaque, 1000);
-    })();
-</script>

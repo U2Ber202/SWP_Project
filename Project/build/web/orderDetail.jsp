@@ -19,16 +19,16 @@
             :root {
                 --primary: #ea580c;
                 --primary-dark: #c2410c;
-                --bg: #0f172a;
-                --card-bg: #1e293b;
-                --glass: #0f172a;
-                --border: rgba(255, 255, 255, 0.1);
+                /* Using theme variables */
+                --local-bg: var(--bg);
+                --local-card-bg: var(--card-bg);
+                --local-border: var(--border);
             }
 
             body {
                 font-family: 'Be Vietnam Pro', sans-serif;
                 background-color: var(--bg) !important;
-                color: #f1f5f9;
+                color: var(--text-main);
                 padding-bottom: 40px;
             }
 
@@ -38,14 +38,14 @@
                 backdrop-filter: none;
                 border: 1px solid var(--border);
                 border-radius: 20px;
-                box-shadow: 0 10px 40px #0f172a;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
                 overflow: hidden;
             }
 
             /* Header */
             .admin-header {
-                background: #0f172a;
-                color: #fff;
+                background: var(--bg);
+                color: var(--text-main);
                 padding: 25px 30px;
                 border-bottom: 1px solid var(--border);
                 display: flex;
@@ -78,16 +78,16 @@
 
             .custom-table {
                 margin-bottom: 0;
-                color: #f1f5f9;
+                color: var(--text-main);
             }
 
             .custom-table thead th {
                 border-bottom: 1px solid var(--border);
                 border-top: none;
-                color: #94a3b8;
+                color: var(--text-muted);
                 font-weight: 600;
                 padding: 15px 20px;
-                background-color: #0f172a;
+                background-color: var(--bg);
                 text-transform: uppercase;
                 font-size: 0.85rem;
                 letter-spacing: 0.5px;
@@ -106,7 +106,8 @@
             }
 
             .custom-table tbody tr:hover {
-                background-color: #1e293b;
+                background-color: var(--bg);
+                opacity: 0.9;
             }
 
             /* Product Image Thumbnail */
@@ -122,7 +123,7 @@
 
             .product-name {
                 font-weight: 600;
-                color: #e2e8f0;
+                color: var(--text-main);
                 margin: 0;
             }
 
@@ -144,9 +145,9 @@
             }
 
             .btn-custom-secondary:hover {
-                background-color: var(--glass);
-                color: white;
-                border-color: var(--border);
+                background-color: var(--bg);
+                color: var(--primary);
+                border-color: var(--primary);
             }
             
             .footer-actions {
@@ -158,11 +159,11 @@
             
             /* Custom text colors for dark mode */
             .text-price {
-                color: #94a3b8;
+                color: var(--text-muted);
             }
             
             .text-quantity {
-                color: #e2e8f0;
+                color: var(--text-main);
             }
             
             .text-total-money {
@@ -196,7 +197,7 @@
                         <tbody>
                             <c:forEach items="${orderDetails}" var="detail" varStatus="loop">
                                 <tr>
-                                    <td class="text-center" style="color: #64748b;">${detail.id}</td>
+                                    <td class="text-center" style="color: var(--text-muted);">${detail.id}</td>
                                     
                                     <td>
                                         <img src="${detail.productImage}" class="product-img" alt="${detail.productName}" onerror="this.src='https://via.placeholder.com/70?text=No+Image'" />

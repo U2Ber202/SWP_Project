@@ -11,20 +11,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        :root {
-            --primary: #ea580c;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --border: rgba(255, 255, 255, 0.1);
-        }
-        body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: #f1f5f9; padding-bottom: 40px; }
-        .glass-card { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px #0f172a; overflow: hidden; margin-bottom: 30px; }
-        .card-header-custom { background: #0f172a; padding: 20px 30px; border-bottom: 1px solid var(--border); }
-        .form-control { background: #0f172a !important; border: 1px solid var(--border) !important; color: white !important; }
-        .form-control:focus { background: #0f172a !important; border-color: var(--primary) !important; color: white !important; box-shadow: none; }
+        body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: var(--text-main); padding-bottom: 40px; }
+        .glass-card { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 30px; }
+        .card-header-custom { background: var(--bg); padding: 20px 30px; border-bottom: 1px solid var(--border); }
+        .form-control { background: var(--bg) !important; border: 1px solid var(--border) !important; color: var(--text-main) !important; }
+        .form-control:focus { background: var(--bg) !important; border-color: var(--primary) !important; color: var(--text-main) !important; box-shadow: none; }
         .btn-primary-custom { background-color: var(--primary); border: none; font-weight: 600; border-radius: 8px; }
-        .table { color: #f1f5f9; }
-        .table thead th { border-top: none; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.1); color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; }
+        .table { color: var(--text-main); }
+        .table thead th { border-top: none; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.05); color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; }
         .table td { border-top: 1px solid var(--border); vertical-align: middle; }
         .badge-role { border-radius: 30px; padding: 5px 12px; font-size: 0.75rem; }
         .history-item { border-left: 2px solid var(--primary); padding-left: 15px; margin-bottom: 15px; }
@@ -129,7 +123,7 @@
                                 <div class="small font-weight-bold text-warning">
                                     ${h.actionType == 'ADD' ? 'THÊM MỚI' : 'CẬP NHẬT'}
                                 </div>
-                                <div class="small text-white mb-1">${h.details}</div>
+                                <div class="small text-main mb-1">${h.details}</div>
                                 <div class="text-muted" style="font-size: 0.7rem;">
                                     <i class="fas fa-clock mr-1"></i><fmt:formatDate value="${h.actionAt}" pattern="dd/MM/yyyy HH:mm"/>
                                 </div>
@@ -147,12 +141,12 @@
     <!-- Add Modal -->
     <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
         <div class="modal-dialog">
-            <div class="modal-content bg-dark text-white border-secondary shadow-lg">
+            <div class="modal-content shadow-lg">
                 <form action="managerStaff" method="post">
                     <input type="hidden" name="action" value="add">
-                    <div class="modal-header border-secondary">
+                    <div class="modal-header">
                         <h5 class="modal-title font-weight-bold">Tạo tài khoản nhân viên</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -187,7 +181,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="modal-footer border-secondary">
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary-custom px-4">Tạo tài khoản</button>
                     </div>
@@ -199,13 +193,13 @@
     <!-- Edit Modal -->
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
         <div class="modal-dialog">
-            <div class="modal-content bg-dark text-white border-secondary shadow-lg">
+            <div class="modal-content shadow-lg">
                 <form action="managerStaff" method="post">
                     <input type="hidden" name="action" value="edit">
                     <input type="hidden" name="id" id="edit-id">
-                    <div class="modal-header border-secondary">
+                    <div class="modal-header">
                         <h5 class="modal-title font-weight-bold">Cập nhật nhân viên</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
@@ -225,7 +219,7 @@
                             <label class="custom-control-label" for="edit-active">Cho phép hoạt động</label>
                         </div>
                     </div>
-                    <div class="modal-footer border-secondary">
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary-custom px-4">Lưu thay đổi</button>
                     </div>

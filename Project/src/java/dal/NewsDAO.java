@@ -23,6 +23,7 @@ public class NewsDAO extends DBContext {
         n.setCreatedAt(rs.getTimestamp("created_at"));
         int storeId = rs.getInt("store_id");
         n.setStoreId(rs.wasNull() ? null : storeId);
+        n.setIsVisible(rs.getBoolean("is_visible"));
         try {
             n.setStoreName(rs.getString("store_name"));
         } catch (SQLException e) {
@@ -37,8 +38,16 @@ public class NewsDAO extends DBContext {
         return getBySql(SELECT_BASE + " ORDER BY n.created_at DESC");
     }
 
+    public List<News> getAllVisibleNews() {
+        return getBySql(SELECT_BASE + " WHERE n.is_visible = 1 ORDER BY n.created_at DESC");
+    }
+
     public List<News> getSystemNews() {
         return getBySql(SELECT_BASE + " WHERE n.store_id IS NULL ORDER BY n.created_at DESC");
+    }
+
+    public List<News> getVisibleSystemNews() {
+        return getBySql(SELECT_BASE + " WHERE n.store_id IS NULL AND n.is_visible = 1 ORDER BY n.created_at DESC");
     }
 
     public List<News> getNewsForAdmin() {
@@ -48,9 +57,17 @@ public class NewsDAO extends DBContext {
     public List<News> getNewsByStore(int storeId) {
         return getBySql(SELECT_BASE + " WHERE n.store_id IS NULL OR n.store_id = ? ORDER BY n.created_at DESC", storeId);
     }
+
+    public List<News> getVisibleNewsByStore(int storeId) {
+        return getBySql(SELECT_BASE + " WHERE (n.store_id IS NULL OR n.store_id = ?) AND n.is_visible = 1 ORDER BY n.created_at DESC", storeId);
+    }
     
     public List<News> getOnlyStoreNews(int storeId) {
         return getBySql(SELECT_BASE + " WHERE n.store_id = ? ORDER BY n.created_at DESC", storeId);
+    }
+
+    public List<News> getVisibleOnlyStoreNews(int storeId) {
+        return getBySql(SELECT_BASE + " WHERE n.store_id = ? AND n.is_visible = 1 ORDER BY n.created_at DESC", storeId);
     }
 
     public News getNewsById(int id) {
@@ -58,17 +75,24 @@ public class NewsDAO extends DBContext {
     }
 
     public void insert(News n) {
-        executeUpdate("INSERT INTO News (title, content, image, store_id) VALUES (?, ?, ?, ?)",
-                n.getTitle(), n.getContent(), n.getImage(), n.getStoreId());
+        executeUpdate("INSERT INTO News (title, content, image, store_id, is_visible) VALUES (?, ?, ?, ?, ?)",
+                n.getTitle(), n.getContent(), n.getImage(), n.getStoreId(), n.isIsVisible());
     }
 
     public void update(News n) {
-        executeUpdate("UPDATE News SET title = ?, content = ?, image = ?, store_id = ? WHERE id = ?",
-                n.getTitle(), n.getContent(), n.getImage(), n.getStoreId(), n.getId());
+        executeUpdate("UPDATE News SET title = ?, content = ?, image = ?, store_id = ?, is_visible = ? WHERE id = ?",
+                n.getTitle(), n.getContent(), n.getImage(), n.getStoreId(), n.isIsVisible(), n.getId());
+    }
+
+    public void updateStatus(int id, boolean isVisible) {
+        executeUpdate("UPDATE News SET is_visible = ? WHERE id = ?", isVisible, id);
     }
 
     public void delete(int id) {
-        executeUpdate("DELETE FROM News WHERE id = ?", id);
+        // Instead of deleting, we could mark as invisible, but the user said "Bài đăng chỉ có Visible/Invisible chứ không có xóa"
+        // So we might want to keep the delete method but make it do nothing or change it to updateStatus.
+        // I'll keep it but it will just hide it.
+        updateStatus(id, false);
     }
 
     private List<News> getBySql(String sql, Object... params) {
