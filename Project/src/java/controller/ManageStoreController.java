@@ -47,11 +47,10 @@ public class ManageStoreController extends HttpServlet {
 
             if (ValidationUtil.isBlank(storeName) || ownerId == null) {
                 error = "Tên cửa hàng và chủ sở hữu không được để trống.";
-            } else if (storeDAO.isStoreNameExist(storeName)) {                           // ← THÊM
-                error = "Tên cửa hàng bị trùng. Vui lòng nhập tên cửa hàng khác";
-
             } else if (storeName.length() < 5 || storeName.length() > 40) {
                 error = "Tên cửa hàng phải từ 5 đến 40 ký tự.";
+            } else if (storeDAO.isStoreNameExist(storeName)) {
+                error = "Tên cửa hàng bị trùng lặp. Vui lòng nhập tên khác.";
             } else {
                 Account owner = accountDAO.getAccountById(ownerId);
                 Account warehouseManager = warehouseManagerId == null ? null : accountDAO.getAccountById(warehouseManagerId);
@@ -81,25 +80,25 @@ public class ManageStoreController extends HttpServlet {
                     if (storeDAO.toggleStoreStatus(storeId)) {
                         message = "Cập nhật trạng thái cửa hàng thành công.";
                         session.setAttribute("success", message);
-                        
+
                         // Notify Owner
                         Account owner = accountDAO.getAccountById(store.getOwnerId());
                         if (owner != null && owner.getEmail() != null) {
                             String subject = "[V-SNKR] Thông báo trạng thái cửa hàng " + store.getName();
                             String content = "Chào " + owner.getFullname() + ",\n\n"
-                                    + "Cửa hàng '" + store.getName() + "' của bạn đã được chuyển sang trạng thái: " 
+                                    + "Cửa hàng '" + store.getName() + "' của bạn đã được chuyển sang trạng thái: "
                                     + (newStatus ? "ĐANG HOẠT ĐỘNG (Active)" : "NGỪNG HOẠT ĐỘNG (Inactive)") + ".\n\n"
                                     + "Vui lòng liên hệ Admin nếu có bất kỳ thắc mắc nào.";
                             SendMail.sendEmailWithContent(owner.getEmail(), subject, content);
                         }
-                        
+
                         // Notify Warehouse Manager
                         if (store.getWarehouseManagerId() > 0) {
                             Account wm = accountDAO.getAccountById(store.getWarehouseManagerId());
                             if (wm != null && wm.getEmail() != null) {
                                 String subject = "[V-SNKR] Thông báo trạng thái cửa hàng " + store.getName();
                                 String content = "Chào " + wm.getFullname() + ",\n\n"
-                                        + "Cửa hàng '" + store.getName() + "' mà bạn đang quản lý đã được chuyển sang trạng thái: " 
+                                        + "Cửa hàng '" + store.getName() + "' mà bạn đang quản lý đã được chuyển sang trạng thái: "
                                         + (newStatus ? "ĐANG HOẠT ĐỘNG (Active)" : "NGỪNG HOẠT ĐỘNG (Inactive)") + ".\n\n"
                                         + "Vui lòng liên hệ Admin hoặc Chủ cửa hàng để biết thêm chi tiết.";
                                 SendMail.sendEmailWithContent(wm.getEmail(), subject, content);
@@ -122,15 +121,14 @@ public class ManageStoreController extends HttpServlet {
                 error = "Thông tin cửa hàng không hợp lệ.";
             } else if (storeName.length() < 5 || storeName.length() > 40) {
                 error = "Tên cửa hàng phải từ 5 đến 40 ký tự.";
+            } else if (storeDAO.isStoreNameExist(storeName)) {                         // ← THÊM VÀO ĐÂY
+                error = "Tên cửa hàng bị trùng lặp. Vui lòng nhập tên khác.";
             } else {
                 Store store = storeDAO.getStoreById(storeId);
                 Account owner = accountDAO.getAccountById(ownerId);
                 Account warehouseManager = warehouseManagerId == null ? null : accountDAO.getAccountById(warehouseManagerId);
                 if (store == null) {
                     error = "Cửa hàng không tồn tại.";
-                } else if (storeDAO.isStoreNameExistForAnotherStore(storeName, storeId)) {   // ← THÊM
-                    error = "Tên cửa hàng bị trùng. Vui lòng nhập tên cửa hàng khác";
-
                 } else if (owner == null || !RoleHelper.isOwner(owner)) {
                     error = "Chủ sở hữu phải là tài khoản Owner hợp lệ.";
                 } else if (warehouseManagerId != null && (warehouseManager == null || !RoleHelper.isWarehouseManager(warehouseManager))) {
