@@ -14,16 +14,16 @@
         :root {
             --primary: #ea580c;
             --bg: #0f172a;
-            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-bg: #1e293b;
             --border: rgba(255, 255, 255, 0.1);
         }
         body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: #f1f5f9; padding-bottom: 40px; }
-        .admin-wrapper { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); overflow: hidden; }
-        .admin-header { background: rgba(0, 0, 0, 0.2); padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .admin-wrapper { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px #0f172a; overflow: hidden; }
+        .admin-header { background: #0f172a; padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .create-form { background-color: rgba(0, 0, 0, 0.15); padding: 25px 30px; border-bottom: 1px solid var(--border); }
-        .form-control { background: rgba(0, 0, 0, 0.2) !important; border: 1px solid var(--border) !important; color: white !important; border-radius: 8px !important; }
+        .form-control { background: #0f172a !important; border: 1px solid var(--border) !important; color: white !important; border-radius: 8px !important; }
         .custom-table { margin-bottom: 0; color: #f1f5f9; }
-        .custom-table thead th { border-bottom: 1px solid var(--border); border-top: none; color: #94a3b8; padding: 15px 20px; background-color: rgba(0, 0, 0, 0.2); text-transform: uppercase; font-size: 0.85rem; }
+        .custom-table thead th { border-bottom: 1px solid var(--border); border-top: none; color: #94a3b8; padding: 15px 20px; background-color: #0f172a; text-transform: uppercase; font-size: 0.85rem; }
         .custom-table tbody td { padding: 15px 20px; vertical-align: middle; border-top: 1px solid var(--border); }
         .news-img { width: 80px; height: 50px; object-fit: cover; border-radius: 6px; }
         .btn-primary-custom { background-color: var(--primary); border: none; font-weight: 600; border-radius: 8px; }
@@ -167,3 +167,6 @@
     </script>
 </body>
 </html>
+
+
+

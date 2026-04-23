@@ -13,7 +13,7 @@
             :root {
                 --primary: #ea580c;
                 --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
+                --card-bg: #1e293b;
                 --border: rgba(255, 255, 255, 0.1);
             }
             body { background: var(--bg); color: #f1f5f9; font-family: 'Be Vietnam Pro', sans-serif; padding-top: 50px; }
@@ -95,3 +95,6 @@
         </div>
     </body>
 </html>
+
+
+

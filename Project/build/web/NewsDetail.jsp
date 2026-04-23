@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        :root { --primary: #ea580c; --bg: #0f172a; --card-bg: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        :root { --primary: #ea580c; --bg: #0f172a; --card-bg: #1e293b; --border: rgba(255, 255, 255, 0.1); }
         body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: #f1f5f9; }
         .news-header { position: relative; height: 400px; border-radius: 30px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .news-header img { width: 100%; height: 100%; object-fit: cover; }
@@ -57,3 +57,6 @@
     <%@ include file="components/footerComponent.jsp" %>
 </body>
 </html>
+
+
+

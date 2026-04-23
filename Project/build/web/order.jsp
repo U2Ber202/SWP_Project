@@ -18,8 +18,8 @@
                         --primary: #ea580c;
                         --primary-dark: #c2410c;
                         --bg: #0f172a;
-                        --card-bg: rgba(255, 255, 255, 0.05);
-                        --glass: rgba(255, 255, 255, 0.03);
+                        --card-bg: #1e293b;
+                        --glass: #0f172a;
                         --border: rgba(255, 255, 255, 0.1);
                     }
 
@@ -32,15 +32,15 @@
 
                     .admin-wrapper {
                         background: var(--card-bg);
-                        backdrop-filter: blur(12px);
+                        backdrop-filter: none;
                         border: 1px solid var(--border);
                         border-radius: 20px;
-                        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                        box-shadow: 0 10px 40px #0f172a;
                         overflow: hidden;
                     }
 
                     .admin-header {
-                        background: rgba(0, 0, 0, 0.2);
+                        background: #0f172a;
                         color: #fff;
                         padding: 25px 30px;
                         border-bottom: 1px solid var(--border);
@@ -86,7 +86,7 @@
                         color: #94a3b8;
                         font-weight: 600;
                         padding: 15px 20px;
-                        background-color: rgba(0, 0, 0, 0.2);
+                        background-color: #0f172a;
                         text-transform: uppercase;
                         font-size: 0.85rem;
                     }
@@ -139,7 +139,7 @@
 
                     .form-select,
                     .form-control {
-                        background: rgba(0, 0, 0, 0.2) !important;
+                        background: #0f172a !important;
                         border: 1px solid var(--border) !important;
                         color: white !important;
                     }
@@ -273,7 +273,7 @@
                                     </c:if>
                                 </div>
                                 <c:if test="${totalPage >= 1}">
-                                    <div class="card-footer border-top-0 bg-transparent pb-4 mt-3">
+                                    <div class="card-footer border-top-0 bg-solid-dark pb-4 mt-3">
                                         <nav aria-label="Page navigation">
                                             <ul class="pagination justify-content-center mb-0">
                                                 <li class="page-item ${page <= 1 ? 'disabled' : ''}">
@@ -298,3 +298,5 @@
             </body>
 
             </html>
+
+

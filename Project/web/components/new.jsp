@@ -49,7 +49,7 @@
                                     </div>
                                 </div>
                                 <!-- Product actions-->
-                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-solid-dark">
                                     <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="add-to-cart?productId=${L.id}">Thêm vào giỏ hàng</a></div>
                                 </div>
                             </div>
@@ -64,3 +64,6 @@
        </c:if>
     </body>
 </html>
+
+
+

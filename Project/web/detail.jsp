@@ -28,7 +28,7 @@
                     :root {
                         --primary: #ea580c;
                         --bg: #0f172a;
-                        --card-bg: rgba(255, 255, 255, 0.05);
+                        --card-bg: #1e293b;
                         --border: rgba(255, 255, 255, 0.1);
                     }
 
@@ -40,7 +40,7 @@
 
                     .detail-card {
                         background: var(--card-bg);
-                        backdrop-filter: blur(12px);
+                        backdrop-filter: none;
                         border: 1px solid var(--border);
                         border-radius: 24px;
                         padding: 2.5rem;
@@ -49,7 +49,7 @@
                     .product-img {
                         border-radius: 20px;
                         border: 1px solid var(--border);
-                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                        box-shadow: 0 20px 40px #0f172a;
                     }
 
                     .price-large {
@@ -70,7 +70,7 @@
                     .stock-info {
                         display: inline-block;
                         padding: 0.5rem 1rem;
-                        background: rgba(255, 255, 255, 0.05);
+                        background: #1e293b;
                         border-radius: 10px;
                         font-size: 0.9rem;
                     }
@@ -103,7 +103,7 @@
                                     </div>
                                     <div class="col-lg-6 px-lg-5">
                                         <nav aria-label="breadcrumb">
-                                            <ol class="breadcrumb bg-transparent p-0">
+                                            <ol class="breadcrumb bg-solid-dark p-0">
                                                 <li class="breadcrumb-item"><a href="home"
                                                         class="text-muted small">Trang chủ</a></li>
                                                 <li class="breadcrumb-item active text-white small" aria-current="page">
@@ -149,7 +149,7 @@
                                         </h4>
                                         <c:forEach items="${listFeedbacks}" var="f">
                                             <div class="mb-4 p-4"
-                                                style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 18px;">
+                                                style="background: #0f172a; border: 1px solid var(--border); border-radius: 18px;">
                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                     <div class="d-flex align-items-center">
                                                         <h6 class="font-weight-bold mb-0 mr-2">${f.userName}</h6>
@@ -226,14 +226,14 @@
                                         <c:choose>
                                             <c:when test="${sessionScope.acc == null}">
                                                 <div class="p-4 text-center"
-                                                    style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 18px;">
+                                                    style="background: #0f172a; border: 1px solid var(--border); border-radius: 18px;">
                                                     <p class="small text-muted">Vui lòng đăng nhập để viết đánh giá.</p>
                                                     <a href="login" class="btn btn-outline-warning btn-sm">Đăng nhập ngay</a>
                                                 </div>
                                             </c:when>
                                             <c:when test="${sessionScope.acc.role != 'customer'}">
                                                 <div class="p-4 text-center"
-                                                    style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 18px;">
+                                                    style="background: #0f172a; border: 1px solid var(--border); border-radius: 18px;">
                                                     <p class="small text-muted">Tài khoản nhân viên/quản trị không thể gửi đánh giá.</p>
                                                     <i class="fas fa-user-shield fa-2x text-warning opacity-50 mt-2"></i>
                                                 </div>
@@ -268,7 +268,7 @@
                         </div>
                         <div class="modal fade" id="editFeedbackModal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
-                                <div class="modal-content text-white" style="background: #1e293b; border-radius: 20px; border: 1px solid var(--border);">
+                                <div class="modal-content text-white" class="modal-content">
                                     <div class="modal-header border-0">
                                         <h5 class="modal-title font-weight-bold">Chỉnh sửa đánh giá</h5>
                                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
@@ -338,3 +338,5 @@
             </body>
 
             </html>
+
+

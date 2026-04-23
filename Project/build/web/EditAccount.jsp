@@ -21,8 +21,8 @@
                     --primary: #ea580c;
                     --primary-dark: #c2410c;
                     --bg: #0f172a;
-                    --card-bg: rgba(255, 255, 255, 0.05);
-                    --glass: rgba(255, 255, 255, 0.03);
+                    --card-bg: #1e293b;
+                    --glass: #0f172a;
                     --border: rgba(255, 255, 255, 0.1);
                 }
 
@@ -40,10 +40,9 @@
                     padding: 40px 0;
                 }
 
-                /* Đồng bộ Card thành Glassmorphism */
+                /* Đồng bộ Card thành Opaque */
                 .edit-card {
-                    background: var(--card-bg);
-                    backdrop-filter: blur(12px);
+                    background: #1e293b !important;
                     border: 1px solid var(--border);
                     border-radius: 24px;
                     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
@@ -51,10 +50,11 @@
                     width: 100%;
                     max-width: 700px;
                     margin: auto;
+                    backdrop-filter: none !important;
                 }
 
                 .edit-card-header {
-                    background: rgba(0, 0, 0, 0.2);
+                    background: #1e293b !important;
                     color: #ffffff;
                     padding: 25px 30px;
                     border-bottom: 1px solid var(--border);
@@ -91,7 +91,7 @@
 
                 /* Đồng bộ Input Form */
                 .form-control {
-                    background: rgba(0, 0, 0, 0.2) !important;
+                    background: #0f172a !important;
                     border: 1px solid var(--border);
                     color: white !important;
                     border-radius: 0 8px 8px 0;
@@ -101,20 +101,20 @@
                 }
 
                 .form-control:focus {
-                    background: rgba(0, 0, 0, 0.3) !important;
+                    background: #0f172a !important;
                     border-color: var(--primary);
                     box-shadow: none;
                 }
 
                 /* Trường không được sửa (readonly) */
                 .form-control[readonly] {
-                    background-color: rgba(0, 0, 0, 0.4) !important;
+                    background-color: #111827 !important;
                     color: #64748b !important;
                     cursor: not-allowed;
                 }
 
                 .input-group-text {
-                    background-color: rgba(0, 0, 0, 0.3);
+                    background-color: #0f172a;
                     border: 1px solid var(--border);
                     border-right: none;
                     color: #94a3b8;
@@ -166,7 +166,7 @@
                     padding: 14px 18px;
                     border: 1px solid var(--border);
                     border-radius: 14px;
-                    background: rgba(0, 0, 0, 0.2);
+                    background: #0f172a;
                 }
 
                 .status-switch-label {
@@ -360,3 +360,5 @@
         </body>
 
         </html>
+
+

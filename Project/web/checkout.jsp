@@ -22,8 +22,8 @@
                 --primary: #ea580c;
                 --primary-dark: #c2410c;
                 --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
-                --glass: rgba(255, 255, 255, 0.03);
+                --card-bg: #1e293b;
+                --glass: #0f172a;
                 --border: rgba(255, 255, 255, 0.1);
                 --vnpay-color: #38bdf8; /* Xanh dương sáng thân thiện với Dark Mode */
             }
@@ -36,7 +36,7 @@
 
             /* Page Header */
             .checkout-header {
-                background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
+                background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, #0f172a 100%);
                 color: white;
                 padding: 40px 0;
                 margin-bottom: 40px;
@@ -58,7 +58,7 @@
             /* Cards Glassmorphism */
             .checkout-card {
                 background: var(--card-bg);
-                backdrop-filter: blur(12px);
+                backdrop-filter: none;
                 border-radius: 20px;
                 box-shadow: 0 10px 40px rgba(0,0,0,0.3);
                 padding: 30px;
@@ -162,7 +162,7 @@
 
             /* Total Box */
             .total-box {
-                background: rgba(0, 0, 0, 0.2);
+                background: #0f172a;
                 border-radius: 12px;
                 padding: 20px;
                 margin-bottom: 25px;
@@ -384,3 +384,6 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </body>
 </html>
+
+
+

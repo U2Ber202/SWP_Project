@@ -6,8 +6,8 @@
             @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
 
             .site-nav {
-                background: rgba(15, 23, 42, 0.8) !important;
-                backdrop-filter: blur(15px);
+                background: #0f172a !important;
+                backdrop-filter: none;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.08);
                 padding: 0.8rem 0;
                 font-family: 'Be Vietnam Pro', sans-serif;
@@ -33,7 +33,7 @@
 
             .cart-btn {
                 position: relative;
-                background: rgba(255, 255, 255, 0.05);
+                background: #1e293b;
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 color: white !important;
                 border-radius: 12px;
@@ -61,7 +61,7 @@
             }
 
             .nav-search {
-                background: rgba(0, 0, 0, 0.2) !important;
+                background: #0f172a !important;
                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
                 color: white !important;
                 border-radius: 10px !important;
@@ -81,7 +81,7 @@
             }
 
             .theme-toggle-btn {
-                background: rgba(255, 255, 255, 0.05);
+                background: #1e293b;
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 color: var(--text-main);
                 width: 38px;
@@ -275,3 +275,36 @@
             </div>
         </nav>
         <jsp:include page="/components/toastNotification.jsp" />
+
+
+<script>
+    // Global Force Opaque Script for Modals
+    (function() {
+        function forceOpaque() {
+            const modals = document.querySelectorAll('.modal-content');
+            modals.forEach(modal => {
+                modal.style.setProperty('background-color', '#1e293b', 'important');
+                modal.style.setProperty('background', '#1e293b', 'important');
+                modal.style.setProperty('backdrop-filter', 'none', 'important');
+                modal.style.setProperty('opacity', '1', 'important');
+            });
+            
+            const inputs = document.querySelectorAll('.modal-content .form-control, .modal-content select, .modal-content textarea');
+            inputs.forEach(input => {
+                input.style.setProperty('background-color', '#0f172a', 'important');
+                input.style.setProperty('opacity', '1', 'important');
+            });
+        }
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', forceOpaque);
+        
+        // Run when any modal is shown (Bootstrap 4 event)
+        $(document).on('shown.bs.modal', function () {
+            forceOpaque();
+        });
+
+        // Periodic check for dynamic content
+        setInterval(forceOpaque, 1000);
+    })();
+</script>

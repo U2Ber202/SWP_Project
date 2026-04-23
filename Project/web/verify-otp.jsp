@@ -19,8 +19,8 @@
                 --primary: #ea580c;
                 --primary-dark: #c2410c;
                 --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
-                --glass: rgba(255, 255, 255, 0.03);
+                --card-bg: #1e293b;
+                --glass: #0f172a;
                 --border: rgba(255, 255, 255, 0.1);
             }
 
@@ -40,7 +40,7 @@
             /* Card Glassmorphism */
             .card-custom {
                 background: var(--card-bg);
-                backdrop-filter: blur(15px);
+                backdrop-filter: none;
                 border: 1px solid var(--border);
                 border-radius: 20px;
                 box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
@@ -90,7 +90,7 @@
                 border: 2px solid var(--border);
                 border-radius: 12px;
                 padding: 15px;
-                background-color: rgba(0, 0, 0, 0.2) !important;
+                background-color: #0f172a !important;
                 transition: all 0.3s ease;
                 font-family: 'Be Vietnam Pro', sans-serif;
             }
@@ -98,7 +98,7 @@
             .otp-input:focus {
                 border-color: var(--primary);
                 box-shadow: none;
-                background-color: rgba(0, 0, 0, 0.3) !important;
+                background-color: #0f172a !important;
             }
             
             .otp-input::placeholder {
@@ -200,7 +200,7 @@
                                 <div class="d-flex justify-content-center align-items-center">
                                     <form action="send-otp" method="post" class="d-inline">
                                         <input type="hidden" name="email" value="${sessionScope.resetEmail}">
-                                        <button type="submit" class="auth-link border-0 bg-transparent p-0">
+                                        <button type="submit" class="auth-link border-0 bg-solid-dark p-0">
                                             <i class="fa-solid fa-rotate-right me-1"></i> Gửi lại mã
                                         </button>
                                     </form>
@@ -220,3 +220,6 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
+
+
+

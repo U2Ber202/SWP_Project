@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        :root { --primary: #ea580c; --bg: #0f172a; --card-bg: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        :root { --primary: #ea580c; --bg: #0f172a; --card-bg: #1e293b; --border: rgba(255, 255, 255, 0.1); }
         body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: #f1f5f9; }
         .order-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 20px; transition: 0.3s; }
         .order-card:hover { border-color: var(--primary); transform: translateY(-5px); }
@@ -20,10 +20,10 @@
         .status-other { background: rgba(255, 255, 255, 0.1); color: #94a3b8; }
         .btn-contact { background: rgba(234, 88, 12, 0.1); border: 1px solid var(--primary); color: var(--primary); border-radius: 10px; font-weight: 600; }
         .btn-contact:hover { background: var(--primary); color: white; }
-        .modal-content { background: #1e293b !important; border: 1px solid var(--border) !important; border-radius: 20px !important; overflow: hidden; }
+        
         .modal-header { border-bottom: 1px solid var(--border) !important; }
         .modal-footer { border-top: 1px solid var(--border) !important; }
-        .bg-glass { background: rgba(255, 255, 255, 0.03) !important; border: 1px solid var(--border); }
+        .bg-glass { background: #0f172a !important; border: 1px solid var(--border); }
         .italic { font-style: italic; }
     </style>
     <script src="js/theme.js"></script>
@@ -145,7 +145,7 @@
                         <p class="small text-muted">Vui lòng mô tả vấn đề bạn gặp phải với đơn hàng này (Ví dụ: Sai kích thước, hàng lỗi, hoàn tiền...).</p>
                         <div class="form-group">
                             <label>Nội dung lời nhắn</label>
-                            <textarea class="form-control bg-transparent text-white border-secondary" name="message" rows="5" required placeholder="Nhập nội dung tại đây..."></textarea>
+                            <textarea class="form-control bg-solid-dark text-white border-secondary" name="message" rows="5" required placeholder="Nhập nội dung tại đây..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer border-secondary">
@@ -215,3 +215,6 @@
     </script>
 </body>
 </html>
+
+
+

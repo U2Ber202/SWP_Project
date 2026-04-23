@@ -19,8 +19,8 @@
                     --primary: #ea580c;
                     --primary-dark: #c2410c;
                     --bg: #0f172a;
-                    --card-bg: rgba(255, 255, 255, 0.05);
-                    --glass: rgba(255, 255, 255, 0.03);
+                    --card-bg: #1e293b;
+                    --glass: #0f172a;
                     --border: rgba(255, 255, 255, 0.1);
                 }
 
@@ -33,10 +33,10 @@
 
                 .panel {
                     background: var(--card-bg);
-                    backdrop-filter: blur(12px);
+                    backdrop-filter: none;
                     border: 1px solid var(--border);
                     border-radius: 24px;
-                    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 14px 40px #0f172a;
                     overflow: hidden;
                     margin-bottom: 24px;
                 }
@@ -97,7 +97,7 @@
                 .form-control,
                 .custom-select,
                 textarea.form-control {
-                    background: rgba(0, 0, 0, 0.2);
+                    background: #0f172a;
                     border: 1px solid var(--border);
                     color: white;
                     border-radius: 12px;
@@ -108,13 +108,7 @@
                     color: white;
                 }
 
-                .modal-content {
-                    background: #0f172a; /* Darker and more solid */
-                    color: #f1f5f9;
-                    border: 1px solid var(--border);
-                    border-radius: 24px;
-                    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-                }
+                
 
                 .modal-header,
                 .modal-footer {
@@ -127,7 +121,7 @@
                 }
 
                 .setting-box {
-                    background: rgba(255, 255, 255, 0.03);
+                    background: #0f172a;
                     border: 1px solid var(--border);
                     border-radius: 18px;
                     padding: 18px;
@@ -231,7 +225,7 @@
                                 </table>
                             </div>
                             <c:if test="${totalPage >= 1}">
-                                <div class="card-footer border-top-0 bg-transparent pb-4">
+                                <div class="card-footer border-top-0 bg-solid-dark pb-4">
                                     <nav aria-label="Page navigation">
                                         <ul class="pagination justify-content-center mb-0">
                                             <li class="page-item ${page <= 1 ? 'disabled' : ''}">
@@ -383,3 +377,5 @@
         </body>
 
         </html>
+
+

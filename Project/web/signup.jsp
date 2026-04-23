@@ -19,7 +19,7 @@
             --bg: #0f172a;
             --glass-bg: rgba(255, 255, 255, 0.07);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --input-bg: rgba(0, 0, 0, 0.3);
+            --input-bg: #0f172a;
         }
 
         body {
@@ -101,8 +101,8 @@
 
         .card-custom {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
             border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 2.5rem;
@@ -284,3 +284,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+

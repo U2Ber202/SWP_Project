@@ -20,8 +20,8 @@
                 --primary: #ea580c;
                 --primary-dark: #c2410c;
                 --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
-                --glass: rgba(255, 255, 255, 0.03);
+                --card-bg: #1e293b;
+                --glass: #0f172a;
                 --border: rgba(255, 255, 255, 0.1);
             }
 
@@ -35,16 +35,16 @@
             /* Main Card Wrapper - Glassmorphism */
             .admin-wrapper {
                 background: var(--card-bg);
-                backdrop-filter: blur(12px);
+                backdrop-filter: none;
                 border: 1px solid var(--border);
                 border-radius: 20px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 10px 40px #0f172a;
                 overflow: hidden;
             }
 
             /* Header */
             .admin-header {
-                background: rgba(0, 0, 0, 0.2);
+                background: #0f172a;
                 color: #fff;
                 padding: 25px 30px;
                 border-bottom: 1px solid var(--border);
@@ -87,7 +87,7 @@
                 color: #94a3b8;
                 font-weight: 600;
                 padding: 15px 20px;
-                background-color: rgba(0, 0, 0, 0.2);
+                background-color: #0f172a;
                 text-transform: uppercase;
                 font-size: 0.85rem;
                 letter-spacing: 0.5px;
@@ -106,7 +106,7 @@
             }
 
             .custom-table tbody tr:hover {
-                background-color: rgba(255, 255, 255, 0.05);
+                background-color: #1e293b;
             }
 
             /* Product Image Thumbnail */
@@ -240,3 +240,6 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
+
+
+

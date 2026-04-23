@@ -14,7 +14,7 @@
             :root {
                 --primary: #ea580c;
                 --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
+                --card-bg: #1e293b;
                 --border: rgba(255, 255, 255, 0.1);
             }
             body { background: var(--bg); color: #f1f5f9; font-family: 'Be Vietnam Pro', sans-serif; }
@@ -40,7 +40,7 @@
                 transform: rotate(-15deg);
             }
             .transaction-table { background: var(--card-bg); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
-            .transaction-table th { background: rgba(0, 0, 0, 0.2); border: none; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; }
+            .transaction-table th { background: #0f172a; border: none; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; }
             .transaction-table td { border-top: 1px solid var(--border); vertical-align: middle; }
         </style>
     </head>
@@ -95,3 +95,6 @@
         </div>
     </body>
 </html>
+
+
+

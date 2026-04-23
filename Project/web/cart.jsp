@@ -15,7 +15,7 @@
             :root {
                 --primary: #ea580c;
                 --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
+                --card-bg: #1e293b;
                 --border: rgba(255, 255, 255, 0.1);
             }
             body {
@@ -25,7 +25,7 @@
             }
             .cart-card {
                 background: var(--card-bg);
-                backdrop-filter: blur(12px);
+                backdrop-filter: none;
                 border: 1px solid var(--border);
                 border-radius: 24px;
             }
@@ -246,3 +246,6 @@
         </script>
     </body>
 </html>
+
+
+

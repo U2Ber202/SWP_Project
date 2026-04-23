@@ -14,14 +14,14 @@
         :root {
             --primary: #ea580c;
             --bg: #0f172a;
-            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-bg: #1e293b;
             --border: rgba(255, 255, 255, 0.1);
         }
         body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: #f1f5f9; padding-bottom: 40px; }
-        .glass-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); overflow: hidden; margin-bottom: 30px; }
-        .card-header-custom { background: rgba(0, 0, 0, 0.2); padding: 20px 30px; border-bottom: 1px solid var(--border); }
-        .form-control { background: rgba(0, 0, 0, 0.2) !important; border: 1px solid var(--border) !important; color: white !important; }
-        .form-control:focus { background: rgba(0, 0, 0, 0.3) !important; border-color: var(--primary) !important; color: white !important; box-shadow: none; }
+        .glass-card { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px #0f172a; overflow: hidden; margin-bottom: 30px; }
+        .card-header-custom { background: #0f172a; padding: 20px 30px; border-bottom: 1px solid var(--border); }
+        .form-control { background: #0f172a !important; border: 1px solid var(--border) !important; color: white !important; }
+        .form-control:focus { background: #0f172a !important; border-color: var(--primary) !important; color: white !important; box-shadow: none; }
         .btn-primary-custom { background-color: var(--primary); border: none; font-weight: 600; border-radius: 8px; }
         .table { color: #f1f5f9; }
         .table thead th { border-top: none; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.1); color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; }
@@ -248,3 +248,6 @@
     </script>
 </body>
 </html>
+
+
+

@@ -21,8 +21,8 @@
                 --primary: #ea580c;
                 --primary-dark: #c2410c;
                 --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
-                --glass: rgba(255, 255, 255, 0.03);
+                --card-bg: #1e293b;
+                --glass: #0f172a;
                 --border: rgba(255, 255, 255, 0.1);
                 --success: #22c55e;
             }
@@ -57,7 +57,7 @@
             /* Receipt Card Glassmorphism */
             .receipt-card {
                 background: var(--card-bg);
-                backdrop-filter: blur(15px);
+                backdrop-filter: none;
                 border: 1px solid var(--border);
                 border-top: 5px solid var(--success);
                 border-radius: 20px;
@@ -82,7 +82,7 @@
             }
 
             .table thead.bg-light-custom {
-                background-color: rgba(0, 0, 0, 0.2);
+                background-color: #0f172a;
             }
 
             .table th {
@@ -104,7 +104,7 @@
                 width: 70px;
                 height: 70px;
                 object-fit: cover;
-                background: rgba(0, 0, 0, 0.3);
+                background: #0f172a;
                 border-radius: 12px;
                 padding: 5px;
                 border: 1px solid var(--border);
@@ -118,7 +118,7 @@
 
             /* Total Box */
             .total-box {
-                background-color: rgba(0, 0, 0, 0.2);
+                background-color: #0f172a;
                 border-radius: 12px;
                 padding: 25px 30px;
                 display: flex;
@@ -273,3 +273,6 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </body>
 </html>
+
+
+

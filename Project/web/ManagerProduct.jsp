@@ -33,8 +33,8 @@
                             --primary: #ea580c;
                             --primary-dark: #c2410c;
                             --bg: #0f172a;
-                            --card-bg: rgba(255, 255, 255, 0.05);
-                            --glass: rgba(255, 255, 255, 0.03);
+                            --card-bg: #1e293b;
+                            --glass: #0f172a;
                             --border: rgba(255, 255, 255, 0.1);
                         }
 
@@ -45,17 +45,17 @@
                             padding-bottom: 40px;
                         }
 
-                        .card {
-                            background: var(--card-bg);
-                            backdrop-filter: blur(12px);
+                        .card { background: #1e293b !important; 
+                            background: #1e293b !important;
+                            backdrop-filter: none !important;
                             border: 1px solid var(--border) !important;
                             border-radius: 20px;
-                            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                            box-shadow: 0 10px 40px #0f172a;
                             overflow: hidden;
                         }
 
                         .card-header {
-                            background: rgba(0, 0, 0, 0.2) !important;
+                            background: #1e293b !important;
                             border-bottom: 1px solid var(--border) !important;
                             font-weight: 600;
                             color: white;
@@ -64,7 +64,7 @@
                         }
 
                         .form-control {
-                            background: rgba(0, 0, 0, 0.2) !important;
+                            background: #0f172a !important;
                             border: 1px solid var(--border);
                             color: white !important;
                             border-radius: 10px;
@@ -116,7 +116,7 @@
                             font-weight: 600;
                             text-transform: uppercase;
                             font-size: 0.85rem;
-                            background-color: rgba(0, 0, 0, 0.2);
+                            background-color: #0f172a;
                             padding: 15px 20px;
                         }
 
@@ -632,3 +632,5 @@
                 </body>
 
                 </html>
+
+

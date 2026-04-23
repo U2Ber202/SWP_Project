@@ -1,14 +1,14 @@
 :root {
     /* Chế độ Tối (Mặc định hiện tại) */
     --bg: #0f172a;
-    --card-bg: rgba(255, 255, 255, 0.05);
+    --card-bg: #1e293b; /* Solid color */
     --text-main: #f1f5f9;
     --text-muted: #94a3b8;
     --border: rgba(255, 255, 255, 0.1);
-    --glass: rgba(255, 255, 255, 0.03);
+    --glass: #0f172a; /* Solid color for inputs */
     --primary: #ea580c;
     --primary-dark: #c2410c;
-    --nav-bg: rgba(15, 23, 42, 0.8);
+    --nav-bg: rgba(15, 23, 42, 0.95); /* Nearly solid */
     --dropdown-bg: #1e293b;
 }
 
@@ -31,17 +31,26 @@ body {
 }
 
 /* Áp dụng biến cho các thành phần chung */
-.card, .detail-card, .product-card, .admin-wrapper, .filter-card {
-    background-color: var(--card-bg) !important;
-    border-color: var(--border) !important;
-    color: var(--text-main) !important;
-}
-
-.modal-content {
-    background-color: #1e293b !important; /* Solid background for modals */
+.card, .detail-card, .product-card, .admin-wrapper, .filter-card, .edit-card, .admin-setting-card {
+    background-color: #1e293b !important; /* Solid background for all form/content containers */
     border-color: var(--border) !important;
     color: var(--text-main) !important;
     backdrop-filter: none !important;
+}
+
+.modal-content, .modal-header, .modal-body, .modal-footer {
+    background-color: #1e293b !important;
+    background: #1e293b !important; /* Force solid color */
+    color: var(--text-main) !important;
+    border-color: var(--border) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    opacity: 1 !important;
+}
+
+div.modal-content {
+    background-color: #1e293b !important;
+    opacity: 1 !important;
 }
 
 .text-muted {
@@ -66,10 +75,11 @@ body {
     background-color: var(--glass) !important;
 }
 
-.form-control, .nav-search {
-    background-color: var(--glass) !important;
+.form-control, .nav-search, select, textarea {
+    background-color: #0f172a !important; /* Solid background for inputs */
     border-color: var(--border) !important;
     color: var(--text-main) !important;
+    opacity: 1 !important;
 }
 
 .breadcrumb-item.active {
@@ -375,4 +385,39 @@ html[data-theme="light"] .related-card:hover {
 
 html[data-theme="light"] img {
     filter: none;
+}
+/* ==========================================================================
+   GLOBAL OPAQUE OVERRIDES - FORCE NO TRANSPARENCY
+   ========================================================================== */
+.modal-content, .modal-header, .modal-body, .modal-footer,
+.card, .panel, .admin-wrapper, .edit-card, .detail-card, .product-card,
+.filter-card, .admin-setting-card, .transaction-table, .related-card, .bg-solid-dark {
+    background-color: #1e293b !important;
+    background: #1e293b !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    opacity: 1 !important;
+}
+
+.form-control, .nav-search, select, textarea, .custom-select, .bg-theme-input {
+    background-color: #0f172a !important;
+    background: #0f172a !important;
+    opacity: 1 !important;
+}
+
+.site-nav {
+    background-color: #0f172a !important;
+    background: #0f172a !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
+}
+
+/* Fix for possible Bootstrap modal backdrop issues */
+.modal-backdrop.show {
+    opacity: 0.7 !important;
+}
+
+/* Ensure modal is above everything and opaque */
+.modal {
+    background-color: rgba(0, 0, 0, 0.5) !important;
 }

@@ -11,21 +11,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        :root { --primary: #ea580c; --bg: #0f172a; --card-bg: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        :root { --primary: #ea580c; --bg: #0f172a; --card-bg: #1e293b; --border: rgba(255, 255, 255, 0.1); }
         body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: #f1f5f9; padding-bottom: 40px; }
-        .admin-wrapper { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); overflow: hidden; }
-        .admin-header { background: rgba(0, 0, 0, 0.2); padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .admin-wrapper { background: var(--card-bg); backdrop-filter: none; border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px #0f172a; overflow: hidden; }
+        .admin-header { background: #0f172a; padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .custom-table { margin-bottom: 0; color: #f1f5f9; }
-        .custom-table thead th { border-bottom: 1px solid var(--border); color: #94a3b8; padding: 15px 20px; background-color: rgba(0, 0, 0, 0.2); text-transform: uppercase; font-size: 0.85rem; }
+        .custom-table thead th { border-bottom: 1px solid var(--border); color: #94a3b8; padding: 15px 20px; background-color: #0f172a; text-transform: uppercase; font-size: 0.85rem; }
         .custom-table tbody td { padding: 15px 20px; vertical-align: middle; border-top: 1px solid var(--border); }
         .status-badge { padding: 5px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
         .status-pending { background: rgba(234, 88, 12, 0.2); color: #fb923c; }
         .status-replied { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
         .bg-orange { background-color: var(--primary) !important; }
-        .modal-content { background: #1e293b !important; border: 1px solid var(--border) !important; border-radius: 20px !important; overflow: hidden; }
+        
         .modal-header { border-bottom: 1px solid var(--border) !important; }
         .modal-footer { border-top: 1px solid var(--border) !important; }
-        .bg-glass { background: rgba(255, 255, 255, 0.03) !important; border: 1px solid var(--border); }
+        .bg-glass { background: #0f172a !important; border: 1px solid var(--border); }
     </style>
     <script src="js/theme.js"></script>
     <link rel="stylesheet" href="css/theme.css">
@@ -132,7 +132,7 @@
                         </div>
                         <div class="form-group mb-0">
                             <label class="small text-muted mb-2">Tin nhắn phản hồi của bạn</label>
-                            <textarea class="form-control bg-transparent text-white border-secondary" name="responseMessage" rows="5" required placeholder="Nhập lời giải đáp cho khách hàng..."></textarea>
+                            <textarea class="form-control bg-solid-dark text-white border-secondary" name="responseMessage" rows="5" required placeholder="Nhập lời giải đáp cho khách hàng..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer border-secondary">
@@ -189,3 +189,6 @@
     </script>
 </body>
 </html>
+
+
+

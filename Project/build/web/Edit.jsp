@@ -28,8 +28,8 @@
                     --primary: #ea580c;
                     --primary-dark: #c2410c;
                     --bg: #0f172a;
-                    --card-bg: rgba(255, 255, 255, 0.05);
-                    --glass: rgba(255, 255, 255, 0.03);
+                    --card-bg: #1e293b;
+                    --glass: #0f172a;
                     --border: rgba(255, 255, 255, 0.1);
                 }
 
@@ -39,16 +39,16 @@
                     color: #f1f5f9;
                 }
 
-                .card {
-                    background: var(--card-bg);
-                    backdrop-filter: blur(12px);
+                .card { background: #1e293b !important; 
+                    background: #1e293b !important;
                     border: 1px solid var(--border) !important;
                     border-radius: 24px;
                     overflow: hidden;
+                    backdrop-filter: none !important;
                 }
 
                 .card-header {
-                    background: rgba(0, 0, 0, 0.2) !important;
+                    background: #1e293b !important;
                     border-bottom: 1px solid var(--border);
                     font-weight: 600;
                     letter-spacing: 0.5px;
@@ -56,7 +56,7 @@
                 }
 
                 .form-control {
-                    background: rgba(0, 0, 0, 0.2) !important;
+                    background: #0f172a !important;
                     border: 1px solid var(--border);
                     color: white !important;
                     border-radius: 10px;
@@ -64,7 +64,7 @@
                 }
 
                 .form-control:focus {
-                    background: rgba(0, 0, 0, 0.3) !important;
+                    background: #0f172a !important;
                     border-color: var(--primary);
                     box-shadow: none;
                 }
@@ -107,7 +107,7 @@
                     object-fit: cover;
                     border-radius: 16px;
                     border: 1px solid var(--border);
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 10px 30px #0f172a;
                 }
 
                 .text-muted {
@@ -237,3 +237,5 @@
         </body>
 
         </html>
+
+

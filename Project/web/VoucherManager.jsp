@@ -75,7 +75,7 @@
 
                     .modal-content.opaque-form {
                         background-color: #1e293b !important; /* Solid dark color */
-                        border: 2px solid #ea580c !important; /* Solid border */
+                        border: 1px solid var(--border) !important;
                         opacity: 1 !important;
                         backdrop-filter: none !important;
                         -webkit-backdrop-filter: none !important;
@@ -95,10 +95,7 @@
                         color: #0f172a !important;
                     }
 
-                    [data-theme="light"] .modal-content {
-                        background: #ffffff !important;
-                        backdrop-filter: none !important;
-                    }
+                    [data-theme="light"] 
 
                     .form-control:focus {
                         background: #0f172a !important;
@@ -404,3 +401,5 @@
             </body>
 
             </html>
+
+
