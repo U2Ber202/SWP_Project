@@ -34,3 +34,4 @@ build/
 .DS_Store
 Thumbs.db
 Project/web/WEB-INF/web.xml
+Project/web/META-INF/context.xml
