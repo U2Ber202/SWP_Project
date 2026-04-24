@@ -15,29 +15,17 @@
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
         <style>
-            /* Đồng bộ biến màu sắc với toàn hệ thống */
-            :root {
-                --primary: #ea580c;
-                --primary-dark: #c2410c;
-                --bg: #0f172a;
-                --card-bg: #1e293b;
-                --glass: #0f172a;
-                --border: rgba(255, 255, 255, 0.1);
-                --vnpay-color: #38bdf8; /* Xanh dương sáng thân thiện với Dark Mode */
-            }
-
             body {
                 font-family: 'Be Vietnam Pro', sans-serif;
                 background-color: var(--bg) !important;
-                color: #f1f5f9;
+                color: var(--text-main);
             }
 
             /* Page Header */
             .checkout-header {
-                background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, #0f172a 100%);
-                color: white;
+                background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg) 100%);
+                color: var(--text-main);
                 padding: 40px 0;
                 margin-bottom: 40px;
                 text-align: center;
@@ -60,7 +48,7 @@
                 background: var(--card-bg);
                 backdrop-filter: none;
                 border-radius: 20px;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
                 padding: 30px;
                 margin-bottom: 30px;
                 border: 1px solid var(--border);
@@ -72,7 +60,7 @@
                 border-bottom: 1px solid var(--border);
                 padding-bottom: 15px;
                 margin-bottom: 25px;
-                color: white;
+                color: var(--text-main);
                 letter-spacing: 0.5px;
             }
             
@@ -82,7 +70,7 @@
 
             /* Table Styles */
             .table {
-                color: #f1f5f9;
+                color: var(--text-main);
             }
             
             .table th {
@@ -90,7 +78,7 @@
                 text-transform: uppercase;
                 font-size: 0.85rem;
                 letter-spacing: 1px;
-                color: #94a3b8;
+                color: var(--text-muted);
                 border-bottom: 1px solid var(--border);
             }
 
@@ -107,7 +95,7 @@
                 width: 60px;
                 height: 60px;
                 object-fit: cover;
-                background: rgba(0,0,0,0.3);
+                background: var(--bg);
                 border: 1px solid var(--border);
                 border-radius: 8px;
                 padding: 2px;
@@ -116,7 +104,7 @@
             /* Form Styles */
             .form-label {
                 font-weight: 600;
-                color: #94a3b8;
+                color: var(--text-muted);
                 margin-bottom: 8px;
                 font-size: 0.85rem;
                 text-transform: uppercase;
@@ -124,16 +112,16 @@
             }
 
             .input-group-text {
-                background-color: rgba(0,0,0,0.3);
+                background-color: var(--bg);
                 border: 1px solid var(--border);
                 border-right: none;
-                color: #94a3b8;
+                color: var(--text-muted);
                 border-radius: 8px 0 0 8px;
             }
 
             .form-control {
-                background: rgba(0,0,0,0.2) !important;
-                color: white !important;
+                background: var(--bg) !important;
+                color: var(--text-main) !important;
                 border-radius: 0 8px 8px 0;
                 border: 1px solid var(--border);
                 padding: 10px 15px;
@@ -142,7 +130,7 @@
             }
             
             .form-control::placeholder {
-                color: #64748b;
+                color: var(--text-muted);
             }
 
             .form-control:focus {
@@ -162,7 +150,7 @@
 
             /* Total Box */
             .total-box {
-                background: #0f172a;
+                background: var(--bg);
                 border-radius: 12px;
                 padding: 20px;
                 margin-bottom: 25px;
@@ -209,7 +197,11 @@
             }
             
             .text-danger {
-                color: #fbbf24 !important; /* Đổi màu tổng tiền sang vàng để nổi bật trên nền tối */
+                color: #ef4444 !important;
+            }
+            
+            .text-warning-custom {
+                color: #f59e0b !important;
             }
         </style>
         <script src="js/theme.js"></script>
@@ -250,15 +242,15 @@
                                                     <img src="${C.value.product.imageUrl}" class="product-img" alt="${C.value.product.name}" onerror="this.src='https://via.placeholder.com/60?text=No+Image'"/>
                                                 </td>
                                                 <td>
-                                                    <p class="font-weight-bold mb-0 text-white">${C.value.product.name}</p>
-                                                    <small style="color: #64748b;">Mã: #${C.value.product.id}</small>
+                                                    <p class="font-weight-bold mb-0 text-main">${C.value.product.name}</p>
+                                                    <small class="text-muted">Mã: #${C.value.product.id}</small>
 <!--                                                    <br>
                                                     <small style="color: #94a3b8;">
                                                         Con ton kho: <span class="font-weight-bold text-warning">${C.value.product.quantity}</span>
                                                     </small>-->
                                                 </td>                                      
                                                 <td class="text-center align-middle"> <fmt:formatNumber value="${C.value.product.price}" pattern="#,### đ"/></td>
-                                                <td class="text-center align-middle font-weight-bold" style="color: #94a3b8;">x${C.value.quantity}</td>
+                                                <td class="text-center align-middle font-weight-bold text-muted">x${C.value.quantity}</td>
                                                 <td class="text-right align-middle font-weight-bold text-danger"><fmt:formatNumber value="${C.value.product.price * C.value.quantity}" pattern="#,### đ"/></td>
                                             </tr>
                                         </c:forEach>
@@ -308,12 +300,12 @@
                                 </div>
                                 
                                 <div class="form-group mb-4">
-                                    <label for="note" class="form-label">Ghi chú đơn hàng <span style="color: #64748b; font-weight: normal; text-transform: none;">(Tùy chọn)</span></label>
+                                    <label for="note" class="form-label">Ghi chú đơn hàng <span class="text-muted" style="font-weight: normal; text-transform: none;">(Tùy chọn)</span></label>
                                     <textarea name="note" id="note" class="form-control" rows="3" placeholder="Ví dụ: Giao hàng giờ hành chính...">${note}</textarea>
                                 </div>
                                 
                                 <div class="form-group mb-4">
-                                    <label for="voucher" class="form-label">Chọn mã giảm giá <span style="color: #64748b; font-weight: normal; text-transform: none;">(1 mã cho sản phẩm từng shop)</span></label>
+                                    <label for="voucher" class="form-label">Chọn mã giảm giá <span class="text-muted" style="font-weight: normal; text-transform: none;">(1 mã cho sản phẩm từng shop)</span></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa-solid fa-ticket"></i></span>
@@ -340,20 +332,20 @@
                                 
                                 <div class="total-box">
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted-custom">Tạm tính:</span>
-                                        <span class="text-white"><fmt:formatNumber value="${totalMoney}" pattern="#,### đ"/></span>
+                                        <span class="text-muted">Tạm tính:</span>
+                                        <span class="text-main"><fmt:formatNumber value="${totalMoney}" pattern="#,### đ"/></span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted-custom">Giảm giá:</span>
+                                        <span class="text-muted">Giảm giá:</span>
                                         <span class="text-success">-<fmt:formatNumber value="${totalDiscount != null ? totalDiscount : 0}" pattern="#,### đ"/></span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted-custom">VAT (10%):</span>
-                                        <span class="text-white"><fmt:formatNumber value="${totalVat != null ? totalVat : (totalMoney * 0.10)}" pattern="#,### đ"/></span>
+                                        <span class="text-muted">VAT (10%):</span>
+                                        <span class="text-main"><fmt:formatNumber value="${totalVat != null ? totalVat : (totalMoney * 0.10)}" pattern="#,### đ"/></span>
                                     </div>
                                     <hr style="border-color: var(--border);">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <p class="mb-0 text-uppercase font-weight-bold" style="color: #94a3b8; letter-spacing: 1px;">Tổng cộng</p>
+                                        <p class="mb-0 text-uppercase font-weight-bold text-muted" style="letter-spacing: 1px;">Tổng cộng</p>
                                         <h3 class="font-weight-bold text-danger mb-0">
                                             <fmt:formatNumber value="${finalTotal != null ? finalTotal : (totalMoney * 1.10)}" pattern="#,### đ"/>
                                         </h3>

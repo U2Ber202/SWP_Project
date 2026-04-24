@@ -42,7 +42,7 @@
                     .product-img {
                         border-radius: 20px;
                         border: 1px solid var(--border);
-                        box-shadow: 0 20px 40px #0f172a;
+                        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.3);
                     }
 
                     .price-large {
@@ -63,7 +63,8 @@
                     .stock-info {
                         display: inline-block;
                         padding: 0.5rem 1rem;
-                        background: #1e293b;
+                        background: var(--bg);
+                        border: 1px solid var(--border);
                         border-radius: 10px;
                         font-size: 0.9rem;
                     }
@@ -142,7 +143,7 @@
                                         </h4>
                                         <c:forEach items="${listFeedbacks}" var="f">
                                             <div class="mb-4 p-4"
-                                                style="background: #0f172a; border: 1px solid var(--border); border-radius: 18px;">
+                                                style="background: var(--bg); border: 1px solid var(--border); border-radius: 18px;">
                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                     <div class="d-flex align-items-center">
                                                         <h6 class="font-weight-bold mb-0 mr-2">${f.userName}</h6>
@@ -165,10 +166,15 @@
                                                     </span>
                                                     <c:if test="${sessionScope.acc != null && f.accountId == sessionScope.acc.uid}">
                                                         <div class="small">
-                                                            <button class="btn btn-link btn-sm text-info p-0 mr-2" 
-                                                                    onclick="openEditFeedbackModal('${f.id}', '${f.rating}', '${f.content}')">
-                                                                <i class="fas fa-edit mr-1"></i>Sửa
-                                                            </button>
+                                                            <c:if test="${!f.edited}">
+                                                                <button class="btn btn-link btn-sm text-info p-0 mr-2" 
+                                                                        onclick="openEditFeedbackModal('${f.id}', '${f.rating}', '${f.content}')">
+                                                                    <i class="fas fa-edit mr-1"></i>Sửa
+                                                                </button>
+                                                            </c:if>
+                                                            <c:if test="${f.edited}">
+                                                                <span class="text-muted small"><i class="fas fa-check-circle mr-1"></i>Đã chỉnh sửa</span>
+                                                            </c:if>
                                                             <%-- Customer cannot delete comment as per requirement --%>
                                                         </div>
                                                     </c:if>
@@ -184,47 +190,56 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <c:if test="${sessionScope.acc != null && sessionScope.acc.role == 'customer'}">
-                                            <div class="p-4"
-                                                style="background: rgba(234, 88, 12, 0.05); border: 1px dashed var(--primary); border-radius: 18px;">
-                                                <h5 class="font-weight-bold mb-3">Viết đánh giá</h5>
-                                                <form action="addFeedback" method="post" onsubmit="return validateFeedback()">
-                                                    <input type="hidden" name="productId" value="${product.id}">
-                                                    <input type="hidden" name="storeId" value="${product.storeId}">
-                                                    <div class="form-group">
-                                                        <label class="small text-muted">Số sao</label>
-                                                        <select name="rating" class="form-control">
-                                                            <option value="5">5 Sao (Tuyệt vời)</option>
-                                                            <option value="4">4 Sao (Hài lòng)</option>
-                                                            <option value="3">3 Sao (Bình thường)</option>
-                                                            <option value="2">2 Sao (Kém)</option>
-                                                            <option value="1">1 Sao (Rất tệ)</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="d-flex justify-content-between">
-                                                            <label class="small text-muted">Nội dung</label>
-                                                            <span id="charCount" class="small text-muted">0/50</span>
+                                            <c:if test="${hasBought}">
+                                                <div class="p-4"
+                                                    style="background: rgba(234, 88, 12, 0.05); border: 1px dashed var(--primary); border-radius: 18px;">
+                                                    <h5 class="font-weight-bold mb-3">Viết đánh giá</h5>
+                                                    <form action="addFeedback" method="post" onsubmit="return validateFeedback()">
+                                                        <input type="hidden" name="productId" value="${product.id}">
+                                                        <input type="hidden" name="storeId" value="${product.storeId}">
+                                                        <div class="form-group">
+                                                            <label class="small text-muted">Số sao</label>
+                                                            <select name="rating" class="form-control">
+                                                                <option value="5">5 Sao (Tuyệt vời)</option>
+                                                                <option value="4">4 Sao (Hài lòng)</option>
+                                                                <option value="3">3 Sao (Bình thường)</option>
+                                                                <option value="2">2 Sao (Kém)</option>
+                                                                <option value="1">1 Sao (Rất tệ)</option>
+                                                            </select>
                                                         </div>
-                                                        <textarea name="content" id="feedbackContent" class="form-control" rows="3"
-                                                            placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." maxlength="50"
-                                                            oninput="updateCharCount()"></textarea>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary btn-block btn-sm">Gửi
-                                                        đánh giá</button>
-                                                </form>
-                                            </div>
+                                                        <div class="form-group">
+                                                            <div class="d-flex justify-content-between">
+                                                                <label class="small text-muted">Nội dung</label>
+                                                                <span id="charCount" class="small text-muted">0/50</span>
+                                                            </div>
+                                                            <textarea name="content" id="feedbackContent" class="form-control" rows="3"
+                                                                placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." maxlength="50"
+                                                                oninput="updateCharCount()"></textarea>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary btn-block btn-sm">Gửi
+                                                            đánh giá</button>
+                                                    </form>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="${!hasBought}">
+                                                <div class="p-4 text-center"
+                                                    style="background: var(--bg); border: 1px solid var(--border); border-radius: 18px;">
+                                                    <p class="small text-muted">Bạn phải mua sản phẩm này mới có thể để lại đánh giá.</p>
+                                                    <i class="fas fa-shopping-cart fa-2x text-warning opacity-50 mt-2"></i>
+                                                </div>
+                                            </c:if>
                                         </c:if>
                                         <c:choose>
                                             <c:when test="${sessionScope.acc == null}">
                                                 <div class="p-4 text-center"
-                                                    style="background: #0f172a; border: 1px solid var(--border); border-radius: 18px;">
+                                                    style="background: var(--bg); border: 1px solid var(--border); border-radius: 18px;">
                                                     <p class="small text-muted">Vui lòng đăng nhập để viết đánh giá.</p>
                                                     <a href="login" class="btn btn-outline-warning btn-sm">Đăng nhập ngay</a>
                                                 </div>
                                             </c:when>
                                             <c:when test="${sessionScope.acc.role != 'customer'}">
                                                 <div class="p-4 text-center"
-                                                    style="background: #0f172a; border: 1px solid var(--border); border-radius: 18px;">
+                                                    style="background: var(--bg); border: 1px solid var(--border); border-radius: 18px;">
                                                     <p class="small text-muted">Tài khoản nhân viên/quản trị không thể gửi đánh giá.</p>
                                                     <i class="fas fa-user-shield fa-2x text-warning opacity-50 mt-2"></i>
                                                 </div>
@@ -248,7 +263,7 @@
                                                     <div class="text-warning mt-1">
                                                         <fmt:formatNumber value="${L.price}" pattern="#,### đ" />
                                                     </div>
-                                                    <a class="btn btn-sm btn-outline-light btn-block mt-3"
+                                                    <a class="btn btn-sm btn-outline-primary btn-block mt-3"
                                                         href="detail?productId=${L.id}">Xem chi tiết</a>
                                                 </div>
                                             </div>

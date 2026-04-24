@@ -237,6 +237,8 @@ CREATE TABLE [dbo].[Feedback] (
     [rating] INT NOT NULL,
     [content] NVARCHAR(1000) NULL,
     [create_date] DATETIME DEFAULT GETDATE(),
+    [is_edited] BIT NOT NULL DEFAULT 0,
+    [is_hidden] BIT NOT NULL DEFAULT 0,
     CONSTRAINT [PK_Feedback] PRIMARY KEY ([id]),
     CONSTRAINT [FK_Feedback_Account] FOREIGN KEY ([account_id]) REFERENCES [dbo].[Account]([uID]),
     CONSTRAINT [FK_Feedback_Product] FOREIGN KEY ([product_id]) REFERENCES [dbo].[Product]([id]),

@@ -36,6 +36,8 @@ public class FeedbackDAO extends DBContext {
                     f.setRating(rs.getInt("rating"));
                     f.setContent(rs.getString("content"));
                     f.setCreateDate(rs.getTimestamp("create_date"));
+                    f.setIsEdited(rs.getBoolean("is_edited"));
+                    f.setIsHidden(rs.getBoolean("is_hidden"));
                     f.setUserName(rs.getString("userName"));
                     f.setProductName(rs.getString("productName"));
                     f.setStoreName(rs.getString("storeName"));
@@ -55,7 +57,7 @@ public class FeedbackDAO extends DBContext {
                      "JOIN Account a ON f.account_id = a.uID " +
                      "JOIN Product p ON f.product_id = p.id " +
                      "JOIN Store s ON f.store_id = s.store_id " +
-                     "WHERE f.product_id = ? " +
+                     "WHERE f.product_id = ? AND (f.is_hidden = 0 OR f.is_hidden IS NULL) " +
                      "ORDER BY f.create_date DESC";
         try (Connection conn = getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
@@ -70,11 +72,12 @@ public class FeedbackDAO extends DBContext {
                     f.setRating(rs.getInt("rating"));
                     f.setContent(rs.getString("content"));
                     f.setCreateDate(rs.getTimestamp("create_date"));
+                    f.setIsEdited(rs.getBoolean("is_edited"));
+                    f.setIsHidden(rs.getBoolean("is_hidden"));
                     f.setUserName(rs.getString("userName"));
                     f.setProductName(rs.getString("productName"));
                     f.setStoreName(rs.getString("storeName"));
                     list.add(f);
-
                 }
             }
         } catch (SQLException ex) {
@@ -102,6 +105,8 @@ public class FeedbackDAO extends DBContext {
                 f.setRating(rs.getInt("rating"));
                 f.setContent(rs.getString("content"));
                 f.setCreateDate(rs.getTimestamp("create_date"));
+                f.setIsEdited(rs.getBoolean("is_edited"));
+                f.setIsHidden(rs.getBoolean("is_hidden"));
                 f.setUserName(rs.getString("userName"));
                 f.setProductName(rs.getString("productName"));
                 f.setStoreName(rs.getString("storeName"));
@@ -136,6 +141,8 @@ public class FeedbackDAO extends DBContext {
                     f.setRating(rs.getInt("rating"));
                     f.setContent(rs.getString("content"));
                     f.setCreateDate(rs.getTimestamp("create_date"));
+                    f.setIsEdited(rs.getBoolean("is_edited"));
+                    f.setIsHidden(rs.getBoolean("is_hidden"));
                     f.setUserName(rs.getString("userName"));
                     f.setProductName(rs.getString("productName"));
                     f.setStoreName(rs.getString("storeName"));
@@ -155,7 +162,7 @@ public class FeedbackDAO extends DBContext {
                      "JOIN Account a ON f.account_id = a.uID " +
                      "JOIN Product p ON f.product_id = p.id " +
                      "JOIN Store s ON f.store_id = s.store_id " +
-                     "WHERE f.rating = ? " +
+                     "WHERE f.rating = ? AND f.is_hidden = 0 " +
                      "ORDER BY f.create_date DESC";
         try (Connection conn = getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
@@ -170,6 +177,8 @@ public class FeedbackDAO extends DBContext {
                     f.setRating(rs.getInt("rating"));
                     f.setContent(rs.getString("content"));
                     f.setCreateDate(rs.getTimestamp("create_date"));
+                    f.setIsEdited(rs.getBoolean("is_edited"));
+                    f.setIsHidden(rs.getBoolean("is_hidden"));
                     f.setUserName(rs.getString("userName"));
                     f.setProductName(rs.getString("productName"));
                     f.setStoreName(rs.getString("storeName"));
@@ -222,9 +231,29 @@ public class FeedbackDAO extends DBContext {
         return stats;
     }
 
-    public void insertFeedback(int accountId, int productId, int storeId, int rating, String content) {
-        String sql = "INSERT INTO Feedback (account_id, product_id, store_id, rating, content, create_date) " +
-                     "VALUES (?, ?, ?, ?, ?, GETDATE())";
+    public boolean hasBoughtProduct(int accountId, int productId) {
+        String sql = "SELECT COUNT(*) FROM Orders o " +
+                     "JOIN OrderDetail od ON o.id = od.order_id " +
+                     "JOIN Product p ON od.productName = p.name " +
+                     "WHERE o.account_id = ? AND p.id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setInt(1, accountId);
+            stm.setInt(2, productId);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public boolean insertFeedback(int accountId, int productId, int storeId, int rating, String content) {
+        String sql = "INSERT INTO Feedback (account_id, product_id, store_id, rating, content, create_date, is_edited, is_hidden) " +
+                     "VALUES (?, ?, ?, ?, ?, GETDATE(), 0, 0)";
         try (Connection conn = getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, accountId);
@@ -232,9 +261,10 @@ public class FeedbackDAO extends DBContext {
             stm.setInt(3, storeId);
             stm.setInt(4, rating);
             stm.setString(5, content);
-            stm.executeUpdate();
+            return stm.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
+            return false;
         }
     }
 
@@ -255,6 +285,8 @@ public class FeedbackDAO extends DBContext {
                     f.setRating(rs.getInt("rating"));
                     f.setContent(rs.getString("content"));
                     f.setCreateDate(rs.getTimestamp("create_date"));
+                    f.setIsEdited(rs.getBoolean("is_edited"));
+                    f.setIsHidden(rs.getBoolean("is_hidden"));
                     f.setUserName(rs.getString("userName"));
                     return f;
                 }
@@ -266,12 +298,24 @@ public class FeedbackDAO extends DBContext {
     }
 
     public void updateFeedback(int id, int rating, String content) {
-        String sql = "UPDATE Feedback SET rating = ?, content = ? WHERE id = ?";
+        String sql = "UPDATE Feedback SET rating = ?, content = ?, is_edited = 1 WHERE id = ?";
         try (Connection conn = getConnection();
              PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, rating);
             stm.setString(2, content);
             stm.setInt(3, id);
+            stm.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void hideFeedback(int id, boolean hide) {
+        String sql = "UPDATE Feedback SET is_hidden = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setBoolean(1, hide);
+            stm.setInt(2, id);
             stm.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);

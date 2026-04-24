@@ -16,21 +16,10 @@
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         
         <style>
-            /* Đồng bộ biến màu sắc với toàn hệ thống */
-            :root {
-                --primary: #ea580c;
-                --primary-dark: #c2410c;
-                --bg: #0f172a;
-                --card-bg: #1e293b;
-                --glass: #0f172a;
-                --border: rgba(255, 255, 255, 0.1);
-                --success: #22c55e;
-            }
-
             body {
                 font-family: 'Be Vietnam Pro', sans-serif;
                 background-color: var(--bg) !important;
-                color: #f1f5f9;
+                color: var(--text-main);
             }
 
             /* Success Header */
@@ -51,7 +40,7 @@
                 font-weight: 800;
                 text-transform: uppercase;
                 letter-spacing: 1px;
-                color: #ffffff;
+                color: var(--text-main);
             }
 
             /* Receipt Card Glassmorphism */
@@ -61,7 +50,7 @@
                 border: 1px solid var(--border);
                 border-top: 5px solid var(--success);
                 border-radius: 20px;
-                box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+                box-shadow: 0 15px 40px rgba(0,0,0,0.1);
                 padding: 40px;
                 margin-bottom: 50px;
             }
@@ -69,7 +58,7 @@
             .receipt-title {
                 font-weight: 700;
                 text-transform: uppercase;
-                color: #ffffff;
+                color: var(--text-main);
                 border-bottom: 1px solid var(--border);
                 padding-bottom: 15px;
                 margin-bottom: 25px;
@@ -78,11 +67,11 @@
 
             /* Table Styles */
             .table {
-                color: #f1f5f9;
+                color: var(--text-main);
             }
 
             .table thead.bg-light-custom {
-                background-color: #0f172a;
+                background-color: var(--bg);
             }
 
             .table th {
@@ -90,7 +79,7 @@
                 text-transform: uppercase;
                 font-size: 0.85rem;
                 letter-spacing: 1px;
-                color: #94a3b8;
+                color: var(--text-muted);
                 padding: 15px;
             }
 
@@ -104,7 +93,7 @@
                 width: 70px;
                 height: 70px;
                 object-fit: cover;
-                background: #0f172a;
+                background: var(--bg);
                 border-radius: 12px;
                 padding: 5px;
                 border: 1px solid var(--border);
@@ -112,13 +101,13 @@
 
             .product-name {
                 font-weight: 600;
-                color: #e2e8f0;
+                color: var(--text-main);
                 margin: 0;
             }
 
             /* Total Box */
             .total-box {
-                background-color: #0f172a;
+                background-color: var(--bg);
                 border-radius: 12px;
                 padding: 25px 30px;
                 display: flex;
@@ -131,14 +120,14 @@
             .total-label {
                 font-weight: 700;
                 text-transform: uppercase;
-                color: #94a3b8;
+                color: var(--text-muted);
                 margin: 0;
                 letter-spacing: 1px;
             }
 
             .total-amount {
                 font-weight: 800;
-                color: #fbbf24; /* Màu vàng cam nổi bật */
+                color: var(--primary);
                 font-size: 1.8rem;
                 margin: 0;
             }
@@ -173,7 +162,7 @@
             }
             
             .text-muted-custom {
-                color: #94a3b8 !important;
+                color: var(--text-muted) !important;
             }
         </style>
         <script src="js/theme.js"></script>
@@ -219,9 +208,9 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="text-center align-middle" style="color: #94a3b8;"> <fmt:formatNumber value="${C.value.product.price}" pattern="#,### đ"/></td>
-                                                <td class="text-center align-middle font-weight-bold" style="color: #e2e8f0;">x${C.value.quantity}</td>
-                                                <td class="text-right align-middle font-weight-bold" style="text-align: right; color: #fbbf24;">
+                                                <td class="text-center align-middle text-muted"> <fmt:formatNumber value="${C.value.product.price}" pattern="#,### đ"/></td>
+                                                <td class="text-center align-middle font-weight-bold text-main">x${C.value.quantity}</td>
+                                                <td class="text-right align-middle font-weight-bold text-primary" style="text-align: right;">
                                                     <fmt:formatNumber value="${C.value.product.price * C.value.quantity}" pattern="#,### đ"/>
                                                 </td>
                                             </tr>
@@ -234,7 +223,7 @@
                                 <div class="px-3">
                                     <div class="d-flex justify-content-between mb-2">
                                         <span class="text-muted-custom">Tạm tính:</span>
-                                        <span style="color: #e2e8f0;"><fmt:formatNumber value="${originalTotalPrice}" pattern="#,### đ"/></span>
+                                        <span class="text-main"><fmt:formatNumber value="${originalTotalPrice}" pattern="#,### đ"/></span>
                                     </div>
                                     <c:if test="${totalDiscount > 0}">
                                         <div class="d-flex justify-content-between mb-2">
@@ -244,7 +233,7 @@
                                     </c:if>
                                     <div class="d-flex justify-content-between mb-3">
                                         <span class="text-muted-custom">VAT (10%):</span>
-                                        <span style="color: #e2e8f0;"><fmt:formatNumber value="${totalVat}" pattern="#,### đ"/></span>
+                                        <span class="text-main"><fmt:formatNumber value="${totalVat}" pattern="#,### đ"/></span>
                                     </div>
                                 </div>
                                 <div class="total-box">

@@ -150,7 +150,21 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!-- Delete button removed as per requirement: View only for staff -->
+                                                <div class="d-flex align-items-center">
+                                                    <c:choose>
+                                                        <c:when test="${!f.hidden}">
+                                                            <a href="feedbacks?action=hide&id=${f.id}&status=true" class="btn btn-sm btn-outline-warning mr-2" style="border-radius: 10px;">
+                                                                <i class="fas fa-eye-slash mr-1"></i> Ẩn
+                                                            </a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <a href="feedbacks?action=hide&id=${f.id}&status=false" class="btn btn-sm btn-outline-success mr-2" style="border-radius: 10px;">
+                                                                <i class="fas fa-eye mr-1"></i> Hiện
+                                                            </a>
+                                                            <span class="badge badge-danger mr-2">Đã ẩn</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
                                             </div>
                                             <div class="mt-3" style="line-height: 1.6; color: var(--text-main);">
                                                 <i class="fas fa-quote-left mr-2 opacity-20"></i> ${f.content}

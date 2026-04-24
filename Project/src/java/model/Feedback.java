@@ -10,6 +10,8 @@ public class Feedback {
     private int rating;
     private String content;
     private Timestamp createDate;
+    private boolean isEdited;
+    private boolean isHidden;
     
     // Additional fields for display
     private String userName;
@@ -73,6 +75,22 @@ public class Feedback {
 
     public void setCreateDate(Timestamp createDate) {
         this.createDate = createDate;
+    }
+
+    public boolean isEdited() {
+        return isEdited;
+    }
+
+    public void setIsEdited(boolean isEdited) {
+        this.isEdited = isEdited;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setIsHidden(boolean isHidden) {
+        this.isHidden = isHidden;
     }
 
     public String getUserName() {
