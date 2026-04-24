@@ -291,9 +291,9 @@ INSERT INTO [dbo].[HomeSetting] (
 GO
 
 INSERT INTO [dbo].[Slider] (title, image_url, back_link, status, description) VALUES
-(N'Adidas Stan Smith Special', N'https://brand.assets.adidas.com/image/upload/f_auto,q_auto,fl_lossy/if_w_gt_1920,w_1920/enUS/Images/ss24-stansmith-generic-hp-mh-large-animated-v2-d_tcm221-1140306.jpg', N'detail?productId=1', 1, N'Mẫu giày huyền thoại với phong cách tối giản.'),
-(N'Vans Old Skool Collection', N'https://images.vans.com/is/image/Vans/VN000D3HY28-HERO?wid=1600&fmt=jpg', N'detail?productId=2', 1, N'Sự lựa chọn hoàn hảo cho phong cách đường phố.'),
-(N'Khám Phá Converse Chuck 70', N'https://www.converse.com/on/demandware.static/-/Library-Sites-ConverseSharedLibrary/default/dwc6c06a8e/firstspirit/converse-it/media/homepage_1/2024_spring/02_february_2/D-Converse-Chuck-70-De-Luxe-Wedge.jpg', N'detail?productId=3', 1, N'Thiết kế cổ điển kết hợp phong cách hiện đại.');
+(N'Adidas Stan Smith Special', N'https://th.bing.com/th/id/OIP.YdN1gfY_9e6RpjFnMm7a1gHaHa?w=201&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', N'detail?productId=1', 1, N'Mẫu giày huyền thoại với phong cách tối giản.'),
+(N'Vans Old Skool Collection', N'https://th.bing.com/th/id/OIP.B56S_fHRq-6NHGKS4I1WmQHaGC?w=247&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', N'detail?productId=2', 1, N'Sự lựa chọn hoàn hảo cho phong cách đường phố.'),
+(N'Khám Phá Converse Chuck 70', N'https://th.bing.com/th/id/OIP.ZIVkD33qBh_HLeE8i6PTjAHaLH?w=134&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', N'detail?productId=3', 1, N'Thiết kế cổ điển kết hợp phong cách hiện đại.');
 GO
 
 INSERT INTO [dbo].[Store] ([store_name], [owner_id], [shipper_id], [warehouse_manager_id]) VALUES

@@ -55,7 +55,7 @@ public class FeedbackManagerController extends HttpServlet {
                 Store store = storeDAO.getStoreByOwnerId(acc.getUid());
                 if (store != null) storeId = store.getId();
             }
-            java.util.Map<Integer, Integer> stats = feedbackDAO.getFeedbackStatistics(storeId);
+            java.util.Map<String, Integer> stats = feedbackDAO.getFeedbackStatistics(storeId);
             request.setAttribute("stats", stats);
             request.getRequestDispatcher("FeedbackStatistic.jsp").forward(request, response);
             return;

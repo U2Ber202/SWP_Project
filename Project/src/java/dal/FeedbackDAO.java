@@ -208,9 +208,9 @@ public class FeedbackDAO extends DBContext {
         return 0;
     }
 
-    public java.util.Map<Integer, Integer> getFeedbackStatistics(int storeId) {
-        java.util.Map<Integer, Integer> stats = new java.util.HashMap<>();
-        for (int i = 1; i <= 5; i++) stats.put(i, 0);
+    public java.util.Map<String, Integer> getFeedbackStatistics(int storeId) {
+        java.util.Map<String, Integer> stats = new java.util.HashMap<>();
+        for (int i = 1; i <= 5; i++) stats.put(String.valueOf(i), 0);
         
         String sql = "SELECT rating, COUNT(*) as count FROM Feedback WHERE store_id = ? GROUP BY rating";
         if (storeId == -1) { // Admin view
@@ -222,7 +222,7 @@ public class FeedbackDAO extends DBContext {
             if (storeId != -1) stm.setInt(1, storeId);
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
-                    stats.put(rs.getInt("rating"), rs.getInt("count"));
+                    stats.put(String.valueOf(rs.getInt("rating")), rs.getInt("count"));
                 }
             }
         } catch (SQLException ex) {
