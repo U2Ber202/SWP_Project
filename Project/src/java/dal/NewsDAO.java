@@ -23,7 +23,7 @@ public class NewsDAO extends DBContext {
         n.setCreatedAt(rs.getTimestamp("created_at"));
         int storeId = rs.getInt("store_id");
         n.setStoreId(rs.wasNull() ? null : storeId);
-        n.setIsVisible(rs.getBoolean("is_visible"));
+        n.setVisible(rs.getBoolean("visible")); // ✅ Map thêm visible
         try {
             n.setStoreName(rs.getString("store_name"));
         } catch (SQLException e) {
@@ -32,73 +32,86 @@ public class NewsDAO extends DBContext {
         return n;
     }
 
-    private final String SELECT_BASE = "SELECT n.*, s.store_name as store_name FROM News n LEFT JOIN Store s ON n.store_id = s.store_id";
+    private final String SELECT_BASE
+            = "SELECT n.*, s.store_name as store_name FROM News n LEFT JOIN Store s ON n.store_id = s.store_id";
 
     public List<News> getAllNews() {
         return getBySql(SELECT_BASE + " ORDER BY n.created_at DESC");
     }
 
-    public List<News> getAllVisibleNews() {
-        return getBySql(SELECT_BASE + " WHERE n.is_visible = 1 ORDER BY n.created_at DESC");
-    }
-
     public List<News> getSystemNews() {
-        return getBySql(SELECT_BASE + " WHERE n.store_id IS NULL ORDER BY n.created_at DESC");
-    }
-
-    public List<News> getVisibleSystemNews() {
-        return getBySql(SELECT_BASE + " WHERE n.store_id IS NULL AND n.is_visible = 1 ORDER BY n.created_at DESC");
+        return getBySql(SELECT_BASE + " WHERE n.store_id IS NULL AND n.visible = 1 ORDER BY n.created_at DESC");
     }
 
     public List<News> getNewsForAdmin() {
+        // Admin thấy tất cả kể cả invisible
         return getBySql(SELECT_BASE + " ORDER BY n.created_at DESC");
     }
 
+    // ✅ Thêm method mới để lấy bài viết hiển thị cho user thường
+    public List<News> getVisibleNewsForHome() {
+        return getBySql(SELECT_BASE + " WHERE n.visible = 1 ORDER BY n.created_at DESC");
+    }
+
     public List<News> getNewsByStore(int storeId) {
-        return getBySql(SELECT_BASE + " WHERE n.store_id IS NULL OR n.store_id = ? ORDER BY n.created_at DESC", storeId);
+        // ✅ Chỉ lấy bài visible = 1
+        return getBySql(SELECT_BASE + " WHERE (n.store_id IS NULL OR n.store_id = ?) AND n.visible = 1 ORDER BY n.created_at DESC", storeId);
     }
 
-    public List<News> getVisibleNewsByStore(int storeId) {
-        return getBySql(SELECT_BASE + " WHERE (n.store_id IS NULL OR n.store_id = ?) AND n.is_visible = 1 ORDER BY n.created_at DESC", storeId);
-    }
-    
     public List<News> getOnlyStoreNews(int storeId) {
+        // Owner thấy tất cả bài của mình (kể cả invisible) để có thể quản lý
         return getBySql(SELECT_BASE + " WHERE n.store_id = ? ORDER BY n.created_at DESC", storeId);
-    }
-
-    public List<News> getVisibleOnlyStoreNews(int storeId) {
-        return getBySql(SELECT_BASE + " WHERE n.store_id = ? AND n.is_visible = 1 ORDER BY n.created_at DESC", storeId);
     }
 
     public News getNewsById(int id) {
         return getSingleBySql(SELECT_BASE + " WHERE n.id = ?", id);
     }
 
+//    public void insert(News n) {
+//        executeUpdate(
+//            "INSERT INTO News (title, content, image, store_id, visible) VALUES (?, ?, ?, ?, 1)",
+//            n.getTitle(), n.getContent(), n.getImage(), n.getStoreId()
+//        );
+//    }
     public void insert(News n) {
-        executeUpdate("INSERT INTO News (title, content, image, store_id, is_visible) VALUES (?, ?, ?, ?, ?)",
-                n.getTitle(), n.getContent(), n.getImage(), n.getStoreId(), n.isIsVisible());
+        // ✅ Đảm bảo visible = 1 khi mới tạo
+        executeUpdate(
+                "INSERT INTO News (title, content, image, store_id, visible) VALUES (?, ?, ?, ?, 1)",
+                n.getTitle(), n.getContent(), n.getImage(), n.getStoreId()
+        );
     }
 
     public void update(News n) {
-        executeUpdate("UPDATE News SET title = ?, content = ?, image = ?, store_id = ?, is_visible = ? WHERE id = ?",
-                n.getTitle(), n.getContent(), n.getImage(), n.getStoreId(), n.isIsVisible(), n.getId());
+        executeUpdate(
+                "UPDATE News SET title = ?, content = ?, image = ?, store_id = ? WHERE id = ?",
+                n.getTitle(), n.getContent(), n.getImage(), n.getStoreId(), n.getId()
+        );
     }
 
-    public void updateStatus(int id, boolean isVisible) {
-        executeUpdate("UPDATE News SET is_visible = ? WHERE id = ?", isVisible, id);
+    // Toggle visible thay vì delete
+    public void toggleVisible(int id) {
+        executeUpdate("UPDATE News SET visible = 1 - visible WHERE id = ?", id);
     }
 
-    public void delete(int id) {
-        // Instead of deleting, we could mark as invisible, but the user said "Bài đăng chỉ có Visible/Invisible chứ không có xóa"
-        // So we might want to keep the delete method but make it do nothing or change it to updateStatus.
-        // I'll keep it but it will just hide it.
-        updateStatus(id, false);
+    // Kiểm tra title trùng khi THÊM MỚI
+    public boolean isTitleExist(String title) {
+        return existsBySql(
+                "SELECT 1 FROM News WHERE LOWER(TRIM(title)) = LOWER(TRIM(?))", title
+        );
     }
 
+    // Kiểm tra title trùng khi CHỈNH SỬA (bỏ qua bài hiện tại)
+    public boolean isTitleExistForAnother(String title, int excludeId) {
+        return existsBySql(
+                "SELECT 1 FROM News WHERE LOWER(TRIM(title)) = LOWER(TRIM(?)) AND id <> ?",
+                title, excludeId
+        );
+    }
+
+    // ==================== PRIVATE HELPERS ====================
     private List<News> getBySql(String sql, Object... params) {
         List<News> list = new ArrayList<>();
-        try (Connection conn = getConnection();
-                PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
                 stm.setObject(i + 1, params[i]);
             }
@@ -114,8 +127,7 @@ public class NewsDAO extends DBContext {
     }
 
     private News getSingleBySql(String sql, Object... params) {
-        try (Connection conn = getConnection();
-                PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
                 stm.setObject(i + 1, params[i]);
             }
@@ -130,9 +142,22 @@ public class NewsDAO extends DBContext {
         return null;
     }
 
+    private boolean existsBySql(String sql, Object... params) {
+        try (Connection conn = getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                stm.setObject(i + 1, params[i]);
+            }
+            try (ResultSet rs = stm.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
     private void executeUpdate(String sql, Object... params) {
-        try (Connection conn = getConnection();
-                PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
                 stm.setObject(i + 1, params[i]);
             }
@@ -141,4 +166,9 @@ public class NewsDAO extends DBContext {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
+
+    public List<News> getAllVisibleNews() {
+        return getBySql(SELECT_BASE + " WHERE n.visible = 1 ORDER BY n.created_at DESC");
+    }
+
 }

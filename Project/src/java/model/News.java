@@ -1,7 +1,6 @@
 package model;
 
 import java.util.Date;
-import java.sql.Timestamp;
 
 public class News {
     private int id;
@@ -9,85 +8,42 @@ public class News {
     private String content;
     private String image;
     private Date createdAt;
-    private Integer storeId; // Null for system news
+    private Integer storeId;
     private String storeName;
-    private boolean isVisible;
+    private boolean visible = true; // ✅ Thêm field visible, mặc định true
 
-    public News() {
-        this.isVisible = true; // Default to visible
-    }
+    public News() {}
 
-    public News(int id, String title, String content, String image, Date createdAt, Integer storeId, boolean isVisible) {
+    public News(int id, String title, String content, String image, Date createdAt, Integer storeId) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.image = image;
         this.createdAt = createdAt;
         this.storeId = storeId;
-        this.isVisible = isVisible;
     }
 
-    public boolean isIsVisible() {
-        return isVisible;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setIsVisible(boolean isVisible) {
-        this.isVisible = isVisible;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public int getId() {
-        return id;
-    }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
 
-    public String getTitle() {
-        return title;
-    }
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public Integer getStoreId() { return storeId; }
+    public void setStoreId(Integer storeId) { this.storeId = storeId; }
 
-    public String getContent() {
-        return content;
-    }
+    public String getStoreName() { return storeName; }
+    public void setStoreName(String storeName) { this.storeName = storeName; }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Integer getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(Integer storeId) {
-        this.storeId = storeId;
-    }
-
-    public String getStoreName() {
-        return storeName;
-    }
-
-    public void setStoreName(String storeName) {
-        this.storeName = storeName;
-    }
+    public boolean isVisible() { return visible; }
+    public void setVisible(boolean visible) { this.visible = visible; }
 }

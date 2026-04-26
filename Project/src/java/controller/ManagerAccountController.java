@@ -55,6 +55,8 @@ public class ManagerAccountController extends HttpServlet {
                 error = "Tên đăng nhập đã tồn tại.";
             } else if (accountDAO.getAccountByEmail(email) != null) {
                 error = "Email đã được sử dụng.";
+            } else if (accountDAO.isPhoneExist(phone)) {                    // ← THÊM VÀO ĐÂY
+                error = "Số điện thoại đã được sử dụng bởi tài khoản khác.";
             } else {
                 accountDAO.insertOwnerAccount(user, pass, email, fullname, phone);
                 message = "Tạo tài khoản owner thành công. Admin có thể gán tài khoản này cho cửa hàng.";
@@ -66,14 +68,22 @@ public class ManagerAccountController extends HttpServlet {
         int page = 1;
         try {
             String p = request.getParameter("page");
-            if (p != null) page = Integer.parseInt(p);
-        } catch (Exception e) { page = 1; }
+            if (p != null) {
+                page = Integer.parseInt(p);
+            }
+        } catch (Exception e) {
+            page = 1;
+        }
 
         List<Account> allAccounts = accountDAO.searchAccounts(search);
         int totalAccounts = allAccounts.size();
         int totalPage = (int) Math.ceil((double) totalAccounts / PAGE_SIZE);
-        if (page > totalPage && totalPage > 0) page = totalPage;
-        if (page < 1) page = 1;
+        if (page > totalPage && totalPage > 0) {
+            page = totalPage;
+        }
+        if (page < 1) {
+            page = 1;
+        }
 
         int fromIndex = (page - 1) * PAGE_SIZE;
         int toIndex = Math.min(fromIndex + PAGE_SIZE, totalAccounts);

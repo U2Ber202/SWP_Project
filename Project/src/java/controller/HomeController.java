@@ -103,33 +103,46 @@ public class HomeController extends HttpServlet {
         int totalPage = Math.max(1, (int) Math.ceil((double) totalProducts / PAGE_SIZE));
         page = Math.min(page, totalPage);
         List<Product> listProducts = paginateProducts(matchedProducts, page, PAGE_SIZE);
-        
+
         NewsDAO newsDAO = new NewsDAO();
         List<model.News> listNews;
-        
-        if (acc == null || RoleHelper.isAdmin(acc) || RoleHelper.isCustomer(acc)) {
-            listNews = newsDAO.getAllVisibleNews();
+
+// ✅ Phân biệt rõ ràng:
+        if (RoleHelper.isAdmin(acc)) {
+            // Admin thấy TẤT CẢ (kể cả invisible) để quản lý
+            listNews = newsDAO.getAllNews();
         } else {
-            // Staff roles: Owner, Warehouse Manager, Shipper
+            // Tất cả các role khác (Customer, Owner, Shipper, Warehouse Manager, hoặc chưa đăng nhập)
+            // chỉ thấy bài viết có visible = 1
             Integer storeId = null;
-            if (RoleHelper.isOwner(acc)) {
+
+            if (acc == null || RoleHelper.isCustomer(acc)) {
+                // Customer hoặc chưa đăng nhập: lấy tất cả bài visible (cả hệ thống và cửa hàng)
+                listNews = newsDAO.getAllVisibleNews();
+            } else if (RoleHelper.isOwner(acc)) {
                 Store s = new StoreDAO().getStoreByOwnerId(acc.getUid());
-                if (s != null) storeId = s.getId();
+                if (s != null) {
+                    storeId = s.getId();
+                }
+                listNews = newsDAO.getNewsByStore(storeId);
             } else if (RoleHelper.isWarehouseManager(acc)) {
                 Store s = new StoreDAO().getStoreByWarehouseManagerId(acc.getUid());
-                if (s != null) storeId = s.getId();
+                if (s != null) {
+                    storeId = s.getId();
+                }
+                listNews = newsDAO.getNewsByStore(storeId);
             } else if (RoleHelper.isShipper(acc)) {
                 storeId = new dal.ShippingDAO().getStoreIdByShipperId(acc.getUid());
-            }
-            
-            if (storeId != null) {
-                listNews = newsDAO.getVisibleNewsByStore(storeId);
+                listNews = newsDAO.getNewsByStore(storeId);
             } else {
-                listNews = newsDAO.getVisibleSystemNews();
+                // Fallback: chỉ lấy tin hệ thống visible
+                listNews = newsDAO.getSystemNews();
             }
         }
-        
-        if (listNews.size() > 4) listNews = listNews.subList(0, 4);
+
+//        if (listNews.size() > 4) {
+//            listNews = listNews.subList(0, 4);
+//        }
 
         request.setAttribute("listCategories", listCategories != null ? listCategories : new ArrayList<>());
         request.setAttribute("listStores", (scopedStore != null) ? java.util.Arrays.asList(scopedStore) : (storeDAO.getAllStores() != null ? storeDAO.getAllStores() : new ArrayList<>()));

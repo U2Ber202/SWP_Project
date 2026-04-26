@@ -285,20 +285,16 @@
                                                 <td class="text-center">
                                                     <c:choose>
                                                         <c:when test="${p.role == 'admin'}"><span
-                                                                class="badge badge-info px-3 py-2 rounded-pill">Quản
-                                                                trị</span></c:when>
+                                                                class="badge badge-info px-3 py-2 rounded-pill">Quản trị</span></c:when>
                                                         <c:when test="${p.role == 'owner'}"><span
-                                                                class="badge badge-warning px-3 py-2 rounded-pill">Chủ
-                                                                cửa hàng</span></c:when>
+                                                                class="badge badge-warning px-3 py-2 rounded-pill">Chủ cửa hàng</span></c:when>
                                                         <c:when test="${p.role == 'shipper'}"><span
                                                                 class="badge badge-primary px-3 py-2 rounded-pill">Shipper</span>
                                                         </c:when>
                                                         <c:when test="${p.role == 'warehouse_manager'}"><span
-                                                                class="badge badge-secondary px-3 py-2 rounded-pill">Quản
-                                                                lý kho</span></c:when>
+                                                                class="badge badge-secondary px-3 py-2 rounded-pill">Quản lý kho</span></c:when>
                                                         <c:otherwise><span
-                                                                class="badge badge-light px-3 py-2 rounded-pill">Khách
-                                                                hàng</span></c:otherwise>
+                                                                class="badge badge-light px-3 py-2 rounded-pill">Khách hàng</span></c:otherwise>
                                                     </c:choose>
                                                 </td>
                                                 <td>${p.email}</td>

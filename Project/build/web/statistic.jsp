@@ -7,33 +7,46 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Báo cáo doanh thu | V-SNKR Admin</title>
-        
+
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        
+
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        
+
+        <!-- Thêm vào trong thẻ <head>, sau các thẻ CSS khác -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
         <style>
+            :root {
+                --primary: #ea580c;
+                --primary-dark: #c2410c;
+                --bg: #0f172a;
+                --card-bg: rgba(255, 255, 255, 0.05);
+                --glass: rgba(255, 255, 255, 0.03);
+                --border: rgba(255, 255, 255, 0.1);
+            }
+
             body {
                 font-family: 'Outfit', sans-serif;
                 background-color: var(--bg) !important;
-                color: var(--text-main);
+                color: #f1f5f9;
                 padding-bottom: 40px;
             }
 
             .admin-wrapper {
                 background: var(--card-bg);
-                backdrop-filter: none;
+                backdrop-filter: blur(12px);
                 border: 1px solid var(--border);
                 border-radius: 20px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
                 overflow: hidden;
             }
 
             .admin-header {
-                background: var(--bg);
-                color: var(--text-main);
+                background: rgba(0, 0, 0, 0.2);
+                color: #fff;
                 padding: 25px 30px;
                 border-bottom: 1px solid var(--border);
                 display: flex;
@@ -68,8 +81,8 @@
             }
 
             .btn-custom-secondary:hover {
-                background-color: var(--bg);
-                color: var(--text-main);
+                background-color: var(--glass);
+                color: white;
                 border-color: var(--border);
             }
 
@@ -79,7 +92,7 @@
 
             .section-title {
                 font-weight: 700;
-                color: var(--text-main);
+                color: #ffffff;
                 text-transform: uppercase;
                 letter-spacing: 1px;
                 margin-bottom: 25px;
@@ -89,7 +102,7 @@
             }
 
             .stat-card {
-                background: var(--bg);
+                background: rgba(0, 0, 0, 0.2);
                 border-radius: 16px;
                 padding: 25px;
                 display: flex;
@@ -128,19 +141,24 @@
             .stat-value {
                 font-size: 1.8rem;
                 font-weight: 800;
-                color: var(--text-main);
+                color: #ffffff;
                 margin: 0;
             }
 
-            .bg-light-success { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
-            .text-success-custom { color: #4ade80 !important; }
-            
+            .bg-light-success {
+                background: rgba(74, 222, 128, 0.15);
+                color: #4ade80;
+            }
+            .text-success-custom {
+                color: #4ade80 !important;
+            }
+
             .table {
-                color: var(--text-main);
+                color: #f1f5f9;
             }
             .table-hover tbody tr:hover {
-                background-color: var(--glass);
-                color: var(--text-main);
+                background-color: rgba(255, 255, 255, 0.05);
+                color: white;
             }
         </style>
         <script src="js/theme.js"></script>
@@ -150,7 +168,7 @@
         <%@ include file="components/navBarComponent.jsp" %>
         <div class="container" style="margin-top: 100px;">
             <div class="admin-wrapper mb-4">
-                
+
                 <div class="admin-header">
                     <h2><i class="fa-solid fa-chart-line"></i> Báo cáo <b>Doanh Thu</b></h2>
                     <a href="home" class="btn-custom-secondary">
@@ -159,17 +177,21 @@
                 </div>
 
                 <div class="dashboard-body">
-                    
+
                     <!-- Filter Section -->
                     <div class="mb-5">
-                        <form action="statistic" method="get" class="row g-3 align-items-end">
+                        <form action="statistic" method="get" id="filterForm" class="row g-3 align-items-end">
                             <div class="col-md-4">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Từ ngày</label>
-                                <input type="date" name="startDate" class="form-control" style="background: var(--bg); color: var(--text-main); border: 1px solid var(--border);" value="${startDate}" required>
+                                <input type="text" name="startDate" id="startDate" class="form-control bg-dark text-white border-secondary" 
+                                       value="<fmt:formatDate value='${startDate}' pattern='dd/MM/yyyy'/>" 
+                                       placeholder="dd/MM/yyyy" required autocomplete="off">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Đến ngày</label>
-                                <input type="date" name="endDate" class="form-control" style="background: var(--bg); color: var(--text-main); border: 1px solid var(--border);" value="${endDate}" required>
+                                <input type="text" name="endDate" id="endDate" class="form-control bg-dark text-white border-secondary" 
+                                       value="<fmt:formatDate value='${endDate}' pattern='dd/MM/yyyy'/>" 
+                                       placeholder="dd/MM/yyyy" required autocomplete="off">
                             </div>
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-primary w-100" style="background: var(--primary); border: none; height: 38px; font-weight: 600;">
@@ -193,8 +215,8 @@
                                     </h3>
                                     <p class="text-muted mb-0">
                                         Thời gian: 
-                                        <fmt:formatDate value="${startDate}" pattern="dd/MM/YYYY"/> - 
-                                        <fmt:formatDate value="${endDate}" pattern="dd/MM/YYYY"/>
+                                        <fmt:formatDate value="${startDate}" pattern="dd/MM/yyyy"/> - 
+                                        <fmt:formatDate value="${endDate}" pattern="dd/MM/yyyy"/>
                                     </p>
                                 </div>
                             </div>
@@ -206,9 +228,9 @@
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                <tr style="background: var(--bg);">
-                                    <th class="py-3 px-4">Thứ</th>
+                                <tr style="background: rgba(255,255,255,0.05);">
                                     <th class="py-3 px-4">Ngày</th>
+                                    <th class="py-3 px-4">Định dạng</th>
                                     <th class="py-3 px-4 text-end">Doanh thu</th>
                                 </tr>
                             </thead>
@@ -221,7 +243,7 @@
                                                     <fmt:formatDate value="${item.date}" pattern="EEEE"/>
                                                 </td>
                                                 <td class="py-3 px-4">
-                                                    <fmt:formatDate value="${item.date}" pattern="dd/MM/YYYY"/>
+                                                    <fmt:formatDate value="${item.date}" pattern="dd/MM/yyyy"/>
                                                 </td>
                                                 <td class="py-3 px-4 text-end fw-bold">
                                                     <fmt:formatNumber value="${item.revenue}" pattern="#,###"/> đ
@@ -239,7 +261,7 @@
                                     </c:otherwise>
                                 </c:choose>
                             </tbody>
-                            <tfoot style="background: var(--bg); border-top: 2px solid var(--primary);">
+                            <tfoot style="background: rgba(255,255,255,0.05); border-top: 2px solid var(--primary);">
                                 <tr>
                                     <td colspan="2" class="py-3 px-4 fw-bold">TỔNG CỘNG</td>
                                     <td class="py-3 px-4 text-end fw-bold text-success-custom">
@@ -252,12 +274,47 @@
 
                 </div>
             </div>
-            
+
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Khởi tạo Flatpickr cho input ngày
+            const startDatePicker = flatpickr("#startDate", {
+                dateFormat: "d/m/Y",
+                locale: "vn",
+                allowInput: true,
+                onChange: function (selectedDates, dateStr, instance) {
+                    if (selectedDates.length > 0) {
+                        endDatePicker.set('minDate', selectedDates[0]);
+                    }
+                }
+            });
+
+            const endDatePicker = flatpickr("#endDate", {
+                dateFormat: "d/m/Y",
+                locale: "vn",
+                allowInput: true
+            });
+
+            // Chuyển đổi định dạng từ dd/MM/yyyy sang yyyy-MM-dd trước khi submit
+            document.getElementById('filterForm').addEventListener('submit', function (e) {
+                var startDate = document.getElementById('startDate').value;
+                var endDate = document.getElementById('endDate').value;
+
+                // Chuyển đổi từ dd/MM/yyyy sang yyyy-MM-dd
+                if (startDate && startDate.includes('/')) {
+                    var parts = startDate.split('/');
+                    var formattedStart = parts[2] + '-' + parts[1] + '-' + parts[0];
+                    document.getElementById('startDate').value = formattedStart;
+                }
+
+                if (endDate && endDate.includes('/')) {
+                    var parts = endDate.split('/');
+                    var formattedEnd = parts[2] + '-' + parts[1] + '-' + parts[0];
+                    document.getElementById('endDate').value = formattedEnd;
+                }
+            });
+        </script>    
     </body>
 </html>
-
-
-

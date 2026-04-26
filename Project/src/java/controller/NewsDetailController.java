@@ -19,12 +19,13 @@ public class NewsDetailController extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             NewsDAO newsDAO = new NewsDAO();
             News news = newsDAO.getNewsById(id);
-            
-            if (news == null) {
+
+            // ✅ KIỂM TRA VISIBLE
+            if (news == null || !news.isVisible()) {
                 response.sendRedirect("home");
                 return;
             }
-            
+
             request.setAttribute("news", news);
             request.getRequestDispatcher("NewsDetail.jsp").forward(request, response);
         } catch (Exception e) {

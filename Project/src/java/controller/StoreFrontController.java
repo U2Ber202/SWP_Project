@@ -40,7 +40,8 @@ public class StoreFrontController extends HttpServlet {
         
         List<Product> products = productDAO.getProductsByStoreId(storeId);
         List<Category> categories = categoryDAO.getCategoriesByStore(storeId);
-        List<model.News> listNews = new NewsDAO().getVisibleOnlyStoreNews(storeId);
+        List<model.News> listNews = new NewsDAO().getNewsByStore(storeId); 
+
         
         request.setAttribute("store", store);
         request.setAttribute("listProducts", products);
