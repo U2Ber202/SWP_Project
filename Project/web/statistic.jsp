@@ -7,13 +7,17 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Báo cáo doanh thu | V-SNKR Admin</title>
-        
+
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        
+
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        
+
+        <!-- Thêm vào trong thẻ <head>, sau các thẻ CSS khác -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
         <style>
             :root {
                 --primary: #ea580c;
@@ -141,9 +145,14 @@
                 margin: 0;
             }
 
-            .bg-light-success { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
-            .text-success-custom { color: #4ade80 !important; }
-            
+            .bg-light-success {
+                background: rgba(74, 222, 128, 0.15);
+                color: #4ade80;
+            }
+            .text-success-custom {
+                color: #4ade80 !important;
+            }
+
             .table {
                 color: #f1f5f9;
             }
@@ -159,7 +168,7 @@
         <%@ include file="components/navBarComponent.jsp" %>
         <div class="container" style="margin-top: 100px;">
             <div class="admin-wrapper mb-4">
-                
+
                 <div class="admin-header">
                     <h2><i class="fa-solid fa-chart-line"></i> Báo cáo <b>Doanh Thu</b></h2>
                     <a href="home" class="btn-custom-secondary">
@@ -168,17 +177,21 @@
                 </div>
 
                 <div class="dashboard-body">
-                    
+
                     <!-- Filter Section -->
                     <div class="mb-5">
-                        <form action="statistic" method="get" class="row g-3 align-items-end">
+                        <form action="statistic" method="get" id="filterForm" class="row g-3 align-items-end">
                             <div class="col-md-4">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Từ ngày</label>
-                                <input type="date" name="startDate" class="form-control bg-dark text-white border-secondary" value="${startDate}" required>
+                                <input type="text" name="startDate" id="startDate" class="form-control bg-dark text-white border-secondary" 
+                                       value="<fmt:formatDate value='${startDate}' pattern='dd/MM/yyyy'/>" 
+                                       placeholder="dd/MM/yyyy" required autocomplete="off">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Đến ngày</label>
-                                <input type="date" name="endDate" class="form-control bg-dark text-white border-secondary" value="${endDate}" required>
+                                <input type="text" name="endDate" id="endDate" class="form-control bg-dark text-white border-secondary" 
+                                       value="<fmt:formatDate value='${endDate}' pattern='dd/MM/yyyy'/>" 
+                                       placeholder="dd/MM/yyyy" required autocomplete="off">
                             </div>
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-primary w-100" style="background: var(--primary); border: none; height: 38px; font-weight: 600;">
@@ -261,9 +274,47 @@
 
                 </div>
             </div>
-            
+
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Khởi tạo Flatpickr cho input ngày
+            const startDatePicker = flatpickr("#startDate", {
+                dateFormat: "d/m/Y",
+                locale: "vn",
+                allowInput: true,
+                onChange: function (selectedDates, dateStr, instance) {
+                    if (selectedDates.length > 0) {
+                        endDatePicker.set('minDate', selectedDates[0]);
+                    }
+                }
+            });
+
+            const endDatePicker = flatpickr("#endDate", {
+                dateFormat: "d/m/Y",
+                locale: "vn",
+                allowInput: true
+            });
+
+            // Chuyển đổi định dạng từ dd/MM/yyyy sang yyyy-MM-dd trước khi submit
+            document.getElementById('filterForm').addEventListener('submit', function (e) {
+                var startDate = document.getElementById('startDate').value;
+                var endDate = document.getElementById('endDate').value;
+
+                // Chuyển đổi từ dd/MM/yyyy sang yyyy-MM-dd
+                if (startDate && startDate.includes('/')) {
+                    var parts = startDate.split('/');
+                    var formattedStart = parts[2] + '-' + parts[1] + '-' + parts[0];
+                    document.getElementById('startDate').value = formattedStart;
+                }
+
+                if (endDate && endDate.includes('/')) {
+                    var parts = endDate.split('/');
+                    var formattedEnd = parts[2] + '-' + parts[1] + '-' + parts[0];
+                    document.getElementById('endDate').value = formattedEnd;
+                }
+            });
+        </script>    
     </body>
 </html>

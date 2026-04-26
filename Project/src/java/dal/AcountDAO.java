@@ -19,8 +19,6 @@ public class AcountDAO extends DBContext {
             + "ISNULL([role], CASE WHEN isAdmin = 1 THEN 'admin' ELSE 'customer' END) AS role, "
             + "[fullname], [phone], [email], [address], [token] FROM Account";
 
-
-
     private Account mapAccount(ResultSet rs) throws SQLException {
         Account a = new Account();
         a.setUid(rs.getInt("uID"));
@@ -41,21 +39,57 @@ public class AcountDAO extends DBContext {
         return getAccountsBySql(ACCOUNT_SELECT + " ORDER BY uID DESC");
     }
 
+// THAY BẰNG ĐOẠN NÀY:
     public List<Account> searchAccounts(String keyword) {
         String normalizedKeyword = keyword == null ? "" : keyword.trim();
         if (normalizedKeyword.isEmpty()) {
             return getAllAccount();
         }
 
+        // Nếu bắt đầu bằng # thì tìm theo ID (bỏ dấu #)
+        String idSearch = normalizedKeyword.startsWith("#")
+                ? normalizedKeyword.substring(1).trim()
+                : normalizedKeyword;
+
+//        String idPattern = "%" + idSearch.toLowerCase() + "%";
+        if (normalizedKeyword.startsWith("#")) {
+            String idStr = normalizedKeyword.substring(1).trim();
+            // Nếu sau # không có gì hoặc không phải số → trả về rỗng
+            if (idStr.isEmpty() || !idStr.matches("\\d+")) {
+                return new ArrayList<>();
+            }
+            return getAccountsBySql(ACCOUNT_SELECT
+                    + " WHERE [uID] = ?"
+                    + " ORDER BY uID DESC",
+                    Integer.parseInt(idStr));
+        }
+
         String searchPattern = "%" + normalizedKeyword.toLowerCase() + "%";
         return getAccountsBySql(ACCOUNT_SELECT
                 + " WHERE LOWER(CAST([uID] AS NVARCHAR(50))) LIKE ?"
                 + " OR LOWER([user]) LIKE ?"
-                + " OR LOWER(ISNULL([role], CASE WHEN isAdmin = 1 THEN 'admin' ELSE 'customer' END)) LIKE ?"
                 + " OR LOWER(ISNULL([email], '')) LIKE ?"
-                + " OR LOWER(CASE WHEN [active] = 1 THEN 'active' ELSE 'inactive' END) LIKE ?"
+                + " OR LOWER(ISNULL([fullname], '')) LIKE ?"
+                + " OR ([role] = 'admin'             AND (N'quản trị'     LIKE ? OR LOWER([role]) LIKE ?))"
+                + " OR ([role] = 'owner'             AND (N'chủ cửa hàng' LIKE ? OR LOWER([role]) LIKE ?))"
+                + " OR ([role] = 'shipper'           AND (N'shipper'      LIKE ? OR LOWER([role]) LIKE ?))"
+                + " OR ([role] = 'warehouse_manager' AND (N'quản lý kho'  LIKE ? OR LOWER([role]) LIKE ?))"
+                + " OR ([role] = 'customer'          AND (N'khách hàng'   LIKE ? OR LOWER([role]) LIKE ?))"
+                + " OR ([active] = 1 AND N'đang hoạt động' LIKE ?)"
+                + " OR ([active] = 0 AND N'đã khóa'        LIKE ?)"
                 + " ORDER BY uID DESC",
-                searchPattern, searchPattern, searchPattern, searchPattern, searchPattern);
+//                idPattern, // ID (bỏ dấu #)
+                searchPattern, // user
+                searchPattern, // email
+                searchPattern, // fullname
+                searchPattern, searchPattern, // admin
+                searchPattern, searchPattern, // owner
+                searchPattern, searchPattern, // shipper
+                searchPattern, searchPattern, // warehouse_manager
+                searchPattern, searchPattern, // customer
+                searchPattern, // đang hoạt động
+                searchPattern // đã khóa
+        );
     }
 
     public List<Account> getAccountsByRole(String role) {
@@ -103,7 +137,6 @@ public class AcountDAO extends DBContext {
                 storeId, storeId);
     }
 
-
     public void insertOwnerAccount(String user, String pass, String email, String fullname, String phone) {
         insertAccountByRole(user, pass, email, fullname, phone, Account.ROLE_OWNER);
     }
@@ -114,8 +147,7 @@ public class AcountDAO extends DBContext {
 
     public int insertStaffAndReturnId(String user, String pass, String email, String fullname, String phone, String role) {
         String sql = "INSERT INTO [Account] ([user], [pass], [isAdmin], [role], [active], [email], [fullname], [phone]) VALUES (?, ?, 0, ?, 1, ?, ?, ?)";
-        try (Connection connection = getConnection();
-             PreparedStatement stm = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
             stm.setString(1, user);
             stm.setString(2, PasswordUtil.hash(pass));
             stm.setString(3, role);
@@ -124,7 +156,9 @@ public class AcountDAO extends DBContext {
             stm.setString(6, phone);
             stm.executeUpdate();
             try (ResultSet rs = stm.getGeneratedKeys()) {
-                if (rs.next()) return rs.getInt(1);
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -181,6 +215,18 @@ public class AcountDAO extends DBContext {
         return account != null && account.getUid() != accountId;
     }
 
+    public boolean isPhoneExist(String phone) {
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(
+                "SELECT 1 FROM Account WHERE [phone] = ?")) {
+            stm.setString(1, phone);
+            ResultSet rs = stm.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
     public void insertAccount(String user, String pass, String email) {
         insertAccountByRole(user, pass, email, null, null, Account.ROLE_CUSTOMER);
     }
@@ -198,8 +244,6 @@ public class AcountDAO extends DBContext {
         }
         return false;
     }
-
-
 
     public Account getAccountById(int accountId) {
         return getSingleBySql(ACCOUNT_SELECT + " WHERE uID = ?", accountId);
@@ -230,8 +274,7 @@ public class AcountDAO extends DBContext {
 
     private List<Account> getAccountsBySql(String sql, Object... params) {
         List<Account> list = new ArrayList<>();
-        try (Connection connection = getConnection();
-                PreparedStatement stm = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(sql)) {
             bindParams(stm, params);
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
@@ -245,8 +288,7 @@ public class AcountDAO extends DBContext {
     }
 
     private Account getSingleBySql(String sql, Object... params) {
-        try (Connection connection = getConnection();
-                PreparedStatement stm = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(sql)) {
             bindParams(stm, params);
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
@@ -260,8 +302,7 @@ public class AcountDAO extends DBContext {
     }
 
     private void executeUpdate(String sql, Object... params) {
-        try (Connection connection = getConnection();
-                PreparedStatement stm = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(sql)) {
             bindParams(stm, params);
             stm.executeUpdate();
         } catch (SQLException ex) {
