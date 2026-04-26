@@ -168,7 +168,7 @@
                                             <th>Số Điện Thoại</th>
                                             <th>Địa Chỉ</th>
                                             <th>Trạng Thái</th>
-                                            <th>Shipper</th>
+                                            <th>Quản lý ship hàng</th>
                                             <th class="text-center">Thao Tác</th>
                                         </tr>
                                     </thead>
@@ -238,7 +238,7 @@
                                                             </c:when>
                                                             <c:otherwise>
                                                                 <span class="text-muted-custom small fw-bold">Chỉ
-                                                                    Shipper được cập nhật</span>
+                                                                    Quản lý ship hàng được cập nhật</span>
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </c:otherwise>

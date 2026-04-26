@@ -29,56 +29,59 @@
                         href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
                     <style>
+                        :root {
+                            --primary: #ea580c;
+                            --primary-dark: #c2410c;
+                            --bg: #0f172a;
+                            --card-bg: rgba(255, 255, 255, 0.05);
+                            --glass: rgba(255, 255, 255, 0.03);
+                            --border: rgba(255, 255, 255, 0.1);
+                        }
+
                         body {
                             font-family: 'Be Vietnam Pro', sans-serif;
                             background-color: var(--bg) !important;
-                            color: var(--text-main);
+                            color: #f1f5f9;
                             padding-bottom: 40px;
                         }
 
-                        .card { 
-                            background: var(--card-bg) !important;
-                            backdrop-filter: none !important;
+                        .card {
+                            background: var(--card-bg);
+                            backdrop-filter: blur(12px);
                             border: 1px solid var(--border) !important;
                             border-radius: 20px;
-                            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
                             overflow: hidden;
                         }
 
                         .card-header {
-                            background: var(--card-bg) !important;
+                            background: rgba(0, 0, 0, 0.2) !important;
                             border-bottom: 1px solid var(--border) !important;
                             font-weight: 600;
-                            color: var(--text-main);
+                            color: white;
                             padding: 20px 30px;
                             font-size: 1.1rem;
                         }
 
                         .form-control {
-                            background: var(--bg) !important;
+                            background: rgba(0, 0, 0, 0.2) !important;
                             border: 1px solid var(--border);
-                            color: var(--text-main) !important;
+                            color: white !important;
                             border-radius: 10px;
-                            padding: 8px 15px;
-                            height: 45px !important;
+                            padding: 12px 15px;
                         }
 
                         .form-control::placeholder {
-                            color: var(--text-muted);
-                        }
-
-                        select.form-control {
-                            height: 45px !important;
-                            padding: 0 15px !important;
+                            color: #64748b;
                         }
 
                         select.form-control option {
-                            background-color: var(--card-bg);
-                            color: var(--text-main);
+                            background-color: #1e293b;
+                            color: white;
                         }
 
                         .form-group label {
-                            color: var(--text-muted) !important;
+                            color: #94a3b8 !important;
                             font-weight: 600;
                             text-transform: uppercase;
                             font-size: 0.85rem;
@@ -96,24 +99,24 @@
                         .btn-outline-light {
                             border-radius: 30px;
                             border: 1px solid var(--border);
-                            color: var(--text-main);
+                            color: #e2e8f0;
                             font-weight: 600;
                             padding: 8px 25px;
                         }
 
                         .table {
-                            color: var(--text-main);
+                            color: #f1f5f9;
                             margin-bottom: 0;
                         }
 
                         .table thead th {
                             border-bottom: 1px solid var(--border);
                             border-top: none;
-                            color: var(--text-muted);
+                            color: #94a3b8;
                             font-weight: 600;
                             text-transform: uppercase;
                             font-size: 0.85rem;
-                            background-color: var(--bg);
+                            background-color: rgba(0, 0, 0, 0.2);
                             padding: 15px 20px;
                         }
 
@@ -154,7 +157,7 @@
                         }
 
                         .helper-text {
-                            color: var(--text-muted);
+                            color: #94a3b8;
                             font-size: 0.92rem;
                         }
 
@@ -165,15 +168,15 @@
                         }
 
                         .muted-box {
-                            background: var(--glass);
+                            background: rgba(255, 255, 255, 0.04);
                             border: 1px solid var(--border);
                             border-radius: 16px;
                             padding: 16px;
-                            color: var(--text-muted);
+                            color: #cbd5e1;
                         }
 
                         .text-muted-custom {
-                            color: var(--text-muted) !important;
+                            color: #94a3b8 !important;
                         }
 
                         .text-info {
@@ -194,7 +197,7 @@
                             <div class="container py-5">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <div>
-                                        <h2 class="font-weight-bold mb-0 text-main">
+                                        <h2 class="font-weight-bold mb-0 text-white">
                                             <i class="fa-solid fa-boxes-stacked text-warning mr-2"></i>Quản Lý Kho Giày
                                         </h2>
                                         <c:if test="${not empty managedStore}">
@@ -269,7 +272,90 @@
                                     </div>
                                 </c:if>
 
-                                
+                                <c:if test="${sessionScope.acc.role == 'owner'}">
+                                    <div class="card mb-5">
+                                        <div class="card-header">
+                                            <i class="fa-solid fa-user-plus text-warning mr-2"></i>Tạo tài khoản quản lý
+                                            kho
+                                        </div>
+                                        <div class="card-body p-4">
+                                            <form action="manager" method="post">
+                                                <input type="hidden" name="action" value="createWarehouseManager">
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-3">
+                                                        <label>Tên đăng nhập quản lý kho</label>
+                                                        <input class="form-control" name="warehouseUser"
+                                                            value="${warehouseFormUser}" required>
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <label>Email quản lý kho</label>
+                                                        <input class="form-control" type="email" name="warehouseEmail"
+                                                            value="${warehouseFormEmail}" required>
+                                                    </div>
+                                                    <div class="form-group col-md-3">
+                                                        <label>Họ tên</label>
+                                                        <input class="form-control" name="warehouseFullname"
+                                                            value="${warehouseFormFullname}" required>
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <label>Số điện thoại</label>
+                                                        <input class="form-control" name="warehousePhone"
+                                                            value="${warehouseFormPhone}" required>
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <label>Mật khẩu</label>
+                                                        <input class="form-control" type="password" name="warehousePass"
+                                                            required>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-brand" type="submit">Tạo quản lý kho</button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="card mb-5">
+                                        <div class="card-header">
+                                            <i class="fa-solid fa-user-plus text-warning mr-2"></i>Tạo tài khoản quản lý ship hàng
+                                            cho cửa hàng
+                                        </div>
+                                        <div class="card-body p-4">
+                                            <form action="manager" method="post">
+                                                <input type="hidden" name="action" value="createShipper">
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-3">
+                                                        <label>Tên đăng nhập quản lý ship hàng</label>
+                                                        <input class="form-control" name="shipperUser"
+                                                            value="${shipperFormUser}" required>
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <label>Email quản lý ship hàng</label>
+                                                        <input class="form-control" type="email" name="shipperEmail"
+                                                            value="${shipperFormEmail}" required>
+                                                    </div>
+                                                    <div class="form-group col-md-3">
+                                                        <label>Họ tên quản lý ship hàng</label>
+                                                        <input class="form-control" name="shipperFullname"
+                                                            value="${shipperFormFullname}" required>
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <label>Số điện thoại quản lý ship hàng</label>
+                                                        <input class="form-control" name="shipperPhone"
+                                                            value="${shipperFormPhone}" required>
+                                                    </div>
+                                                    <div class="form-group col-md-2">
+                                                        <label>Mật khẩu quản lý ship hàng</label>
+                                                        <input class="form-control" type="password" name="shipperPass"
+                                                            required>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-brand" type="submit">Tạo quản lý ship hàng</button>
+                                                <div class="helper-text mt-3">Sau khi tạo quản lý ship hàng, chủ cửa hàng vào
+                                                    trang đơn hàng để gán đơn cho quản lý ship hàng.</div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </c:if>
+
                                 <c:if test="${sessionScope.acc.role == 'owner'}">
                                     <div class="card mb-5">
                                         <div class="card-header">
@@ -339,7 +425,7 @@
 
                                 <div class="card mb-5">
                                     <div class="card-header border-bottom">
-                                        <h5 class="mb-0 font-weight-bold text-main"><i
+                                        <h5 class="mb-0 font-weight-bold text-white"><i
                                                 class="fa-solid fa-list-ul text-info mr-2"></i>Danh sách sản phẩm hiện
                                             có</h5>
                                     </div>
@@ -629,5 +715,3 @@
                 </body>
 
                 </html>
-
-
