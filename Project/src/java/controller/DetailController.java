@@ -43,6 +43,14 @@ public class DetailController extends HttpServlet {
             
             FeedbackDAO feedbackDAO = new FeedbackDAO();
             request.setAttribute("listFeedbacks", feedbackDAO.getAllFeedbackForProduct(productId));
+            
+            model.Account acc = (model.Account) request.getSession().getAttribute("acc");
+            boolean hasBought = false;
+            if (acc != null) {
+                hasBought = feedbackDAO.hasBoughtProduct(acc.getUid(), productId);
+            }
+            request.setAttribute("hasBought", hasBought);
+            
             request.setAttribute("product", product);
             request.setAttribute("listLast", listLast);
             
