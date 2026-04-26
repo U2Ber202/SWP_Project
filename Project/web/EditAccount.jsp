@@ -17,19 +17,10 @@
 
             <style>
                 /* Đồng bộ biến màu sắc với trang chủ */
-                :root {
-                    --primary: #ea580c;
-                    --primary-dark: #c2410c;
-                    --bg: #0f172a;
-                    --card-bg: rgba(255, 255, 255, 0.05);
-                    --glass: rgba(255, 255, 255, 0.03);
-                    --border: rgba(255, 255, 255, 0.1);
-                }
-
                 body {
                     font-family: 'Be Vietnam Pro', sans-serif;
                     background-color: var(--bg) !important;
-                    color: #f1f5f9;
+                    color: var(--text-main);
                 }
 
                 .main-content {
@@ -40,22 +31,22 @@
                     padding: 40px 0;
                 }
 
-                /* Đồng bộ Card thành Glassmorphism */
+                /* Đồng bộ Card thành Opaque */
                 .edit-card {
-                    background: var(--card-bg);
-                    backdrop-filter: blur(12px);
+                    background: var(--card-bg) !important;
                     border: 1px solid var(--border);
                     border-radius: 24px;
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
                     overflow: hidden;
                     width: 100%;
                     max-width: 700px;
                     margin: auto;
+                    backdrop-filter: none !important;
                 }
 
                 .edit-card-header {
-                    background: rgba(0, 0, 0, 0.2);
-                    color: #ffffff;
+                    background: var(--card-bg) !important;
+                    color: var(--text-main);
                     padding: 25px 30px;
                     border-bottom: 1px solid var(--border);
                     display: flex;
@@ -82,7 +73,7 @@
 
                 .form-group label {
                     font-weight: 600;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     margin-bottom: 8px;
                     font-size: 0.85rem;
                     text-transform: uppercase;
@@ -91,9 +82,9 @@
 
                 /* Đồng bộ Input Form */
                 .form-control {
-                    background: rgba(0, 0, 0, 0.2) !important;
+                    background: var(--bg) !important;
                     border: 1px solid var(--border);
-                    color: white !important;
+                    color: var(--text-main) !important;
                     border-radius: 0 8px 8px 0;
                     padding: 10px 15px;
                     font-size: 1rem;
@@ -101,23 +92,23 @@
                 }
 
                 .form-control:focus {
-                    background: rgba(0, 0, 0, 0.3) !important;
+                    background: var(--bg) !important;
                     border-color: var(--primary);
                     box-shadow: none;
                 }
 
                 /* Trường không được sửa (readonly) */
                 .form-control[readonly] {
-                    background-color: rgba(0, 0, 0, 0.4) !important;
-                    color: #64748b !important;
+                    background-color: rgba(0, 0, 0, 0.05) !important;
+                    color: var(--text-muted) !important;
                     cursor: not-allowed;
                 }
 
                 .input-group-text {
-                    background-color: rgba(0, 0, 0, 0.3);
+                    background-color: var(--bg);
                     border: 1px solid var(--border);
                     border-right: none;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     border-radius: 8px 0 0 8px;
                 }
 
@@ -141,7 +132,7 @@
 
                 .btn-custom-secondary {
                     background-color: transparent;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     border: 1px solid var(--border);
                     padding: 10px 25px;
                     border-radius: 12px;
@@ -150,8 +141,8 @@
                 }
 
                 .btn-custom-secondary:hover {
-                    background-color: var(--glass);
-                    color: white;
+                    background-color: var(--bg);
+                    color: var(--text-main);
                 }
 
                 .border-top {
@@ -166,7 +157,7 @@
                     padding: 14px 18px;
                     border: 1px solid var(--border);
                     border-radius: 14px;
-                    background: rgba(0, 0, 0, 0.2);
+                    background: var(--bg);
                 }
 
                 .status-switch-label {
@@ -176,12 +167,12 @@
                 }
 
                 .status-switch-label strong {
-                    color: #f8fafc;
+                    color: var(--text-main);
                     font-size: 1rem;
                 }
 
                 .status-switch-label span {
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     font-size: 0.9rem;
                 }
 
@@ -241,7 +232,7 @@
                         <form action="EditAccount" method="post">
                                 <div class="edit-card-header">
                                     <h4><i class="fa-solid fa-user-pen"></i> Chỉnh Sửa Tài Khoản</h4>
-                                    <a href="managerAccount" class="text-white"
+                                    <a href="managerAccount" class="text-main"
                                         style="font-size: 1.2rem; opacity: 0.6; transition: opacity 0.3s;"
                                         onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'"><i
                                             class="fa-solid fa-xmark"></i></a>
@@ -360,3 +351,5 @@
         </body>
 
         </html>
+
+

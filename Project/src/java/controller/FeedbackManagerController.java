@@ -39,6 +39,15 @@ public class FeedbackManagerController extends HttpServlet {
             return;
         }
 
+        if ("hide".equals(action)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            boolean status = Boolean.parseBoolean(request.getParameter("status"));
+            feedbackDAO.hideFeedback(id, status);
+            session.setAttribute("success", (status ? "Ẩn" : "Hiện") + " đánh giá thành công!");
+            response.sendRedirect("feedbacks");
+            return;
+        }
+
         if ("statistic".equals(action)) {
             int storeId = -1;
             if (!RoleHelper.isAdmin(acc)) {
@@ -46,7 +55,7 @@ public class FeedbackManagerController extends HttpServlet {
                 Store store = storeDAO.getStoreByOwnerId(acc.getUid());
                 if (store != null) storeId = store.getId();
             }
-            java.util.Map<Integer, Integer> stats = feedbackDAO.getFeedbackStatistics(storeId);
+            java.util.Map<String, Integer> stats = feedbackDAO.getFeedbackStatistics(storeId);
             request.setAttribute("stats", stats);
             request.getRequestDispatcher("FeedbackStatistic.jsp").forward(request, response);
             return;

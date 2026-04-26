@@ -11,19 +11,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        :root { --primary: #ea580c; --bg: #0f172a; --card-bg: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
-        body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: #f1f5f9; }
+        body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg) !important; color: var(--text-main); }
         .order-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 25px; margin-bottom: 20px; transition: 0.3s; }
         .order-card:hover { border-color: var(--primary); transform: translateY(-5px); }
         .status-badge { padding: 5px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
         .status-shipped { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
-        .status-other { background: rgba(255, 255, 255, 0.1); color: #94a3b8; }
+        .status-other { background: rgba(255, 255, 255, 0.1); color: var(--text-muted); }
         .btn-contact { background: rgba(234, 88, 12, 0.1); border: 1px solid var(--primary); color: var(--primary); border-radius: 10px; font-weight: 600; }
         .btn-contact:hover { background: var(--primary); color: white; }
-        .modal-content { background: #1e293b !important; border: 1px solid var(--border) !important; border-radius: 20px !important; overflow: hidden; }
+        
         .modal-header { border-bottom: 1px solid var(--border) !important; }
         .modal-footer { border-top: 1px solid var(--border) !important; }
-        .bg-glass { background: rgba(255, 255, 255, 0.03) !important; border: 1px solid var(--border); }
+        .bg-glass { background: var(--bg) !important; border: 1px solid var(--border); }
         .italic { font-style: italic; }
     </style>
     <script src="js/theme.js"></script>
@@ -134,21 +133,21 @@
     <!-- Contact Modal -->
     <div class="modal fade" id="contactModal" tabindex="-1" role="dialog">
         <div class="modal-dialog">
-            <div class="modal-content bg-dark text-white border-secondary">
+            <div class="modal-content">
                 <form action="addContact" method="post">
                     <input type="hidden" name="orderId" id="contact-order-id">
-                    <div class="modal-header border-secondary">
+                    <div class="modal-header">
                         <h5 class="modal-title">Gửi yêu cầu hỗ trợ đơn hàng</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         <p class="small text-muted">Vui lòng mô tả vấn đề bạn gặp phải với đơn hàng này (Ví dụ: Sai kích thước, hàng lỗi, hoàn tiền...).</p>
                         <div class="form-group">
                             <label>Nội dung lời nhắn</label>
-                            <textarea class="form-control bg-transparent text-white border-secondary" name="message" rows="5" required placeholder="Nhập nội dung tại đây..."></textarea>
+                            <textarea class="form-control" name="message" rows="5" required placeholder="Nhập nội dung tại đây..."></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer border-secondary">
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                         <button type="submit" class="btn btn-warning px-4">Gửi yêu cầu</button>
                     </div>
@@ -159,10 +158,10 @@
 
     <div class="modal fade" id="ownerReplyModal" tabindex="-1" role="dialog">
         <div class="modal-dialog">
-            <div class="modal-content bg-dark text-white border-secondary">
-                <div class="modal-header border-secondary">
+            <div class="modal-content">
+                <div class="modal-header">
                     <h5 class="modal-title"><i class="fa-solid fa-comments text-warning mr-2"></i> Giải đáp từ <span id="reply-store-name" class="text-warning font-weight-bold"></span></h5>
-                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-4">
@@ -174,7 +173,7 @@
                         <div id="reply-owner-text" class="p-3 bg-glass rounded border-left border-success" style="border-left-width: 4px !important; background: rgba(34, 197, 94, 0.05) !important;"></div>
                     </div>
                 </div>
-                <div class="modal-footer border-secondary">
+                <div class="modal-footer">
                     <p class="small text-muted mr-auto">Bạn vẫn cần hỗ trợ?</p>
                     <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Đóng</button>
                     <button type="button" class="btn btn-warning btn-sm" id="btn-respond-back">
@@ -215,3 +214,6 @@
     </script>
 </body>
 </html>
+
+
+

@@ -15,28 +15,19 @@
                 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
             <style>
-                :root {
-                    --primary: #ea580c;
-                    --primary-dark: #c2410c;
-                    --bg: #0f172a;
-                    --card-bg: rgba(255, 255, 255, 0.05);
-                    --glass: rgba(255, 255, 255, 0.03);
-                    --border: rgba(255, 255, 255, 0.1);
-                }
-
                 body {
                     font-family: 'Be Vietnam Pro', sans-serif;
                     background-color: var(--bg) !important;
-                    color: #f1f5f9;
+                    color: var(--text-main);
                     padding-bottom: 48px;
                 }
 
                 .panel {
                     background: var(--card-bg);
-                    backdrop-filter: blur(12px);
+                    backdrop-filter: none;
                     border: 1px solid var(--border);
                     border-radius: 24px;
-                    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 14px 40px rgba(0,0,0,0.1);
                     overflow: hidden;
                     margin-bottom: 24px;
                 }
@@ -44,13 +35,14 @@
                 .panel-header {
                     padding: 24px 28px;
                     border-bottom: 1px solid var(--border);
-                    background: rgba(0, 0, 0, 0.18);
+                    background: rgba(0, 0, 0, 0.05);
                 }
 
                 .panel-title {
                     margin: 0;
                     font-size: 1.35rem;
                     font-weight: 700;
+                    color: var(--text-main);
                 }
 
                 .panel-body {
@@ -68,7 +60,7 @@
 
                 .btn-secondary-custom {
                     background: transparent;
-                    color: #cbd5e1;
+                    color: var(--text-muted);
                     border: 1px solid var(--border);
                     border-radius: 12px;
                     font-weight: 600;
@@ -76,14 +68,14 @@
                 }
 
                 .table {
-                    color: #f1f5f9;
+                    color: var(--text-main);
                     margin-bottom: 0;
                 }
 
                 .table thead th {
                     border-top: none;
                     border-bottom: 1px solid var(--border);
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     text-transform: uppercase;
                     font-size: 0.8rem;
                 }
@@ -95,25 +87,31 @@
                 }
 
                 .form-control,
-                .custom-select,
-                textarea.form-control {
-                    background: rgba(0, 0, 0, 0.2);
+                .custom-select {
+                    background: var(--bg);
                     border: 1px solid var(--border);
-                    color: white;
+                    color: var(--text-main);
                     border-radius: 12px;
+                    height: 45px !important;
+                    padding: 8px 15px;
+                }
+
+                .custom-select {
+                    padding: 0 15px !important;
+                }
+
+                textarea.form-control {
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    color: var(--text-main);
+                    border-radius: 12px;
+                    height: auto !important;
+                    padding: 12px 15px;
                 }
 
                 .custom-select option {
-                    background: #1e293b;
-                    color: white;
-                }
-
-                .modal-content {
-                    background: #0f172a; /* Darker and more solid */
-                    color: #f1f5f9;
-                    border: 1px solid var(--border);
-                    border-radius: 24px;
-                    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+                    background: var(--card-bg);
+                    color: var(--text-main);
                 }
 
                 .modal-header,
@@ -127,7 +125,7 @@
                 }
 
                 .setting-box {
-                    background: rgba(255, 255, 255, 0.03);
+                    background: var(--bg);
                     border: 1px solid var(--border);
                     border-radius: 18px;
                     padding: 18px;
@@ -135,11 +133,11 @@
                 }
 
                 .custom-control-label {
-                    color: #e2e8f0;
+                    color: var(--text-main);
                 }
 
                 label {
-                    color: #cbd5e1;
+                    color: var(--text-muted);
                     font-weight: 600;
                 }
             </style>
@@ -231,7 +229,7 @@
                                 </table>
                             </div>
                             <c:if test="${totalPage >= 1}">
-                                <div class="card-footer border-top-0 bg-transparent pb-4">
+                                <div class="card-footer border-top-0 bg-solid-dark pb-4">
                                     <nav aria-label="Page navigation">
                                         <ul class="pagination justify-content-center mb-0">
                                             <li class="page-item ${page <= 1 ? 'disabled' : ''}">
@@ -262,7 +260,7 @@
                                         <input type="hidden" name="storeId" value="${s.id}">
                                         <div class="modal-header">
                                             <h5 class="modal-title">Cập nhật cửa hàng</h5>
-                                            <button type="button" class="close text-white"
+                                            <button type="button" class="close"
                                                 data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
@@ -312,7 +310,7 @@
                                             <h5 class="modal-title ${s.active ? 'text-warning' : 'text-success'}">
                                                 ${s.active ? 'Ngừng hoạt động cửa hàng' : 'Kích hoạt cửa hàng'}
                                             </h5>
-                                            <button type="button" class="close text-white"
+                                            <button type="button" class="close"
                                                 data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
@@ -339,7 +337,7 @@
                                     <input type="hidden" name="action" value="add">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Thêm cửa hàng mới</h5>
-                                        <button type="button" class="close text-white"
+                                        <button type="button" class="close"
                                             data-dismiss="modal">&times;</button>
                                     </div>
                                     <div class="modal-body">
@@ -383,3 +381,5 @@
         </body>
 
         </html>
+
+

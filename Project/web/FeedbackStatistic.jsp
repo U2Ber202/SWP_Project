@@ -1,5 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -70,7 +71,8 @@
                     <h5 class="text-left mb-4 font-weight-bold">Chi tiết phân bổ</h5>
                     <c:forEach begin="0" end="4" var="idx">
                         <c:set var="star" value="${5 - idx}" />
-                        <c:set var="count" value="${stats[star]}" />
+                        <c:set var="starKey" value="${star.toString()}" />
+                        <c:set var="count" value="${stats[starKey]}" />
                         <c:set var="percent" value="${total > 0 ? (count * 100 / total) : 0}" />
                         <div class="row rating-row">
                             <div class="col-2 text-left small font-weight-bold">${star} sao</div>
@@ -90,3 +92,6 @@
     </div>
 </body>
 </html>
+
+
+

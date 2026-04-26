@@ -25,13 +25,6 @@
                     href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
                     rel="stylesheet">
                 <style>
-                    :root {
-                        --primary: #ea580c;
-                        --bg: #0f172a;
-                        --card-bg: rgba(255, 255, 255, 0.05);
-                        --border: rgba(255, 255, 255, 0.1);
-                    }
-
                     body {
                         background: var(--bg);
                         color: var(--text-main);
@@ -40,7 +33,7 @@
 
                     .detail-card {
                         background: var(--card-bg);
-                        backdrop-filter: blur(12px);
+                        backdrop-filter: none;
                         border: 1px solid var(--border);
                         border-radius: 24px;
                         padding: 2.5rem;
@@ -49,7 +42,7 @@
                     .product-img {
                         border-radius: 20px;
                         border: 1px solid var(--border);
-                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.3);
                     }
 
                     .price-large {
@@ -70,7 +63,8 @@
                     .stock-info {
                         display: inline-block;
                         padding: 0.5rem 1rem;
-                        background: rgba(255, 255, 255, 0.05);
+                        background: var(--bg);
+                        border: 1px solid var(--border);
                         border-radius: 10px;
                         font-size: 0.9rem;
                     }
@@ -89,6 +83,7 @@
                 </style>
                 <script src="js/theme.js"></script>
                 <link rel="stylesheet" href="css/theme.css">
+                <script src="js/validation.js"></script>
             </head>
 
             <body class="bg-theme" style="background: var(--bg) !important;">
@@ -103,10 +98,10 @@
                                     </div>
                                     <div class="col-lg-6 px-lg-5">
                                         <nav aria-label="breadcrumb">
-                                            <ol class="breadcrumb bg-transparent p-0">
+                                            <ol class="breadcrumb bg-solid-dark p-0">
                                                 <li class="breadcrumb-item"><a href="home"
                                                         class="text-muted small">Trang chủ</a></li>
-                                                <li class="breadcrumb-item active text-white small" aria-current="page">
+                                                <li class="breadcrumb-item active small" aria-current="page">
                                                     ${product.name}</li>
                                             </ol>
                                         </nav>
@@ -149,7 +144,7 @@
                                         </h4>
                                         <c:forEach items="${listFeedbacks}" var="f">
                                             <div class="mb-4 p-4"
-                                                style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 18px;">
+                                                style="background: var(--bg); border: 1px solid var(--border); border-radius: 18px;">
                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                     <div class="d-flex align-items-center">
                                                         <h6 class="font-weight-bold mb-0 mr-2">${f.userName}</h6>
@@ -164,7 +159,7 @@
                                                                 class="far fa-star"></i></c:forEach>
                                                     </div>
                                                 </div>
-                                                <p class="text-white small mb-2">${f.content}</p>
+                                                <p class="text-main small mb-2">${f.content}</p>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <span class="text-muted" style="font-size: 0.7rem;">
                                                         <fmt:formatDate value="${f.createDate}"
@@ -172,10 +167,15 @@
                                                     </span>
                                                     <c:if test="${sessionScope.acc != null && f.accountId == sessionScope.acc.uid}">
                                                         <div class="small">
-                                                            <button class="btn btn-link btn-sm text-info p-0 mr-2" 
-                                                                    onclick="openEditFeedbackModal('${f.id}', '${f.rating}', '${f.content}')">
-                                                                <i class="fas fa-edit mr-1"></i>Sửa
-                                                            </button>
+                                                            <c:if test="${!f.edited}">
+                                                                <button class="btn btn-link btn-sm text-info p-0 mr-2" 
+                                                                        onclick="openEditFeedbackModal('${f.id}', '${f.rating}', '${f.content}')">
+                                                                    <i class="fas fa-edit mr-1"></i>Sửa
+                                                                </button>
+                                                            </c:if>
+                                                            <c:if test="${f.edited}">
+                                                                <span class="text-muted small"><i class="fas fa-check-circle mr-1"></i>Đã chỉnh sửa</span>
+                                                            </c:if>
                                                             <%-- Customer cannot delete comment as per requirement --%>
                                                         </div>
                                                     </c:if>
@@ -191,49 +191,59 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <c:if test="${sessionScope.acc != null && sessionScope.acc.role == 'customer'}">
-                                            <div class="p-4"
-                                                style="background: rgba(234, 88, 12, 0.05); border: 1px dashed var(--primary); border-radius: 18px;">
-                                                <h5 class="font-weight-bold mb-3">Viết đánh giá</h5>
-                                                <form action="addFeedback" method="post" onsubmit="return validateFeedback()">
-                                                    <input type="hidden" name="productId" value="${product.id}">
-                                                    <input type="hidden" name="storeId" value="${product.storeId}">
-                                                    <div class="form-group">
-                                                        <label class="small text-muted">Số sao</label>
-                                                        <select name="rating" class="form-control"
-                                                            style="background: var(--bg); border: 1px solid var(--border); color: white;">
-                                                            <option value="5">5 Sao (Tuyệt vời)</option>
-                                                            <option value="4">4 Sao (Hài lòng)</option>
-                                                            <option value="3">3 Sao (Bình thường)</option>
-                                                            <option value="2">2 Sao (Kém)</option>
-                                                            <option value="1">1 Sao (Rất tệ)</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="d-flex justify-content-between">
-                                                            <label class="small text-muted">Nội dung</label>
-                                                            <span id="charCount" class="small text-muted">0/50</span>
+                                            <c:if test="${hasBought}">
+                                                <div class="p-4"
+                                                    style="background: rgba(234, 88, 12, 0.05); border: 1px dashed var(--primary); border-radius: 18px;">
+                                                    <h5 class="font-weight-bold mb-3">Viết đánh giá</h5>
+                                                    <form action="addFeedback" method="post" onsubmit="return validateFeedback()">
+                                                        <input type="hidden" name="productId" value="${product.id}">
+                                                        <input type="hidden" name="storeId" value="${product.storeId}">
+                                                        <div class="form-group">
+                                                            <label class="small text-muted">Số sao</label>
+                                                            <select name="rating" class="form-control">
+                                                                <option value="5">5 Sao (Tuyệt vời)</option>
+                                                                <option value="4">4 Sao (Hài lòng)</option>
+                                                                <option value="3">3 Sao (Bình thường)</option>
+                                                                <option value="2">2 Sao (Kém)</option>
+                                                                <option value="1">1 Sao (Rất tệ)</option>
+                                                            </select>
                                                         </div>
-                                                        <textarea name="content" id="feedbackContent" class="form-control" rows="3"
-                                                            placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." maxlength="50"
-                                                            oninput="updateCharCount()"
-                                                            style="background: var(--bg); border: 1px solid var(--border); color: white;"></textarea>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-primary btn-block btn-sm">Gửi
-                                                        đánh giá</button>
-                                                </form>
-                                            </div>
+                                                        <div class="form-group">
+                                                            <div class="d-flex justify-content-between">
+                                                                <label class="small text-muted">Nội dung</label>
+                                                                <span id="charCount" class="small text-muted">0/50</span>
+                                                            </div>
+                                                            <textarea name="content" id="feedbackContent" class="form-control" rows="3"
+                                                                placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." maxlength="50"
+                                                                oninput="handleFeedbackInput()"></textarea>
+                                                            <div id="badword-warning" style="color: #f87171; font-size: 0.8rem; margin-top: 5px; display: none;">
+                                                                Cảnh báo: Nội dung chứa từ ngữ không phù hợp!
+                                                            </div>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary btn-block btn-sm">Gửi
+                                                            đánh giá</button>
+                                                    </form>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="${!hasBought}">
+                                                <div class="p-4 text-center"
+                                                    style="background: var(--bg); border: 1px solid var(--border); border-radius: 18px;">
+                                                    <p class="small text-muted">Bạn phải mua sản phẩm này mới có thể để lại đánh giá.</p>
+                                                    <i class="fas fa-shopping-cart fa-2x text-warning opacity-50 mt-2"></i>
+                                                </div>
+                                            </c:if>
                                         </c:if>
                                         <c:choose>
                                             <c:when test="${sessionScope.acc == null}">
                                                 <div class="p-4 text-center"
-                                                    style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 18px;">
+                                                    style="background: var(--bg); border: 1px solid var(--border); border-radius: 18px;">
                                                     <p class="small text-muted">Vui lòng đăng nhập để viết đánh giá.</p>
                                                     <a href="login" class="btn btn-outline-warning btn-sm">Đăng nhập ngay</a>
                                                 </div>
                                             </c:when>
                                             <c:when test="${sessionScope.acc.role != 'customer'}">
                                                 <div class="p-4 text-center"
-                                                    style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 18px;">
+                                                    style="background: var(--bg); border: 1px solid var(--border); border-radius: 18px;">
                                                     <p class="small text-muted">Tài khoản nhân viên/quản trị không thể gửi đánh giá.</p>
                                                     <i class="fas fa-user-shield fa-2x text-warning opacity-50 mt-2"></i>
                                                 </div>
@@ -257,7 +267,7 @@
                                                     <div class="text-warning mt-1">
                                                         <fmt:formatNumber value="${L.price}" pattern="#,### đ" />
                                                     </div>
-                                                    <a class="btn btn-sm btn-outline-light btn-block mt-3"
+                                                    <a class="btn btn-sm btn-outline-primary btn-block mt-3"
                                                         href="detail?productId=${L.id}">Xem chi tiết</a>
                                                 </div>
                                             </div>
@@ -268,10 +278,10 @@
                         </div>
                         <div class="modal fade" id="editFeedbackModal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
-                                <div class="modal-content text-white" style="background: #1e293b; border-radius: 20px; border: 1px solid var(--border);">
-                                    <div class="modal-header border-0">
+                                <div class="modal-content">
+                                    <div class="modal-header">
                                         <h5 class="modal-title font-weight-bold">Chỉnh sửa đánh giá</h5>
-                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
@@ -281,8 +291,7 @@
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label class="small text-muted">Số sao</label>
-                                                <select name="rating" id="editFeedbackRating" class="form-control"
-                                                    style="background: var(--bg); border: 1px solid var(--border); color: white;">
+                                                <select name="rating" id="editFeedbackRating" class="form-control">
                                                     <option value="5">5 Sao (Tuyệt vời)</option>
                                                     <option value="4">4 Sao (Hài lòng)</option>
                                                     <option value="3">3 Sao (Bình thường)</option>
@@ -293,8 +302,7 @@
                                             <div class="form-group">
                                                 <label class="small text-muted">Nội dung</label>
                                                 <textarea name="content" id="editFeedbackContent" class="form-control" rows="4"
-                                                    maxlength="50"
-                                                    style="background: var(--bg); border: 1px solid var(--border); color: white;"></textarea>
+                                                    maxlength="50"></textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0">
@@ -322,6 +330,17 @@
                                 document.getElementById('charCount').innerText = content.length + '/50';
                             }
 
+                            function handleFeedbackInput() {
+                                updateCharCount();
+                                const content = document.getElementById('feedbackContent').value;
+                                const warning = document.getElementById('badword-warning');
+                                if (Validation.containsBadWords(content)) {
+                                    warning.style.display = 'block';
+                                } else {
+                                    warning.style.display = 'none';
+                                }
+                            }
+
                             function validateFeedback() {
                                 const content = document.getElementById('feedbackContent').value;
                                 if (content.length > 50) {
@@ -332,9 +351,15 @@
                                     alert('Vui lòng nhập nội dung đánh giá.');
                                     return false;
                                 }
+                                if (Validation.containsBadWords(content)) {
+                                    alert('Nội dung chứa từ ngữ thô tục không phù hợp. Vui lòng chỉnh sửa lại!');
+                                    return false;
+                                }
                                 return true;
                             }
                         </script>
             </body>
 
             </html>
+
+

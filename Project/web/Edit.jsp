@@ -28,8 +28,8 @@
                     --primary: #ea580c;
                     --primary-dark: #c2410c;
                     --bg: #0f172a;
-                    --card-bg: rgba(255, 255, 255, 0.05);
-                    --glass: rgba(255, 255, 255, 0.03);
+                    --card-bg: #1e293b;
+                    --glass: #0f172a;
                     --border: rgba(255, 255, 255, 0.1);
                 }
 
@@ -39,16 +39,16 @@
                     color: #f1f5f9;
                 }
 
-                .card {
-                    background: var(--card-bg);
-                    backdrop-filter: blur(12px);
+                .card { background: #1e293b !important; 
+                    background: #1e293b !important;
                     border: 1px solid var(--border) !important;
                     border-radius: 24px;
                     overflow: hidden;
+                    backdrop-filter: none !important;
                 }
 
                 .card-header {
-                    background: rgba(0, 0, 0, 0.2) !important;
+                    background: #1e293b !important;
                     border-bottom: 1px solid var(--border);
                     font-weight: 600;
                     letter-spacing: 0.5px;
@@ -56,7 +56,7 @@
                 }
 
                 .form-control {
-                    background: rgba(0, 0, 0, 0.2) !important;
+                    background: #0f172a !important;
                     border: 1px solid var(--border);
                     color: white !important;
                     border-radius: 10px;
@@ -64,7 +64,7 @@
                 }
 
                 .form-control:focus {
-                    background: rgba(0, 0, 0, 0.3) !important;
+                    background: #0f172a !important;
                     border-color: var(--primary);
                     box-shadow: none;
                 }
@@ -107,7 +107,7 @@
                     object-fit: cover;
                     border-radius: 16px;
                     border: 1px solid var(--border);
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 10px 30px #0f172a;
                 }
 
                 .text-muted {
@@ -120,6 +120,10 @@
             </style>
             <script src="js/theme.js"></script>
             <link rel="stylesheet" href="css/theme.css">
+            <!-- Validation and NSFW JS -->
+            <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+            <script src="https://cdn.jsdelivr.net/npm/nsfwjs"></script>
+            <script src="js/validation.js"></script>
         </head>
 
         <body class="bg-theme">
@@ -157,10 +161,10 @@
 
                                             <div class="form-row">
                                                 <div class="form-group col-md-4">
-                                                    <label class="small font-weight-bold text-muted text-uppercase">Tên
-                                                        mẫu giày</label>
-                                                    <input class="form-control" name="name" value="${product.name}"
-                                                        required>
+                                                    <label class="small font-weight-bold text-muted text-uppercase">Tên mẫu giày (Max 100)</label>
+                                                    <input class="form-control" name="name" id="editName" value="${product.name}"
+                                                        maxlength="100" oninput="validateEditField(this, 100)" required>
+                                                    <div id="editNameError" style="color: #f87171; font-size: 0.7rem;"></div>
                                                 </div>
                                                 <div class="form-group col-md-2">
                                                     <label class="small font-weight-bold text-muted text-uppercase">Giá
@@ -180,7 +184,7 @@
                                                     <label class="small font-weight-bold text-muted text-uppercase">Link
                                                         hình ảnh</label>
                                                     <input class="form-control" name="image" value="${product.imageUrl}"
-                                                        oninput="document.getElementById('shoePreview').src=this.value"
+                                                        oninput="handleEditImageValidation(this)"
                                                         required>
                                                 </div>
                                             </div>
@@ -213,10 +217,10 @@
                                             </div>
 
                                             <div class="form-group mt-2">
-                                                <label class="small font-weight-bold text-muted text-uppercase">Mô tả
-                                                    sản phẩm</label>
-                                                <textarea class="form-control" name="description" rows="4"
-                                                    required>${product.description}</textarea>
+                                                <label class="small font-weight-bold text-muted text-uppercase">Mô tả sản phẩm (Max 1000)</label>
+                                                <textarea class="form-control" name="description" id="editDesc" rows="4"
+                                                    maxlength="1000" oninput="validateEditField(this, 1000)" required>${product.description}</textarea>
+                                                <div id="editDescError" style="color: #f87171; font-size: 0.7rem;"></div>
                                             </div>
 
                                             <div class="mt-4 pt-3 border-top">
@@ -234,6 +238,60 @@
 
                     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
                     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+                    <script>
+                        async function handleEditImageValidation(input) {
+                            const preview = document.getElementById('shoePreview');
+                            const submitBtn = input.closest('form').querySelector('button[type="submit"]');
+                            
+                            if (input.value) {
+                                preview.src = input.value;
+                                
+                                preview.onload = async function() {
+                                    const isSafe = await Validation.isSafeImage(preview);
+                                    let errorMsg = document.getElementById('edit-image-nsfw-error');
+                                    if (!errorMsg) {
+                                        errorMsg = document.createElement('div');
+                                        errorMsg.id = 'edit-image-nsfw-error';
+                                        errorMsg.style.color = 'red';
+                                        errorMsg.style.fontSize = '0.8em';
+                                        input.parentNode.appendChild(errorMsg);
+                                    }
+                                    
+                                    if (!isSafe) {
+                                        errorMsg.innerText = 'Ảnh bị phát hiện chứa nội dung không phù hợp!';
+                                        submitBtn.disabled = true;
+                                    } else {
+                                        errorMsg.innerText = '';
+                                        submitBtn.disabled = false;
+                                    }
+                                };
+                            }
+                        }
+
+                        function validateEditField(input, max) {
+                            const submitBtn = input.closest('form').querySelector('button[type="submit"]');
+                            const errorDiv = document.getElementById(input.id + 'Error');
+                            
+                            let error = '';
+                            if (input.value.length > max) {
+                                error = 'Vượt quá ' + max + ' ký tự!';
+                            } else if (Validation.containsBadWords(input.value)) {
+                                error = 'Chứa từ ngữ không phù hợp!';
+                            }
+
+                            errorDiv.innerText = error;
+                            
+                            const form = input.closest('form');
+                            const name = form.querySelector('#editName').value;
+                            const desc = form.querySelector('#editDesc').value;
+                            
+                            const isOk = name.length <= 100 && !Validation.containsBadWords(name) &&
+                                         desc.length <= 1000 && !Validation.containsBadWords(desc);
+                            submitBtn.disabled = !isOk;
+                        }
+                    </script>
         </body>
 
         </html>
+
+

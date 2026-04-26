@@ -74,34 +74,25 @@
                     }
 
                     .modal-content.opaque-form {
-                        background-color: #1e293b !important; /* Solid dark color */
-                        border: 2px solid #ea580c !important; /* Solid border */
+                        background-color: var(--card-bg) !important;
+                        border: 1px solid var(--border) !important;
                         opacity: 1 !important;
                         backdrop-filter: none !important;
                         -webkit-backdrop-filter: none !important;
-                        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+                        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
+                        color: var(--text-main) !important;
                     }
 
                     .form-control {
-                        background: #0f172a !important; /* Solid dark color */
+                        background: var(--bg) !important;
                         border: 1px solid var(--border);
                         color: var(--text-main) !important;
                         border-radius: 10px;
                         opacity: 1 !important;
                     }
 
-                    [data-theme="light"] .form-control {
-                        background: #ffffff !important;
-                        color: #0f172a !important;
-                    }
-
-                    [data-theme="light"] .modal-content {
-                        background: #ffffff !important;
-                        backdrop-filter: none !important;
-                    }
-
                     .form-control:focus {
-                        background: #0f172a !important;
+                        background: var(--bg) !important;
                         border-color: var(--primary);
                         color: var(--text-main) !important;
                     }
@@ -137,7 +128,7 @@
                                         </c:when>
                                         <c:otherwise>
                                             <p class="text-muted mb-0">Cửa hàng: <span
-                                                    class="text-white">${store.name}</span></p>
+                                                    class="text-main">${store.name}</span></p>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
@@ -184,14 +175,7 @@
                                                         </c:choose>
                                                     </p>
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <c:choose>
-                                                            <c:when test="${v.expiryDate < today}">
-                                                                <span class="badge badge-danger px-3 py-2">Expired</span>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <span class="badge badge-success px-3 py-2">Active</span>
-                                                            </c:otherwise>
-                                                        </c:choose>
+                                                        <span class="badge badge-success px-3 py-2">Active</span>
                                                         <div class="d-flex action-buttons">
                                                             <button type="button"
                                                                 class="btn btn-sm btn-outline-warning btn-action"
@@ -261,7 +245,7 @@
                                         <input type="hidden" name="action" value="add">
                                         <div class="modal-header border-0">
                                             <h5 class="modal-title font-weight-bold">Tạo voucher mới</h5>
-                                            <button type="button" class="close text-white"
+                                            <button type="button" class="close"
                                                 data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
@@ -311,7 +295,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0">
-                                            <button type="button" class="btn btn-outline-light"
+                                            <button type="button" class="btn btn-outline-secondary"
                                                 data-dismiss="modal">Hủy</button>
                                             <button type="submit" class="btn btn-add text-white">Xác nhận tạo</button>
                                         </div>
@@ -328,7 +312,7 @@
                                         <input type="hidden" name="id" id="editVoucherId">
                                         <div class="modal-header border-0">
                                             <h5 class="modal-title font-weight-bold">Cập nhật voucher</h5>
-                                            <button type="button" class="close text-white"
+                                            <button type="button" class="close"
                                                 data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
@@ -382,7 +366,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer border-0">
-                                            <button type="button" class="btn btn-outline-light"
+                                            <button type="button" class="btn btn-outline-secondary"
                                                 data-dismiss="modal">Hủy</button>
                                             <button type="submit" class="btn btn-add text-white">Lưu thay đổi</button>
                                         </div>
@@ -411,3 +395,5 @@
             </body>
 
             </html>
+
+

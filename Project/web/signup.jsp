@@ -19,7 +19,7 @@
             --bg: #0f172a;
             --glass-bg: rgba(255, 255, 255, 0.07);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --input-bg: rgba(0, 0, 0, 0.3);
+            --input-bg: #0f172a;
         }
 
         body {
@@ -101,8 +101,8 @@
 
         .card-custom {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
             border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 2.5rem;
@@ -210,6 +210,7 @@
     </style>
     <script src="js/theme.js"></script>
     <link rel="stylesheet" href="css/theme.css">
+    <script src="js/validation.js"></script>
 </head>
 <body>
 
@@ -246,8 +247,9 @@
                             <label class="form-label">Địa chỉ Email</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
-                                <input type="email" class="form-control form-control-custom" placeholder="Nhập địa chỉ email..." required name="email" value="${formEmail}"/>
+                                <input type="email" class="form-control form-control-custom" placeholder="Nhập địa chỉ email..." required name="email" value="${formEmail}" id="emailInput" oninput="validateEmailField(this)"/>
                             </div>
+                            <div id="emailError" style="color: #f87171; font-size: 0.8rem; margin-top: -15px; margin-bottom: 15px;"></div>
                         </div>
 
                         <div class="form-group">
@@ -282,5 +284,21 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function validateEmailField(input) {
+            const errorDiv = document.getElementById('emailError');
+            const submitBtn = document.querySelector('button[type="submit"]');
+            if (input.value && !Validation.isValidEmail(input.value)) {
+                errorDiv.innerText = 'Định dạng Email không hợp lệ!';
+                submitBtn.disabled = true;
+            } else {
+                errorDiv.innerText = '';
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
 </body>
 </html>
+
+
+

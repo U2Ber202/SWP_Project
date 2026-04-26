@@ -47,8 +47,12 @@ public class EditFeedbackController extends HttpServlet {
             Feedback f = feedbackDAO.getFeedbackById(id);
             
             if (f != null && f.getAccountId() == acc.getUid()) {
-                feedbackDAO.updateFeedback(id, rating, content);
-                session.setAttribute("success", "Cập nhật đánh giá thành công!");
+                if (f.isEdited()) {
+                    session.setAttribute("error", "Đánh giá này đã được sửa một lần, không thể sửa thêm.");
+                } else {
+                    feedbackDAO.updateFeedback(id, rating, content);
+                    session.setAttribute("success", "Cập nhật đánh giá thành công!");
+                }
             } else {
                 session.setAttribute("error", "Bạn không có quyền sửa đánh giá này.");
             }

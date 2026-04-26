@@ -16,33 +16,20 @@ public class DBContext {
     private static final String DATASOURCE_JNDI = "java:comp/env/jdbc/ProjectDS";
 
     protected Connection getConnection() throws SQLException {
-        DataSource dataSource = lookupDataSource();
-        if (dataSource != null) {
-            return dataSource.getConnection();
-        }
-        return createFallbackConnection();
-    }
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=PRJ301;encrypt=true;trustServerCertificate=true";
+        String user = "SA";
+        String pass = "123456";
 
-    private DataSource lookupDataSource() {
         try {
-            InitialContext context = new InitialContext();
-            return (DataSource) context.lookup(DATASOURCE_JNDI);
-        } catch (NamingException ex) {
-            LOGGER.log(Level.FINE, "JNDI datasource not available, falling back to direct JDBC connection.", ex);
-            return null;
-        }
-    }
-
-    private Connection createFallbackConnection() throws SQLException {
-        try {
+            // Đảm bảo Driver được load
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            return DriverManager.getConnection(url, user, pass);
         } catch (ClassNotFoundException ex) {
-            throw new SQLException("SQL Server JDBC driver not found.", ex);
+            LOGGER.log(Level.SEVERE, "Không tìm thấy Driver SQL Server (sqljdbc42.jar). Hãy đảm bảo file này có trong thư mục lib của dự án.", ex);
+            throw new SQLException("JDBC Driver not found", ex);
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Lỗi kết nối Database. Hãy kiểm tra: 1. SQL Server đã chạy? 2. Port 1433 đã mở? 3. User/Pass đúng?", ex);
+            throw ex;
         }
-
-        String url = AppConfig.getRequired("DB_URL", null);
-        String user = AppConfig.getRequired("DB_USERNAME", null);
-        String password = AppConfig.getRequired("DB_PASSWORD", null);
-        return DriverManager.getConnection(url, user, password);
     }
 }

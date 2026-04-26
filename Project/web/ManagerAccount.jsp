@@ -17,34 +17,25 @@
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
             <style>
-                :root {
-                    --primary: #ea580c;
-                    --primary-dark: #c2410c;
-                    --bg: #0f172a;
-                    --card-bg: rgba(255, 255, 255, 0.05);
-                    --glass: rgba(255, 255, 255, 0.03);
-                    --border: rgba(255, 255, 255, 0.1);
-                }
-
                 body {
                     font-family: 'Be Vietnam Pro', sans-serif;
                     background-color: var(--bg) !important;
-                    color: #f1f5f9;
+                    color: var(--text-main);
                     padding-bottom: 40px;
                 }
 
                 .admin-wrapper {
                     background: var(--card-bg);
-                    backdrop-filter: blur(12px);
+                    backdrop-filter: none;
                     border: 1px solid var(--border);
                     border-radius: 20px;
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
                     overflow: hidden;
                 }
 
                 .admin-header {
-                    background: rgba(0, 0, 0, 0.2);
-                    color: #fff;
+                    background: var(--bg);
+                    color: var(--text-main);
                     padding: 25px 30px;
                     border-bottom: 1px solid var(--border);
                     display: flex;
@@ -53,30 +44,30 @@
                 }
 
                 .create-section {
-                    background-color: rgba(0, 0, 0, 0.15);
+                    background-color: rgba(0, 0, 0, 0.05);
                     padding: 25px 30px;
                     border-bottom: 1px solid var(--border);
                 }
 
                 .input-group-text {
-                    background-color: rgba(0, 0, 0, 0.3);
+                    background-color: var(--bg);
                     border: 1px solid var(--border);
                     border-right: none;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     border-radius: 8px 0 0 8px;
                 }
 
                 .form-control {
-                    background: rgba(0, 0, 0, 0.2) !important;
+                    background: var(--bg) !important;
                     border: 1px solid var(--border);
-                    color: white !important;
+                    color: var(--text-main) !important;
                     border-left: none;
                     border-radius: 0 8px 8px 0;
                     box-shadow: none !important;
                 }
 
                 .form-control::placeholder {
-                    color: #64748b;
+                    color: var(--text-muted);
                 }
 
                 .btn-custom-primary {
@@ -91,7 +82,7 @@
 
                 .btn-custom-secondary {
                     background-color: transparent;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     border: 1px solid var(--border);
                     border-radius: 12px;
                     font-weight: 600;
@@ -100,16 +91,16 @@
 
                 .custom-table {
                     margin-bottom: 0;
-                    color: #f1f5f9;
+                    color: var(--text-main);
                 }
 
                 .custom-table thead th {
                     border-bottom: 1px solid var(--border);
                     border-top: none;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     font-weight: 600;
                     padding: 15px 20px;
-                    background-color: rgba(0, 0, 0, 0.2);
+                    background-color: var(--bg);
                     text-transform: uppercase;
                     font-size: 0.85rem;
                 }
@@ -143,7 +134,7 @@
                 .search-toolbar {
                     padding: 24px 30px 12px;
                     border-bottom: 1px solid var(--border);
-                    background: rgba(255, 255, 255, 0.02);
+                    background: var(--bg);
                 }
 
                 .search-toolbar .input-group .form-control {
@@ -181,6 +172,7 @@
             </script>
             <script src="js/theme.js"></script>
             <link rel="stylesheet" href="css/theme.css">
+            <script src="js/validation.js"></script>
         </head>
 
         <body class="bg-theme">
@@ -216,8 +208,9 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
                                                 </div>
-                                                <input type="email" class="form-control" name="email" placeholder="Địa chỉ Email" value="${formEmail}" required>
+                                                <input type="email" class="form-control" name="email" id="emailInput" placeholder="Địa chỉ Email" value="${formEmail}" required oninput="validateField(this, 'email')">
                                             </div>
+                                            <div id="emailError" style="color: #f87171; font-size: 0.75rem; margin-top: 2px;"></div>
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <div class="input-group">
@@ -234,16 +227,18 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
                                                 </div>
-                                                <input type="text" class="form-control" name="fullname" placeholder="Họ và tên" value="${formFullname}" required>
+                                                <input type="text" class="form-control" name="fullname" placeholder="Họ và tên" value="${formFullname}" required oninput="validateField(this, 'badword')">
                                             </div>
+                                            <div id="badwordError" style="color: #f87171; font-size: 0.75rem; margin-top: 2px;"></div>
                                         </div>
                                         <div class="col-md-5 mb-3">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
                                                 </div>
-                                                <input type="text" class="form-control" name="phone" placeholder="Số điện thoại" value="${formPhone}" required>
+                                                <input type="text" class="form-control" name="phone" id="phoneInput" placeholder="Số điện thoại" value="${formPhone}" required oninput="validateField(this, 'phone')">
                                             </div>
+                                            <div id="phoneError" style="color: #f87171; font-size: 0.75rem; margin-top: 2px;"></div>
                                         </div>
                                         <div class="col-md-2 mb-3">
                                             <button type="submit" class="btn btn-custom-primary">Tạo Chủ sở hữu</button>
@@ -328,7 +323,7 @@
                                 </table>
                             </div>
                             <c:if test="${totalPage >= 1}">
-                                <div class="card-footer border-top-0 bg-transparent pb-4">
+                                <div class="card-footer border-top-0 bg-solid-dark pb-4">
                                     <nav aria-label="Page navigation">
                                         <ul class="pagination justify-content-center mb-0">
                                             <li class="page-item ${page <= 1 ? 'disabled' : ''}">
@@ -354,6 +349,37 @@
 
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                    <script>
+                        function validateField(input, type) {
+                            const submitBtn = input.closest('form').querySelector('button[type="submit"]');
+                            const errorDiv = document.getElementById(type + 'Error');
+                            let isValid = true;
+
+                            if (type === 'email') {
+                                isValid = Validation.isValidEmail(input.value);
+                                errorDiv.innerText = isValid ? '' : 'Email không hợp lệ!';
+                            } else if (type === 'phone') {
+                                isValid = Validation.isValidPhone(input.value);
+                                errorDiv.innerText = isValid ? '' : 'SĐT không hợp lệ (10 số, bắt đầu 03,05,07,08,09)!';
+                            } else if (type === 'badword') {
+                                isValid = !Validation.containsBadWords(input.value);
+                                errorDiv.innerText = isValid ? '' : 'Chứa từ ngữ không phù hợp!';
+                            }
+
+                            // Re-check all to enable/disable button
+                            const form = input.closest('form');
+                            const email = form.querySelector('[name="email"]').value;
+                            const phone = form.querySelector('[name="phone"]').value;
+                            const name = form.querySelector('[name="fullname"]').value;
+                            
+                            const allOk = Validation.isValidEmail(email) && 
+                                          Validation.isValidPhone(phone) && 
+                                          !Validation.containsBadWords(name);
+                            submitBtn.disabled = !allOk;
+                        }
+                    </script>
         </body>
 
         </html>
+
+

@@ -29,59 +29,56 @@
                         href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
                     <style>
-                        :root {
-                            --primary: #ea580c;
-                            --primary-dark: #c2410c;
-                            --bg: #0f172a;
-                            --card-bg: rgba(255, 255, 255, 0.05);
-                            --glass: rgba(255, 255, 255, 0.03);
-                            --border: rgba(255, 255, 255, 0.1);
-                        }
-
                         body {
                             font-family: 'Be Vietnam Pro', sans-serif;
                             background-color: var(--bg) !important;
-                            color: #f1f5f9;
+                            color: var(--text-main);
                             padding-bottom: 40px;
                         }
 
-                        .card {
-                            background: var(--card-bg);
-                            backdrop-filter: blur(12px);
+                        .card { 
+                            background: var(--card-bg) !important;
+                            backdrop-filter: none !important;
                             border: 1px solid var(--border) !important;
                             border-radius: 20px;
-                            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
                             overflow: hidden;
                         }
 
                         .card-header {
-                            background: rgba(0, 0, 0, 0.2) !important;
+                            background: var(--card-bg) !important;
                             border-bottom: 1px solid var(--border) !important;
                             font-weight: 600;
-                            color: white;
+                            color: var(--text-main);
                             padding: 20px 30px;
                             font-size: 1.1rem;
                         }
 
                         .form-control {
-                            background: rgba(0, 0, 0, 0.2) !important;
+                            background: var(--bg) !important;
                             border: 1px solid var(--border);
-                            color: white !important;
+                            color: var(--text-main) !important;
                             border-radius: 10px;
-                            padding: 12px 15px;
+                            padding: 8px 15px;
+                            height: 45px !important;
                         }
 
                         .form-control::placeholder {
-                            color: #64748b;
+                            color: var(--text-muted);
+                        }
+
+                        select.form-control {
+                            height: 45px !important;
+                            padding: 0 15px !important;
                         }
 
                         select.form-control option {
-                            background-color: #1e293b;
-                            color: white;
+                            background-color: var(--card-bg);
+                            color: var(--text-main);
                         }
 
                         .form-group label {
-                            color: #94a3b8 !important;
+                            color: var(--text-muted) !important;
                             font-weight: 600;
                             text-transform: uppercase;
                             font-size: 0.85rem;
@@ -99,24 +96,24 @@
                         .btn-outline-light {
                             border-radius: 30px;
                             border: 1px solid var(--border);
-                            color: #e2e8f0;
+                            color: var(--text-main);
                             font-weight: 600;
                             padding: 8px 25px;
                         }
 
                         .table {
-                            color: #f1f5f9;
+                            color: var(--text-main);
                             margin-bottom: 0;
                         }
 
                         .table thead th {
                             border-bottom: 1px solid var(--border);
                             border-top: none;
-                            color: #94a3b8;
+                            color: var(--text-muted);
                             font-weight: 600;
                             text-transform: uppercase;
                             font-size: 0.85rem;
-                            background-color: rgba(0, 0, 0, 0.2);
+                            background-color: var(--bg);
                             padding: 15px 20px;
                         }
 
@@ -157,7 +154,7 @@
                         }
 
                         .helper-text {
-                            color: #94a3b8;
+                            color: var(--text-muted);
                             font-size: 0.92rem;
                         }
 
@@ -168,15 +165,15 @@
                         }
 
                         .muted-box {
-                            background: rgba(255, 255, 255, 0.04);
+                            background: var(--glass);
                             border: 1px solid var(--border);
                             border-radius: 16px;
                             padding: 16px;
-                            color: #cbd5e1;
+                            color: var(--text-muted);
                         }
 
                         .text-muted-custom {
-                            color: #94a3b8 !important;
+                            color: var(--text-muted) !important;
                         }
 
                         .text-info {
@@ -189,6 +186,10 @@
                     </style>
                     <script src="js/theme.js"></script>
                     <link rel="stylesheet" href="css/theme.css">
+                    <!-- Validation and NSFW JS -->
+                    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/nsfwjs"></script>
+                    <script src="js/validation.js"></script>
                 </head>
 
                 <body class="bg-theme">
@@ -197,7 +198,7 @@
                             <div class="container py-5">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <div>
-                                        <h2 class="font-weight-bold mb-0 text-white">
+                                        <h2 class="font-weight-bold mb-0 text-main">
                                             <i class="fa-solid fa-boxes-stacked text-warning mr-2"></i>Quản Lý Kho Giày
                                         </h2>
                                         <c:if test="${not empty managedStore}">
@@ -220,14 +221,20 @@
                                             <form action="add" method="post">
                                                 <div class="form-row">
                                                     <div class="form-group col-md-6">
-                                                        <label>Tên sản phẩm</label>
-                                                        <input class="form-control" name="name" value="${formName}"
+                                                        <label>Tên sản phẩm (Tối đa 100 ký tự)</label>
+                                                        <input class="form-control" name="name" id="productName" value="${formName}"
+                                                            maxlength="100" oninput="validateProductField(this, 100)"
                                                             required>
+                                                        <div id="productNameError" style="color: #f87171; font-size: 0.75rem;"></div>
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label>Link hình ảnh</label>
-                                                        <input class="form-control" name="image" value="${formImage}"
+                                                        <input class="form-control" name="image" id="productImage" value="${formImage}"
+                                                            oninput="handleImageValidation(this)"
                                                             required>
+                                                        <div class="mt-2">
+                                                            <img id="addProductPreview" src="" style="max-height: 100px; border-radius: 8px; display: none;">
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
@@ -260,9 +267,11 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label>Mô tả</label>
-                                                    <textarea class="form-control" name="description" rows="3"
+                                                    <label>Mô tả (Tối đa 1000 ký tự)</label>
+                                                    <textarea class="form-control" name="description" id="productDesc" rows="3"
+                                                        maxlength="1000" oninput="validateProductField(this, 1000)"
                                                         required>${formDescription}</textarea>
+                                                    <div id="productDescError" style="color: #f87171; font-size: 0.75rem;"></div>
                                                 </div>
                                                 <button class="btn btn-brand" type="submit">Thêm sản phẩm</button>
                                                 <div class="helper-text mt-3">Nhập size cách nhau bằng dấu phẩy. Ví dụ:
@@ -342,7 +351,7 @@
 
                                 <div class="card mb-5">
                                     <div class="card-header border-bottom">
-                                        <h5 class="mb-0 font-weight-bold text-white"><i
+                                        <h5 class="mb-0 font-weight-bold text-main"><i
                                                 class="fa-solid fa-list-ul text-info mr-2"></i>Danh sách sản phẩm hiện
                                             có</h5>
                                     </div>
@@ -628,7 +637,68 @@
                                     productSelect.addEventListener('change', renderSizeInputs);
                                     renderSizeInputs();
                                 })();
+
+                                async function handleImageValidation(input) {
+                                    const preview = document.getElementById('addProductPreview');
+                                    const submitBtn = input.closest('form').querySelector('button[type="submit"]');
+                                    
+                                    if (input.value) {
+                                        preview.src = input.value;
+                                        preview.style.display = 'block';
+                                        
+                                        // Wait for image to load to scan
+                                        preview.onload = async function() {
+                                            const isSafe = await Validation.isSafeImage(preview);
+                                            let errorMsg = document.getElementById('image-nsfw-error');
+                                            if (!errorMsg) {
+                                                errorMsg = document.createElement('div');
+                                                errorMsg.id = 'image-nsfw-error';
+                                                errorMsg.style.color = 'red';
+                                                errorMsg.style.fontSize = '0.8em';
+                                                input.parentNode.appendChild(errorMsg);
+                                            }
+                                            
+                                            if (!isSafe) {
+                                                errorMsg.innerText = 'Ảnh bị phát hiện chứa nội dung không phù hợp!';
+                                                submitBtn.disabled = true;
+                                            } else {
+                                                errorMsg.innerText = '';
+                                                submitBtn.disabled = false;
+                                            }
+                                        };
+                                        preview.onerror = function() {
+                                            preview.style.display = 'none';
+                                        };
+                                    } else {
+                                        preview.style.display = 'none';
+                                    }
+                                }
+
+                                function validateProductField(input, max) {
+                                    const submitBtn = input.closest('form').querySelector('button[type="submit"]');
+                                    const errorDiv = document.getElementById(input.id + 'Error');
+                                    
+                                    let error = '';
+                                    if (input.value.length > max) {
+                                        error = 'Vượt quá ' + max + ' ký tự!';
+                                    } else if (Validation.containsBadWords(input.value)) {
+                                        error = 'Chứa từ ngữ không phù hợp!';
+                                    }
+
+                                    errorDiv.innerText = error;
+                                    
+                                    // Check all fields for this form
+                                    const form = input.closest('form');
+                                    const name = form.querySelector('#productName').value;
+                                    const desc = form.querySelector('#productDesc').value;
+                                    
+                                    const isOk = name.length <= 100 && !Validation.containsBadWords(name) &&
+                                                 desc.length <= 1000 && !Validation.containsBadWords(desc);
+                                    submitBtn.disabled = !isOk;
+                                }
                             </script>
                 </body>
 
                 </html>
+
+

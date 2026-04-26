@@ -80,6 +80,7 @@ public class ManagerNewsController extends HttpServlet {
             String title = request.getParameter("title");
             String content = request.getParameter("content");
             String image = request.getParameter("image");
+            boolean isVisible = request.getParameter("isVisible") != null;
             
             News n = newsDAO.getNewsById(id);
             if (n != null) {
@@ -88,15 +89,17 @@ public class ManagerNewsController extends HttpServlet {
                     n.setTitle(title);
                     n.setContent(content);
                     n.setImage(image);
+                    n.setIsVisible(isVisible);
                     newsDAO.update(n);
                 }
             }
-        } else if ("delete".equals(action)) {
+        } else if ("toggleStatus".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
+            boolean currentStatus = Boolean.parseBoolean(request.getParameter("status"));
             News n = newsDAO.getNewsById(id);
             if (n != null) {
                 if (RoleHelper.isAdmin(account) || (storeId != null && storeId.equals(n.getStoreId()))) {
-                    newsDAO.delete(id);
+                    newsDAO.updateStatus(id, !currentStatus);
                 }
             }
         }

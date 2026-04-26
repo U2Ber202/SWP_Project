@@ -65,8 +65,6 @@ public class VoucherController extends HttpServlet {
         int toIndex = Math.min(fromIndex + PAGE_SIZE, totalVouchers);
         List<Voucher> listVouchers = (fromIndex < totalVouchers) ? allVouchers.subList(fromIndex, toIndex) : new java.util.ArrayList<>();
 
-        request.setAttribute("today", java.time.LocalDate.now().toString());
-
         request.setAttribute("listVouchers", listVouchers);
         request.setAttribute("page", page);
         request.setAttribute("totalPage", totalPage);

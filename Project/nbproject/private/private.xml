@@ -3,10 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Development/Java/Project%20(3)/Project/src/java/dal/DBContext.java</file>
-            <file>file:/D:/Development/Java/Project%20(3)/Project/src/java/controller/DetailController.java</file>
-            <file>file:/D:/Development/Java/Project%20(3)/Project/src/java/controller/CheckOutController.java</file>
-            <file>file:/D:/Development/Java/Project%20(3)/Project/src/java/controller/CartController.java</file>
+            <file>file:/C:/Users/Hoang%20Hung/Documents/GitHub/SWP_Project-master/Project/web/HomeSetting.jsp</file>
+            <file>file:/C:/Users/Hoang%20Hung/Documents/GitHub/SWP_Project-master/Project/web/StoreList.jsp</file>
+            <file>file:/C:/Users/Hoang%20Hung/Documents/GitHub/SWP_Project-master/Project/src/java/controller/StoreListController.java</file>
+            <file>file:/C:/Users/Hoang%20Hung/Documents/GitHub/SWP_Project-master/Project/web/META-INF/context.xml</file>
+            <file>file:/C:/Users/Hoang%20Hung/Documents/GitHub/SWP_Project-master/Project/web/ManagerProduct.jsp</file>
+            <file>file:/C:/Users/Hoang%20Hung/Documents/GitHub/SWP_Project-master/Project/src/java/dal/StoreDAO.java</file>
+            <file>file:/C:/Users/Hoang%20Hung/Documents/GitHub/SWP_Project-master/Project/web/StoreFront.jsp</file>
         </group>
     </open-files>
 </project-private>

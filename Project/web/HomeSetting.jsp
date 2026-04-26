@@ -11,103 +11,72 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
-            :root {
-                --primary: #ea580c;
-                --primary-dark: #c2410c;
-                --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
-                --glass: rgba(255, 255, 255, 0.03);
-                --border: rgba(255, 255, 255, 0.1);
-            }
             body {
                 font-family: 'Be Vietnam Pro', sans-serif;
-                background-color: var(--bg);
-                color: #f1f5f9;
+                background-color: var(--bg) !important;
+                color: var(--text-main);
                 padding: 32px 0 48px;
             }
             .panel {
-                background: var(--card-bg);
-                backdrop-filter: blur(12px);
+                background: var(--card-bg) !important;
+                backdrop-filter: none !important;
                 border: 1px solid var(--border);
                 border-radius: 24px;
-                box-shadow: 0 14px 40px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 14px 40px rgba(0,0,0,0.1);
                 overflow: hidden;
                 margin-bottom: 24px;
             }
             .panel-header {
                 padding: 24px 28px;
                 border-bottom: 1px solid var(--border);
-                background: rgba(0, 0, 0, 0.18);
-            }
-            .panel-title {
-                margin: 0;
-                font-size: 1.35rem;
-                font-weight: 700;
-            }
-            .panel-body {
-                padding: 24px 28px;
+                background: rgba(0, 0, 0, 0.05) !important;
             }
             .btn-primary-custom {
-                background: var(--primary);
+                background: var(--primary) !important;
                 border: none;
                 border-radius: 12px;
-                color: white;
+                color: white !important;
                 font-weight: 600;
                 padding: 10px 24px;
                 transition: all 0.3s ease;
             }
-            .btn-primary-custom:hover {
-                background: var(--primary-dark);
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(234, 88, 12, 0.3);
-            }
-            .btn-secondary-custom {
-                background: transparent;
-                color: #cbd5e1;
-                border: 1px solid var(--border);
+            .form-control, .custom-select {
+                background: var(--bg) !important;
+                border: 1px solid var(--border) !important;
+                color: var(--text-main) !important;
                 border-radius: 12px;
-                font-weight: 600;
-                padding: 10px 18px;
+                opacity: 1 !important;
+                height: 45px !important;
+                padding: 8px 15px;
             }
-            .form-control, .custom-select, textarea.form-control {
-                background: rgba(0, 0, 0, 0.2);
-                border: 1px solid var(--border);
-                color: white;
+
+            .custom-select {
+                padding: 0 15px !important;
+            }
+
+            textarea.form-control {
+                background: var(--bg) !important;
+                border: 1px solid var(--border) !important;
+                color: var(--text-main) !important;
                 border-radius: 12px;
-                padding: 12px;
+                opacity: 1 !important;
+                height: auto !important;
+                padding: 12px 15px;
             }
-            .form-control:focus, .custom-select:focus {
-                background: rgba(0, 0, 0, 0.3);
-                border-color: var(--primary);
-                color: white;
-                box-shadow: none;
-            }
-            .custom-select option {
-                background: #1e293b;
-                color: white;
-            }
-            .alert { border-radius: 14px; border: none; }
+            
             .setting-box {
-                background: rgba(255, 255, 255, 0.03);
+                background: var(--bg) !important;
                 border: 1px solid var(--border);
                 border-radius: 18px;
                 padding: 24px;
                 height: 100%;
             }
             .custom-control-label {
-                color: #e2e8f0;
-                cursor: pointer;
+                color: var(--text-main);
             }
             label {
-                color: #cbd5e1;
+                color: var(--text-muted);
                 font-weight: 600;
-                margin-bottom: 8px;
-            }
-            .preview-card {
-                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-                border-radius: 20px;
-                padding: 30px;
-                border: 1px solid var(--border);
             }
         </style>
         <script src="js/theme.js"></script>
@@ -235,7 +204,7 @@
                 </div>
                 <div class="panel-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0 text-white" style="background: transparent;">
+                        <table class="table table-hover mb-0">
                             <thead style="background: rgba(0,0,0,0.1)">
                                 <tr>
                                     <th class="border-0 pl-4">Ảnh</th>
@@ -289,10 +258,10 @@
         <!-- Add Slider Modal -->
         <div class="modal fade" id="addSliderModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content border-0" style="background: #1e293b; border-radius: 20px;">
+                <div class="modal-content">
                     <div class="modal-header border-0 pb-0">
                         <h5 class="modal-title text-white font-weight-bold">Thêm Slider mới</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -342,10 +311,10 @@
         <!-- Edit Slider Modal -->
         <div class="modal fade" id="editSliderModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content border-0" style="background: #1e293b; border-radius: 20px;">
+                <div class="modal-content">
                     <div class="modal-header border-0 pb-0">
                         <h5 class="modal-title text-white font-weight-bold">Chỉnh sửa Slider</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -420,4 +389,7 @@
         </script>
     </body>
 </html>
+
+
+
 

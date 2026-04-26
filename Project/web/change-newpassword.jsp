@@ -24,8 +24,8 @@
                 --primary: #ea580c;
                 --primary-dark: #c2410c;
                 --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
-                --glass: rgba(255, 255, 255, 0.03);
+                --card-bg: #1e293b;
+                --glass: #0f172a;
                 --border: rgba(255, 255, 255, 0.1);
             }
 
@@ -45,7 +45,7 @@
             /* Card Glassmorphism */
             .card-custom {
                 background: var(--card-bg);
-                backdrop-filter: blur(15px);
+                backdrop-filter: none;
                 border: 1px solid var(--border);
                 border-radius: 20px;
                 box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
@@ -233,3 +233,6 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </body>
 </html>
+
+
+

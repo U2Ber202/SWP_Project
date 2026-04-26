@@ -20,8 +20,8 @@
                 --primary: #ea580c;
                 --primary-dark: #c2410c;
                 --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
-                --glass: rgba(255, 255, 255, 0.03);
+                --card-bg: #1e293b;
+                --glass: #0f172a;
                 --border: rgba(255, 255, 255, 0.1);
             }
 
@@ -41,7 +41,7 @@
             /* Card Glassmorphism */
             .profile-card {
                 background: var(--card-bg);
-                backdrop-filter: blur(15px);
+                backdrop-filter: none;
                 border: 1px solid var(--border);
                 border-top: 5px solid var(--primary);
                 border-radius: 20px;
@@ -57,7 +57,7 @@
             .avatar-placeholder {
                 width: 90px;
                 height: 90px;
-                background: rgba(0, 0, 0, 0.3);
+                background: #0f172a;
                 color: var(--primary);
                 border: 1px solid var(--border);
                 border-radius: 50%;
@@ -179,6 +179,7 @@
         </style>
         <script src="js/theme.js"></script>
         <link rel="stylesheet" href="css/theme.css">
+        <script src="js/validation.js"></script>
     </head>
     <body>
         <%@include file="components/navBarComponent.jsp" %>
@@ -226,8 +227,9 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" name="phone" value="${not empty formPhone ? formPhone : acc.phone}" placeholder="Nhập số điện thoại liên lạc...">
+                                        <input type="text" class="form-control" name="phone" id="phoneInput" value="${not empty formPhone ? formPhone : acc.phone}" placeholder="Nhập số điện thoại liên lạc..." oninput="validateProfileField(this, 'phone')">
                                     </div>
+                                    <div id="phoneError" style="color: #f87171; font-size: 0.8rem; margin-top: 5px;"></div>
                                 </div>
 
                                 <div class="form-group mb-3">
@@ -236,13 +238,15 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
                                         </div>
-                                        <input type="email" class="form-control" name="email" value="${not empty formEmail ? formEmail : acc.email}" placeholder="Nhập địa chỉ email...">
+                                        <input type="email" class="form-control" name="email" id="emailInput" value="${not empty formEmail ? formEmail : acc.email}" placeholder="Nhập địa chỉ email..." oninput="validateProfileField(this, 'email')">
                                     </div>
+                                    <div id="emailError" style="color: #f87171; font-size: 0.8rem; margin-top: 5px;"></div>
                                 </div>
 
                                 <div class="form-group mb-4">
-                                    <label class="form-label">Địa chỉ giao hàng mặc định</label>
-                                    <textarea class="form-control" name="address" rows="3" placeholder="Nhập địa chỉ chi tiết...">${not empty formAddress ? formAddress : acc.address}</textarea>
+                                    <label class="form-label">Địa chỉ giao hàng mặc định (Max 255)</label>
+                                    <textarea class="form-control" name="address" id="addressInput" rows="3" maxlength="255" placeholder="Nhập địa chỉ chi tiết..." oninput="validateProfileField(this, 'address')">${not empty formAddress ? formAddress : acc.address}</textarea>
+                                    <div id="addressError" style="color: #f87171; font-size: 0.8rem; margin-top: 5px;"></div>
                                 </div>
 
                                 <button type="submit" class="btn btn-custom w-100">
@@ -261,5 +265,35 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateProfileField(input, type) {
+                const errorDiv = document.getElementById(type + 'Error');
+                const submitBtn = document.querySelector('button[type="submit"]');
+                let isValid = true;
+                
+                if (type === 'email' && input.value) {
+                    isValid = Validation.isValidEmail(input.value);
+                    errorDiv.innerText = isValid ? '' : 'Định dạng Email không hợp lệ!';
+                } else if (type === 'phone' && input.value) {
+                    isValid = Validation.isValidPhone(input.value);
+                    errorDiv.innerText = isValid ? '' : 'SĐT phải 10 số và bắt đầu bằng 0 (3,5,7,8,9)!';
+                } else if (type === 'address' && input.value) {
+                    isValid = !Validation.containsBadWords(input.value);
+                    errorDiv.innerText = isValid ? '' : 'Địa chỉ chứa từ ngữ không phù hợp!';
+                }
+                
+                // Disable submit if any field is invalid
+                const emailVal = document.getElementById('emailInput').value;
+                const phoneVal = document.getElementById('phoneInput').value;
+                const addressVal = document.getElementById('addressInput').value;
+                const isAllValid = Validation.isValidEmail(emailVal) && 
+                                  Validation.isValidPhone(phoneVal) && 
+                                  !Validation.containsBadWords(addressVal);
+                submitBtn.disabled = !isAllValid;
+            }
+        </script>
     </body>
 </html>
+
+
+

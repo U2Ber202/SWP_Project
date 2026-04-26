@@ -16,16 +16,16 @@
             :root {
                 --primary: #ea580c;
                 --primary-dark: #c2410c;
-                --bg: #0f172a;
-                --card-bg: rgba(255, 255, 255, 0.05);
-                --glass: rgba(255, 255, 255, 0.03);
-                --border: rgba(255, 255, 255, 0.1);
+                /* Using theme variables */
+                --local-bg: var(--bg);
+                --local-card-bg: var(--card-bg);
+                --local-border: var(--border);
             }
 
             body {
                 font-family: 'Be Vietnam Pro', sans-serif;
                 background-color: var(--bg) !important;
-                color: #f1f5f9;
+                color: var(--text-main);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -35,10 +35,10 @@
 
             .edit-card {
                 background: var(--card-bg);
-                backdrop-filter: blur(12px);
+                backdrop-filter: none;
                 border: 1px solid var(--border);
                 border-radius: 24px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
                 overflow: hidden;
                 width: 100%;
                 max-width: 500px;
@@ -46,8 +46,8 @@
             }
 
             .edit-card-header {
-                background: rgba(0, 0, 0, 0.2);
-                color: #ffffff;
+                background: var(--bg);
+                color: var(--text-main);
                 padding: 25px 30px;
                 border-bottom: 1px solid var(--border);
                 display: flex;
@@ -74,7 +74,7 @@
 
             .form-group label {
                 font-weight: 600;
-                color: #94a3b8;
+                color: var(--text-muted);
                 margin-bottom: 8px;
                 font-size: 0.85rem;
                 text-transform: uppercase;
@@ -82,9 +82,9 @@
             }
 
             .form-control {
-                background: rgba(0,0,0,0.2) !important;
+                background: var(--bg) !important;
                 border: 1px solid var(--border);
-                color: white !important;
+                color: var(--text-main) !important;
                 border-radius: 0 8px 8px 0;
                 padding: 10px 15px;
                 font-size: 1rem;
@@ -92,22 +92,22 @@
             }
 
             .form-control:focus {
-                background: rgba(0,0,0,0.3) !important;
+                background: var(--bg) !important;
                 border-color: var(--primary);
                 box-shadow: none;
             }
 
             .form-control[readonly] {
-                background-color: rgba(0,0,0,0.4) !important;
-                color: #64748b !important;
+                background-color: var(--bg) !important;
+                color: var(--text-muted) !important;
                 cursor: not-allowed;
             }
 
             .input-group-text {
-                background-color: rgba(0,0,0,0.3);
+                background-color: var(--bg);
                 border: 1px solid var(--border);
                 border-right: none;
-                color: #94a3b8;
+                color: var(--text-muted);
                 border-radius: 8px 0 0 8px;
             }
 
@@ -146,8 +146,8 @@
             }
 
             .btn-custom-secondary:hover {
-                background-color: var(--glass);
-                color: white;
+                background-color: var(--bg);
+                color: var(--primary);
                 text-decoration: none;
             }
 
@@ -221,3 +221,6 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </body>
 </html>
+
+
+

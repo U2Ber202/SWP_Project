@@ -17,31 +17,31 @@
                     :root {
                         --primary: #ea580c;
                         --primary-dark: #c2410c;
-                        --bg: #0f172a;
-                        --card-bg: rgba(255, 255, 255, 0.05);
-                        --glass: rgba(255, 255, 255, 0.03);
-                        --border: rgba(255, 255, 255, 0.1);
+                        /* Using theme variables */
+                        --local-bg: var(--bg);
+                        --local-card-bg: var(--card-bg);
+                        --local-border: var(--border);
                     }
 
                     body {
                         font-family: 'Be Vietnam Pro', sans-serif;
                         background-color: var(--bg) !important;
-                        color: #f1f5f9;
+                        color: var(--text-main);
                         padding-bottom: 40px;
                     }
 
                     .admin-wrapper {
                         background: var(--card-bg);
-                        backdrop-filter: blur(12px);
+                        backdrop-filter: none;
                         border: 1px solid var(--border);
                         border-radius: 20px;
-                        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
                         overflow: hidden;
                     }
 
                     .admin-header {
-                        background: rgba(0, 0, 0, 0.2);
-                        color: #fff;
+                        background: var(--bg);
+                        color: var(--text-main);
                         padding: 25px 30px;
                         border-bottom: 1px solid var(--border);
                         display: flex;
@@ -77,16 +77,16 @@
 
                     .custom-table {
                         margin-bottom: 0;
-                        color: #f1f5f9;
+                        color: var(--text-main);
                     }
 
                     .custom-table thead th {
                         border-bottom: 1px solid var(--border);
                         border-top: none;
-                        color: #94a3b8;
+                        color: var(--text-muted);
                         font-weight: 600;
                         padding: 15px 20px;
-                        background-color: rgba(0, 0, 0, 0.2);
+                        background-color: var(--bg);
                         text-transform: uppercase;
                         font-size: 0.85rem;
                     }
@@ -124,8 +124,8 @@
                     }
 
                     .badge-light-custom {
-                        background-color: rgba(255, 255, 255, 0.1);
-                        color: #e2e8f0;
+                        background-color: var(--bg);
+                        color: var(--text-main);
                         border: 1px solid var(--border) !important;
                     }
 
@@ -139,9 +139,9 @@
 
                     .form-select,
                     .form-control {
-                        background: rgba(0, 0, 0, 0.2) !important;
+                        background: var(--bg) !important;
                         border: 1px solid var(--border) !important;
-                        color: white !important;
+                        color: var(--text-main) !important;
                     }
                 </style>
                 <script src="js/theme.js"></script>
@@ -273,7 +273,7 @@
                                     </c:if>
                                 </div>
                                 <c:if test="${totalPage >= 1}">
-                                    <div class="card-footer border-top-0 bg-transparent pb-4 mt-3">
+                                    <div class="card-footer border-top-0 bg-solid-dark pb-4 mt-3">
                                         <nav aria-label="Page navigation">
                                             <ul class="pagination justify-content-center mb-0">
                                                 <li class="page-item ${page <= 1 ? 'disabled' : ''}">
@@ -298,3 +298,5 @@
             </body>
 
             </html>
+
+

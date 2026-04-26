@@ -43,6 +43,12 @@ public class AddCategoryController extends HttpServlet {
             return;
         }
 
+        if (ValidationUtil.hasBadWords(name) || ValidationUtil.hasBadWords(manufacturer)) {
+            session.setAttribute("error", "Tên danh mục hoặc hãng chứa từ ngữ không phù hợp!");
+            response.sendRedirect("managerCategory");
+            return;
+        }
+
         StoreDAO storeDAO = new StoreDAO();
         Store store = storeDAO.getStoreByOwnerId(a.getUid());
 

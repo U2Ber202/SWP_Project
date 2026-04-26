@@ -11,6 +11,11 @@ import java.util.logging.Logger;
 import model.Product;
 
 public class ProductDAO extends DBContext {
+    
+    public boolean isProductNameExist(String name, int storeId, int excludeId) {
+        String sql = "SELECT COUNT(*) FROM Product WHERE name = ? AND store_id = ? AND id <> ?";
+        return getCount(sql, name, storeId, excludeId) > 0;
+    }
 
     private static final Logger LOGGER = Logger.getLogger(ProductDAO.class.getName());
     private static final String PRODUCT_SELECT = "SELECT p.*, s.store_name "

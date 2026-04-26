@@ -29,8 +29,8 @@
                         --primary: #ea580c;
                         --primary-dark: #c2410c;
                         --bg: #0f172a;
-                        --card-bg: rgba(255, 255, 255, 0.05);
-                        --glass: rgba(255, 255, 255, 0.03);
+                        --card-bg: #1e293b;
+                        --glass: #0f172a;
                         --border: rgba(255, 255, 255, 0.1);
                     }
 
@@ -66,7 +66,7 @@
                     .product-card,
                     .admin-setting-card {
                         background: var(--card-bg);
-                        backdrop-filter: blur(12px);
+                        backdrop-filter: none;
                         border: 1px solid var(--border);
                         border-radius: 20px;
                         color: var(--text-main);
@@ -140,14 +140,14 @@
                     }
 
                     .form-control {
-                        background: rgba(0, 0, 0, 0.2);
+                        background: #0f172a;
                         border: 1px solid var(--border);
                         color: white;
                         border-radius: 10px;
                     }
 
                     .form-control:focus {
-                        background: rgba(0, 0, 0, 0.3);
+                        background: #0f172a;
                         border-color: var(--primary);
                         color: white;
                         box-shadow: none;
@@ -212,7 +212,7 @@
                                         <div class="carousel-item ${status.first ? 'active' : ''}"
                                             style="height: 500px; background: url('${s.imageUrl}') center/cover no-repeat;">
                                             <div class="carousel-caption d-none d-md-block text-left"
-                                                style="bottom: 20%; left: 10%; right: auto; background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); max-width: 600px;">
+                                                style="bottom: 20%; left: 10%; right: auto; background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; backdrop-filter: none !important; border: 1px solid rgba(255,255,255,0.1); max-width: 600px;">
                                                 <h1 class="display-4 font-weight-bold mb-3">${s.title}</h1>
                                                 <p class="lead mb-4">${s.description}</p>
                                                 <c:if test="${not empty s.backLink}">
@@ -267,7 +267,7 @@
 
                     <c:if test="${setting.showStats}">
                         <div class="container mt-n5 position-relative" style="z-index: 10;">
-                            <div class="hero-card shadow-lg p-4" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px;">
+                            <div class="hero-card shadow-lg p-4" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: none !important; border-radius: 20px;">
                                 <div class="row text-center">
                                     <div class="col-4">
                                         <div class="h2 mb-0 font-weight-bold text-warning">${productCount}</div>
@@ -550,3 +550,5 @@
             </body>
 
             </html>
+
+

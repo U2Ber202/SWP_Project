@@ -20,31 +20,31 @@
                 :root {
                     --primary: #ea580c;
                     --primary-dark: #c2410c;
-                    --bg: #0f172a;
-                    --card-bg: rgba(255, 255, 255, 0.05);
-                    --glass: rgba(255, 255, 255, 0.03);
-                    --border: rgba(255, 255, 255, 0.1);
+                    /* Using theme variables instead of hardcoded values */
+                    --local-bg: var(--bg);
+                    --local-card-bg: var(--card-bg);
+                    --local-border: var(--border);
                 }
 
                 body {
                     font-family: 'Be Vietnam Pro', sans-serif;
                     background-color: var(--bg) !important;
-                    color: #f1f5f9;
+                    color: var(--text-main);
                     padding-bottom: 40px;
                 }
 
                 .admin-wrapper {
                     background: var(--card-bg);
-                    backdrop-filter: blur(12px);
+                    backdrop-filter: none;
                     border: 1px solid var(--border);
                     border-radius: 20px;
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
                     overflow: hidden;
                 }
 
                 .admin-header {
-                    background: rgba(0, 0, 0, 0.2);
-                    color: #fff;
+                    background: var(--bg);
+                    color: var(--text-main);
                     padding: 25px 30px;
                     border-bottom: 1px solid var(--border);
                     display: flex;
@@ -106,16 +106,16 @@
 
                 .custom-table {
                     margin-bottom: 0;
-                    color: #f1f5f9;
+                    color: var(--text-main);
                 }
 
                 .custom-table thead th {
                     border-bottom: 1px solid var(--border);
                     border-top: none;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     font-weight: 600;
                     padding: 15px 30px;
-                    background-color: rgba(0, 0, 0, 0.2);
+                    background-color: var(--bg);
                     text-transform: uppercase;
                     font-size: 0.85rem;
                     letter-spacing: 0.5px;
@@ -129,7 +129,8 @@
                 }
 
                 .custom-table tbody tr:hover {
-                    background-color: rgba(255, 255, 255, 0.05);
+                    background-color: var(--bg);
+                    opacity: 0.9;
                 }
 
                 .action-icon {
@@ -152,13 +153,7 @@
                     opacity: 0.8;
                 }
 
-                .modal-content {
-                    background: #1e293b;
-                    border-radius: 20px;
-                    border: 1px solid var(--border);
-                    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-                    color: #f1f5f9;
-                }
+                
 
                 .modal-header {
                     border-bottom: 1px solid var(--border);
@@ -172,27 +167,27 @@
                 .modal-footer {
                     border-top: 1px solid var(--border);
                     padding: 20px 30px;
-                    background-color: rgba(0, 0, 0, 0.1);
+                    background-color: var(--bg);
                     border-radius: 0 0 20px 20px;
                 }
 
                 .input-group-text {
-                    background-color: rgba(0, 0, 0, 0.3);
+                    background-color: var(--bg);
                     border: 1px solid var(--border);
                     border-right: none;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     border-radius: 8px 0 0 8px;
                 }
 
                 .form-control {
-                    background: rgba(0, 0, 0, 0.2) !important;
+                    background: var(--bg) !important;
                     border: 1px solid var(--border);
-                    color: white !important;
+                    color: var(--text-main) !important;
                     border-radius: 0 8px 8px 0;
                 }
 
                 .form-control:focus {
-                    background: rgba(0, 0, 0, 0.3) !important;
+                    background: var(--bg) !important;
                     border-color: var(--primary);
                     box-shadow: none;
                 }
@@ -257,8 +252,8 @@
                                     <tbody>
                                         <c:forEach items="${listCategories}" var="c">
                                             <tr>
-                                                <td><span class="badge badge-light border p-2">#${c.cid}</span></td>
-                                                <td class="font-weight-bold" style="color: #e2e8f0;">${c.cname}</td>
+                                                <td><span class="badge border p-2 bg-theme-input text-light">#${c.cid}</span></td>
+                                                <td class="font-weight-bold" style="color: var(--text-main);">${c.cname}</td>
                                                 <td>${empty c.manufacturer ? 'Chưa cập nhật' : c.manufacturer}</td>
                                                 <td class="text-center">
                                                     <a href="loadCategory?cid=${c.cid}" class="action-icon edit"
@@ -277,7 +272,7 @@
                                 </table>
                             </div>
                             <c:if test="${totalPage >= 1}">
-                                <div class="card-footer border-top-0 bg-transparent pb-4">
+                                <div class="card-footer border-top-0 bg-solid-dark pb-4">
                                     <nav aria-label="Page navigation">
                                         <ul class="pagination justify-content-center mb-0">
                                             <li class="page-item ${page <= 1 ? 'disabled' : ''}">
@@ -362,3 +357,5 @@
         </body>
 
         </html>
+
+
