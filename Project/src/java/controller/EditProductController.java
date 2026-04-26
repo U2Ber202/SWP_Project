@@ -68,19 +68,31 @@ public class EditProductController extends HttpServlet {
         int productPrice = Integer.parseInt(price);
         int categoryId = Integer.parseInt(cid);
 
+        // Check for duplicate name
+        if (productDAO.isProductNameExist(pName, store.getId(), productId)) {
+            forwardWithValidationError(request, response, store.getId(),
+                    "Tên sản phẩm này đã được sử dụng bởi một sản phẩm khác. Vui lòng chọn tên khác.",
+                    existingProduct.getQuantity());
+            return;
+        }
+
+        // Filter bad words
+        pName = ValidationUtil.filterBadWords(pName);
+        des = ValidationUtil.filterBadWords(des);
+
         productDAO.updateProductByStore(pName, img, productPrice, title, des, manufacturer, categoryId, existingProduct.getQuantity(), productId, store.getId());
         session.setAttribute("success", "Cập nhật sản phẩm thành công!");
         response.sendRedirect("manager");
     }
 
     private boolean isValidProductInput(String pName, String img, String price, String title, String manufacturer, String cid, String des) {
-        return !ValidationUtil.isBlank(pName)
+        return ValidationUtil.isValidLength(pName, 1, 100)
                 && !ValidationUtil.isBlank(img)
                 && ValidationUtil.isNonNegativeInteger(price)
                 && ValidationUtil.isValidSizeList(title)
-                && !ValidationUtil.isBlank(manufacturer)
+                && ValidationUtil.isValidLength(manufacturer, 1, 50)
                 && ValidationUtil.isNonNegativeInteger(cid)
-                && !ValidationUtil.isBlank(des);
+                && ValidationUtil.isValidLength(des, 1, 1000);
     }
 
     private void forwardWithValidationError(HttpServletRequest request, HttpServletResponse response, int storeId, String message, int quantity)

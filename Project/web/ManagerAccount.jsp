@@ -172,6 +172,7 @@
             </script>
             <script src="js/theme.js"></script>
             <link rel="stylesheet" href="css/theme.css">
+            <script src="js/validation.js"></script>
         </head>
 
         <body class="bg-theme">
@@ -207,8 +208,9 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
                                                 </div>
-                                                <input type="email" class="form-control" name="email" placeholder="Địa chỉ Email" value="${formEmail}" required>
+                                                <input type="email" class="form-control" name="email" id="emailInput" placeholder="Địa chỉ Email" value="${formEmail}" required oninput="validateField(this, 'email')">
                                             </div>
+                                            <div id="emailError" style="color: #f87171; font-size: 0.75rem; margin-top: 2px;"></div>
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <div class="input-group">
@@ -225,16 +227,18 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
                                                 </div>
-                                                <input type="text" class="form-control" name="fullname" placeholder="Họ và tên" value="${formFullname}" required>
+                                                <input type="text" class="form-control" name="fullname" placeholder="Họ và tên" value="${formFullname}" required oninput="validateField(this, 'badword')">
                                             </div>
+                                            <div id="badwordError" style="color: #f87171; font-size: 0.75rem; margin-top: 2px;"></div>
                                         </div>
                                         <div class="col-md-5 mb-3">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
                                                 </div>
-                                                <input type="text" class="form-control" name="phone" placeholder="Số điện thoại" value="${formPhone}" required>
+                                                <input type="text" class="form-control" name="phone" id="phoneInput" placeholder="Số điện thoại" value="${formPhone}" required oninput="validateField(this, 'phone')">
                                             </div>
+                                            <div id="phoneError" style="color: #f87171; font-size: 0.75rem; margin-top: 2px;"></div>
                                         </div>
                                         <div class="col-md-2 mb-3">
                                             <button type="submit" class="btn btn-custom-primary">Tạo Chủ sở hữu</button>
@@ -345,6 +349,35 @@
 
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                    <script>
+                        function validateField(input, type) {
+                            const submitBtn = input.closest('form').querySelector('button[type="submit"]');
+                            const errorDiv = document.getElementById(type + 'Error');
+                            let isValid = true;
+
+                            if (type === 'email') {
+                                isValid = Validation.isValidEmail(input.value);
+                                errorDiv.innerText = isValid ? '' : 'Email không hợp lệ!';
+                            } else if (type === 'phone') {
+                                isValid = Validation.isValidPhone(input.value);
+                                errorDiv.innerText = isValid ? '' : 'SĐT không hợp lệ (10 số, bắt đầu 03,05,07,08,09)!';
+                            } else if (type === 'badword') {
+                                isValid = !Validation.containsBadWords(input.value);
+                                errorDiv.innerText = isValid ? '' : 'Chứa từ ngữ không phù hợp!';
+                            }
+
+                            // Re-check all to enable/disable button
+                            const form = input.closest('form');
+                            const email = form.querySelector('[name="email"]').value;
+                            const phone = form.querySelector('[name="phone"]').value;
+                            const name = form.querySelector('[name="fullname"]').value;
+                            
+                            const allOk = Validation.isValidEmail(email) && 
+                                          Validation.isValidPhone(phone) && 
+                                          !Validation.containsBadWords(name);
+                            submitBtn.disabled = !allOk;
+                        }
+                    </script>
         </body>
 
         </html>

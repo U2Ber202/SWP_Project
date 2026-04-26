@@ -13,17 +13,51 @@ public final class ValidationUtil {
         return normalize(value).isEmpty();
     }
 
+    private static final String[] BAD_WORDS = {
+        // Vietnamese vulgarities
+        "dm", "vcl", "cl", "dcm", "cho", "ngu", "cac", "lon", "buoi", "du", "dit", "me", "ba", "ma",
+        "khon", "nan", "mat", "day", "oc", "cho", "do", "dien", "khung", "di", "diem",
+        // English vulgarities
+        "fuck", "shit", "bitch", "ass", "bastard", "dick", "pussy", "fucker", "shitty", "hell", "damn"
+    };
+
     public static boolean isValidEmail(String email) {
         String normalizedEmail = normalize(email);
-        return !normalizedEmail.isEmpty()
-                && normalizedEmail.contains("@")
-                && normalizedEmail.indexOf('@') > 0
-                && normalizedEmail.indexOf('@') == normalizedEmail.lastIndexOf('@')
-                && normalizedEmail.indexOf('@') < normalizedEmail.length() - 1;
+        return normalizedEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$");
     }
 
     public static boolean isValidPhone(String phone) {
-        return normalize(phone).matches("0\\d{9}");
+        return normalize(phone).matches("^0[35789]\\d{8}$");
+    }
+
+    public static boolean isValidLength(String value, int min, int max) {
+        String normalized = normalize(value);
+        return normalized.length() >= min && normalized.length() <= max;
+    }
+
+    public static String filterBadWords(String content) {
+        if (isBlank(content)) {
+            return content;
+        }
+        String filtered = content;
+        for (String word : BAD_WORDS) {
+            // Case insensitive replacement with asterisks
+            filtered = filtered.replaceAll("(?i)\\b" + word + "\\b", "***");
+        }
+        return filtered;
+    }
+
+    public static boolean hasBadWords(String content) {
+        if (isBlank(content)) {
+            return false;
+        }
+        String lowerContent = content.toLowerCase();
+        for (String word : BAD_WORDS) {
+            if (lowerContent.matches(".*\\b" + word + "\\b.*")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isNonNegativeInteger(String value) {

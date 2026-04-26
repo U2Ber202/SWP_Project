@@ -36,9 +36,16 @@ public class AddFeedbackController extends HttpServlet {
             response.sendRedirect("detail?productId=" + (productIdStr != null ? productIdStr : ""));
             return;
         }
+
+        // Check for bad words
+        if (ValidationUtil.hasBadWords(content)) {
+            session.setAttribute("error", "Nội dung đánh giá chứa từ ngữ thô tục không phù hợp. Vui lòng chỉnh sửa lại.");
+            response.sendRedirect("detail?productId=" + productIdStr);
+            return;
+        }
         
-        if (content.length() > 50) {
-            session.setAttribute("error", "Nội dung đánh giá không được vượt quá 50 ký tự.");
+        if (!ValidationUtil.isValidLength(content, 1, 50)) {
+            session.setAttribute("error", "Nội dung đánh giá phải từ 1 đến 50 ký tự.");
             response.sendRedirect("detail?productId=" + productIdStr);
             return;
         }
@@ -56,7 +63,7 @@ public class AddFeedbackController extends HttpServlet {
                 response.sendRedirect("detail?productId=" + productId);
                 return;
             }
-            
+
             // Check condition: maximum 2 comments per user per product
             int feedbackCount = feedbackDAO.countFeedbackByUserOnProduct(acc.getUid(), productId);
             if (feedbackCount >= 2) {

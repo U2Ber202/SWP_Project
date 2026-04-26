@@ -83,6 +83,7 @@
                 </style>
                 <script src="js/theme.js"></script>
                 <link rel="stylesheet" href="css/theme.css">
+                <script src="js/validation.js"></script>
             </head>
 
             <body class="bg-theme" style="background: var(--bg) !important;">
@@ -167,7 +168,7 @@
                                                     <c:if test="${sessionScope.acc != null && f.accountId == sessionScope.acc.uid}">
                                                         <div class="small">
                                                             <c:if test="${!f.edited}">
-                                                                <button class="btn btn-link btn-sm text-info p-0 mr-2" 
+                                                                <button class="btn btn-link btn-sm text-info p-0 mr-2"
                                                                         onclick="openEditFeedbackModal('${f.id}', '${f.rating}', '${f.content}')">
                                                                     <i class="fas fa-edit mr-1"></i>Sửa
                                                                 </button>
@@ -214,7 +215,10 @@
                                                             </div>
                                                             <textarea name="content" id="feedbackContent" class="form-control" rows="3"
                                                                 placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." maxlength="50"
-                                                                oninput="updateCharCount()"></textarea>
+                                                                oninput="handleFeedbackInput()"></textarea>
+                                                            <div id="badword-warning" style="color: #f87171; font-size: 0.8rem; margin-top: 5px; display: none;">
+                                                                Cảnh báo: Nội dung chứa từ ngữ không phù hợp!
+                                                            </div>
                                                         </div>
                                                         <button type="submit" class="btn btn-primary btn-block btn-sm">Gửi
                                                             đánh giá</button>
@@ -326,6 +330,17 @@
                                 document.getElementById('charCount').innerText = content.length + '/50';
                             }
 
+                            function handleFeedbackInput() {
+                                updateCharCount();
+                                const content = document.getElementById('feedbackContent').value;
+                                const warning = document.getElementById('badword-warning');
+                                if (Validation.containsBadWords(content)) {
+                                    warning.style.display = 'block';
+                                } else {
+                                    warning.style.display = 'none';
+                                }
+                            }
+
                             function validateFeedback() {
                                 const content = document.getElementById('feedbackContent').value;
                                 if (content.length > 50) {
@@ -334,6 +349,10 @@
                                 }
                                 if (content.trim() === '') {
                                     alert('Vui lòng nhập nội dung đánh giá.');
+                                    return false;
+                                }
+                                if (Validation.containsBadWords(content)) {
+                                    alert('Nội dung chứa từ ngữ thô tục không phù hợp. Vui lòng chỉnh sửa lại!');
                                     return false;
                                 }
                                 return true;

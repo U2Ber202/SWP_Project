@@ -59,19 +59,31 @@ public class AddProductController extends HttpServlet {
 
         int productPrice = Integer.parseInt(price);
         ProductDAO productDAO = new ProductDAO();
+        
+        // Check for duplicate name
+        if (productDAO.isProductNameExist(pName, store.getId(), 0)) {
+            forwardWithValidationError(request, response, store.getId(),
+                    "Tên sản phẩm này đã tồn tại trong cửa hàng của bạn. Vui lòng chọn tên khác.");
+            return;
+        }
+        
+        // Filter bad words
+        pName = ValidationUtil.filterBadWords(pName);
+        des = ValidationUtil.filterBadWords(des);
+        
         productDAO.insertProduct(pName, img, productPrice, title, des, manufacturer, categoryId, 0, account.getUid(), store.getId());
         session.setAttribute("success", "Thêm sản phẩm mới thành công!");
         response.sendRedirect("manager");
     }
 
     private boolean isValidProductInput(String pName, String img, String price, String title, String manufacturer, String cid, String des) {
-        return !ValidationUtil.isBlank(pName)
+        return ValidationUtil.isValidLength(pName, 1, 100)
                 && !ValidationUtil.isBlank(img)
                 && ValidationUtil.isNonNegativeInteger(price)
                 && ValidationUtil.isValidSizeList(title)
-                && !ValidationUtil.isBlank(manufacturer)
+                && ValidationUtil.isValidLength(manufacturer, 1, 50)
                 && ValidationUtil.isNonNegativeInteger(cid)
-                && !ValidationUtil.isBlank(des);
+                && ValidationUtil.isValidLength(des, 1, 1000);
     }
 
     private void forwardWithValidationError(HttpServletRequest request, HttpServletResponse response, int storeId, String message)

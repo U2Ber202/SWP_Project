@@ -31,6 +31,12 @@ public class SignupController extends HttpServlet {
             return;
         }
 
+        if (ValidationUtil.hasBadWords(user)) {
+            request.setAttribute("mess", "Tên đăng nhập không được chứa từ ngữ thô tục.");
+            request.getRequestDispatcher("signup.jsp").forward(request, response);
+            return;
+        }
+
 
         if (!ValidationUtil.isValidEmail(email)) {
             request.setAttribute("mess", "Email không hợp lệ, vui lòng nhập đúng định dạng có ký tự @.");

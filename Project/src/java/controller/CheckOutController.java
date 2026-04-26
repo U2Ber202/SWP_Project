@@ -54,9 +54,6 @@ public class CheckOutController extends HttpServlet {
             else if (storeTotal >= 10000000) autoDiscountPercent = 20;
             int autoDiscountValue = (int) Math.round(storeTotal * (autoDiscountPercent / 100.0));
 
-        request.setAttribute("defaultName", acc.getFullname());
-        request.setAttribute("defaultPhone", acc.getPhone());
-        request.setAttribute("defaultAddress", acc.getAddress());
             // 2. Calculate Best Voucher discount
             model.Voucher bestV = findBestVoucher(vDAO.getVouchersByStoreId(sid), storeTotal);
             int voucherDiscountValue = 0;

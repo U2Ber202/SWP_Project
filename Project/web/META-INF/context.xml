@@ -7,12 +7,16 @@
         maxTotal="30"
         maxIdle="10"
         maxWaitMillis="10000"
-        username="sa"
-        password="123"
+        username="SA"
+        password="123456"
         driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-        url="jdbc:sqlserver://localhost\\BUIHUY:1433;databaseName=PRJ301;encrypt=true;trustServerCertificate=true"
+        url="jdbc:sqlserver://localhost:1433;databaseName=PRJ301;encrypt=true;trustServerCertificate=true"
         validationQuery="SELECT 1"
         testOnBorrow="true"/>
+
+    <Environment name="DB_URL" type="java.lang.String" value="jdbc:sqlserver://localhost:1433;databaseName=PRJ301;encrypt=true;trustServerCertificate=true" override="false"/>
+    <Environment name="DB_USERNAME" type="java.lang.String" value="SA" override="false"/>
+    <Environment name="DB_PASSWORD" type="java.lang.String" value="123456" override="false"/>
 
     <Environment name="MAIL_USERNAME" type="java.lang.String" value="hungnguyenames2003@gmail.com" override="false"/>
     <Environment name="MAIL_PASSWORD" type="java.lang.String" value="qdpu pqil zvss llkz" override="false"/>
