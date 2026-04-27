@@ -39,58 +39,86 @@ public class AcountDAO extends DBContext {
         return getAccountsBySql(ACCOUNT_SELECT + " ORDER BY uID DESC");
     }
 
-// THAY BẰNG ĐOẠN NÀY:
-    public List<Account> searchAccounts(String keyword) {
-        String normalizedKeyword = keyword == null ? "" : keyword.trim();
-        if (normalizedKeyword.isEmpty()) {
-            return getAllAccount();
-        }
-
-        // Nếu bắt đầu bằng # thì tìm theo ID (bỏ dấu #)
-        String idSearch = normalizedKeyword.startsWith("#")
-                ? normalizedKeyword.substring(1).trim()
-                : normalizedKeyword;
-
-//        String idPattern = "%" + idSearch.toLowerCase() + "%";
-        if (normalizedKeyword.startsWith("#")) {
-            String idStr = normalizedKeyword.substring(1).trim();
-            // Nếu sau # không có gì hoặc không phải số → trả về rỗng
-            if (idStr.isEmpty() || !idStr.matches("\\d+")) {
-                return new ArrayList<>();
-            }
-            return getAccountsBySql(ACCOUNT_SELECT
-                    + " WHERE [uID] = ?"
-                    + " ORDER BY uID DESC",
-                    Integer.parseInt(idStr));
-        }
-
-        String searchPattern = "%" + normalizedKeyword.toLowerCase() + "%";
-        return getAccountsBySql(ACCOUNT_SELECT
-                + " WHERE LOWER(CAST([uID] AS NVARCHAR(50))) LIKE ?"
-                + " OR LOWER([user]) LIKE ?"
-                + " OR LOWER(ISNULL([email], '')) LIKE ?"
-                + " OR LOWER(ISNULL([fullname], '')) LIKE ?"
-                + " OR ([role] = 'admin'             AND (N'quản trị'     LIKE ? OR LOWER([role]) LIKE ?))"
-                + " OR ([role] = 'owner'             AND (N'chủ cửa hàng' LIKE ? OR LOWER([role]) LIKE ?))"
-                + " OR ([role] = 'shipper'           AND (N'shipper'      LIKE ? OR LOWER([role]) LIKE ?))"
-                + " OR ([role] = 'warehouse_manager' AND (N'quản lý kho'  LIKE ? OR LOWER([role]) LIKE ?))"
-                + " OR ([role] = 'customer'          AND (N'khách hàng'   LIKE ? OR LOWER([role]) LIKE ?))"
-                + " OR ([active] = 1 AND N'đang hoạt động' LIKE ?)"
-                + " OR ([active] = 0 AND N'đã khóa'        LIKE ?)"
-                + " ORDER BY uID DESC",
-//                idPattern, // ID (bỏ dấu #)
-                searchPattern, // user
-                searchPattern, // email
-                searchPattern, // fullname
-                searchPattern, searchPattern, // admin
-                searchPattern, searchPattern, // owner
-                searchPattern, searchPattern, // shipper
-                searchPattern, searchPattern, // warehouse_manager
-                searchPattern, searchPattern, // customer
-                searchPattern, // đang hoạt động
-                searchPattern // đã khóa
-        );
+public List<Account> searchAccounts(String keyword) {
+    String normalizedKeyword = keyword == null ? "" : keyword.trim().toLowerCase();
+    if (normalizedKeyword.isEmpty()) {
+        return getAllAccount();
     }
+
+    // Tìm theo ID tuyệt đối: #123
+    if (normalizedKeyword.startsWith("#")) {
+        String idStr = normalizedKeyword.substring(1).trim();
+        if (idStr.matches("\\d+")) {
+            return getAccountsBySql(ACCOUNT_SELECT 
+                + " WHERE [uID] = ? ORDER BY uID DESC", 
+                Integer.parseInt(idStr));
+        }
+        return new ArrayList<>();
+    }
+
+    // ✅ Map từ tiếng Việt → giá trị role trong DB
+    List<String> roleFilters = new ArrayList<>();
+    if ("quản trị".contains(normalizedKeyword) || normalizedKeyword.contains("quản trị") || normalizedKeyword.contains("admin")) {
+        roleFilters.add("admin");
+    }
+    if ("chủ cửa hàng".contains(normalizedKeyword) || normalizedKeyword.contains("chủ") || normalizedKeyword.contains("owner")) {
+        roleFilters.add("owner");
+    }
+    if (normalizedKeyword.contains("shipper") || normalizedKeyword.contains("ship")) {
+        roleFilters.add("shipper");
+    }
+    if ("quản lý kho".contains(normalizedKeyword) || normalizedKeyword.contains("quản lý") || normalizedKeyword.contains("kho") || normalizedKeyword.contains("warehouse")) {
+        roleFilters.add("warehouse_manager");
+    }
+    if ("khách hàng".contains(normalizedKeyword) || normalizedKeyword.contains("khách") || normalizedKeyword.contains("customer")) {
+        roleFilters.add("customer");
+    }
+
+    // ✅ Map từ tiếng Việt → giá trị active trong DB
+    Boolean activeFilter = null;
+    if (normalizedKeyword.contains("hoạt động") || normalizedKeyword.contains("active")) {
+        activeFilter = true;
+    } else if (normalizedKeyword.contains("khóa") || normalizedKeyword.contains("locked") || normalizedKeyword.contains("lock")) {
+        activeFilter = false;
+    }
+
+    // ✅ Nếu chỉ tìm theo role
+    if (!roleFilters.isEmpty() && activeFilter == null) {
+        String inClause = String.join(",", java.util.Collections.nCopies(roleFilters.size(), "?"));
+        return getAccountsBySql(ACCOUNT_SELECT
+                + " WHERE ISNULL([role], CASE WHEN isAdmin = 1 THEN 'admin' ELSE 'customer' END)"
+                + " IN (" + inClause + ") ORDER BY uID DESC",
+                roleFilters.toArray());
+    }
+
+    // ✅ Nếu chỉ tìm theo trạng thái
+    if (roleFilters.isEmpty() && activeFilter != null) {
+        return getAccountsBySql(ACCOUNT_SELECT
+                + " WHERE [active] = ? ORDER BY uID DESC",
+                activeFilter ? 1 : 0);
+    }
+
+    // ✅ Nếu tìm theo cả role + trạng thái
+    if (!roleFilters.isEmpty() && activeFilter != null) {
+        String inClause = String.join(",", java.util.Collections.nCopies(roleFilters.size(), "?"));
+        List<Object> params = new ArrayList<>(roleFilters);
+        params.add(activeFilter ? 1 : 0);
+        return getAccountsBySql(ACCOUNT_SELECT
+                + " WHERE ISNULL([role], CASE WHEN isAdmin = 1 THEN 'admin' ELSE 'customer' END)"
+                + " IN (" + inClause + ") AND [active] = ? ORDER BY uID DESC",
+                params.toArray());
+    }
+
+    // ✅ Tìm kiếm thông thường theo text (user, email, fullname, ID)
+    String searchPattern = "%" + normalizedKeyword + "%";
+    return getAccountsBySql(ACCOUNT_SELECT
+            + " WHERE LOWER([user]) LIKE ?"
+            + " OR LOWER(ISNULL([email], '')) LIKE ?"
+            + " OR LOWER(ISNULL([fullname], '')) LIKE ?"
+            + " OR LOWER(CAST([uID] AS NVARCHAR(50))) LIKE ?"
+            + " ORDER BY uID DESC",
+            searchPattern, searchPattern, searchPattern, searchPattern);
+}
 
     public List<Account> getAccountsByRole(String role) {
         return getAccountsBySql(ACCOUNT_SELECT

@@ -86,7 +86,10 @@
                 background: #1e293b;
                 color: white;
             }
-            .alert { border-radius: 14px; border: none; }
+            .alert {
+                border-radius: 14px;
+                border: none;
+            }
             .setting-box {
                 background: rgba(255, 255, 255, 0.03);
                 border: 1px solid var(--border);
@@ -109,13 +112,93 @@
                 padding: 30px;
                 border: 1px solid var(--border);
             }
+            /* ✅ Fix modal solid - không trong suốt */
+            .modal-content {
+                background: #1e293b !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                border-radius: 20px !important;
+                box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8) !important;
+            }
+
+            .modal-backdrop {
+                background-color: rgba(0, 0, 0, 0.75) !important;
+            }
+
+            .modal-backdrop.show {
+                opacity: 1 !important;
+            }
+
+            /* ✅ Fix input trong modal solid */
+            .modal .form-control,
+            .modal textarea.form-control {
+                background: #0f172a !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                color: #f1f5f9 !important;
+                border-radius: 10px !important;
+            }
+
+            .modal .form-control:focus,
+            .modal textarea.form-control:focus {
+                border-color: var(--primary) !important;
+                box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.2) !important;
+            }
+
+            .modal .form-control::placeholder {
+                color: #475569 !important;
+            }
+
+            /* ✅ Fix label trong modal */
+            .modal label {
+                color: #94a3b8 !important;
+                font-weight: 600;
+                font-size: 0.875rem;
+            }
+
+            /* ✅ Fix modal header & footer */
+            .modal .modal-header {
+                padding: 20px 24px 12px !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            }
+
+            .modal .modal-footer {
+                padding: 12px 24px 20px !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+            }
+
+            .modal .modal-title {
+                color: #f1f5f9 !important;
+                font-weight: 700 !important;
+            }
+
+            .modal .close {
+                color: #94a3b8 !important;
+                opacity: 1 !important;
+                text-shadow: none !important;
+            }
+
+            .modal .close:hover {
+                color: #f87171 !important;
+            }
+
+            /* ✅ Fix custom-select trong modal */
+            .modal .custom-select {
+                background: #0f172a !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                color: #f1f5f9 !important;
+                border-radius: 10px !important;
+            }
+
+            /* ✅ Fix custom switch trong modal */
+            .modal .custom-control-label {
+                color: #cbd5e1 !important;
+            }
         </style>
         <script src="js/theme.js"></script>
         <link rel="stylesheet" href="css/theme.css">
     </head>
     <body>
         <%@ include file="components/navBarComponent.jsp" %>
-        
+
         <div class="container mt-5">
             <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
                 <div>
@@ -217,9 +300,9 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                             <button type="submit" class="btn btn-primary-custom px-5">
-                                 <i class="fas fa-save mr-2"></i>Lưu cấu hình chung
-                             </button>
+                            <button type="submit" class="btn btn-primary-custom px-5">
+                                <i class="fas fa-save mr-2"></i>Lưu cấu hình chung
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -289,10 +372,12 @@
         <!-- Add Slider Modal -->
         <div class="modal fade" id="addSliderModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content border-0" style="background: #1e293b; border-radius: 20px;">
-                    <div class="modal-header border-0 pb-0">
-                        <h5 class="modal-title text-white font-weight-bold">Thêm Slider mới</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-plus-circle text-warning mr-2"></i>Thêm Slider mới
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -303,7 +388,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Tiêu đề slider</label>
-                                        <input type="text" name="title" class="form-control" required>
+                                        <input type="text" name="title" class="form-control" required placeholder="VD: Bộ sưu tập mùa hè">
                                     </div>
                                     <div class="form-group">
                                         <label>Đường dẫn ảnh (URL)</label>
@@ -312,10 +397,10 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Link khi click (Optional)</label>
+                                        <label>Link khi click (Tuỳ chọn)</label>
                                         <input type="text" name="backLink" class="form-control" placeholder="#shop">
                                     </div>
-                                    <div class="form-group mt-4">
+                                    <div class="form-group mt-4 pt-2">
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="newSliderStatus" name="status" checked>
                                             <label class="custom-control-label" for="newSliderStatus">Cho phép hiển thị ngay</label>
@@ -323,16 +408,20 @@
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <div class="form-group">
+                                    <div class="form-group mb-0">
                                         <label>Mô tả ngắn</label>
-                                        <textarea name="description" class="form-control" rows="3"></textarea>
+                                        <textarea name="description" class="form-control" rows="3" placeholder="Nhập mô tả cho slider..."></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer border-0">
-                            <button type="button" class="btn btn-secondary-custom" data-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary-custom">Xác nhận thêm</button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary-custom" data-dismiss="modal">
+                                <i class="fas fa-times mr-1"></i>Hủy
+                            </button>
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="fas fa-plus mr-1"></i>Xác nhận thêm
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -342,10 +431,12 @@
         <!-- Edit Slider Modal -->
         <div class="modal fade" id="editSliderModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content border-0" style="background: #1e293b; border-radius: 20px;">
-                    <div class="modal-header border-0 pb-0">
-                        <h5 class="modal-title text-white font-weight-bold">Chỉnh sửa Slider</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-edit text-warning mr-2"></i>Chỉnh sửa Slider
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -369,7 +460,7 @@
                                         <label>Link khi click</label>
                                         <input type="text" name="backLink" id="edit-link" class="form-control">
                                     </div>
-                                    <div class="form-group mt-4">
+                                    <div class="form-group mt-4 pt-2">
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="edit-status" name="status">
                                             <label class="custom-control-label" for="edit-status">Hiển thị slider</label>
@@ -377,16 +468,20 @@
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <div class="form-group">
+                                    <div class="form-group mb-0">
                                         <label>Mô tả ngắn</label>
                                         <textarea name="description" id="edit-desc" class="form-control" rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer border-0">
-                            <button type="button" class="btn btn-secondary-custom" data-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary-custom">Cập nhật</button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary-custom" data-dismiss="modal">
+                                <i class="fas fa-times mr-1"></i>Hủy
+                            </button>
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="fas fa-save mr-1"></i>Cập nhật
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -401,22 +496,22 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script>
-            function editSlider(id, title, image, link, status, desc) {
-                $('#edit-id').val(id);
-                $('#edit-title').val(title);
-                $('#edit-image').val(image);
-                $('#edit-link').val(link);
-                $('#edit-status').prop('checked', status);
-                $('#edit-desc').val(desc);
-                $('#editSliderModal').modal('show');
-            }
+                                                function editSlider(id, title, image, link, status, desc) {
+                                                    $('#edit-id').val(id);
+                                                    $('#edit-title').val(title);
+                                                    $('#edit-image').val(image);
+                                                    $('#edit-link').val(link);
+                                                    $('#edit-status').prop('checked', status);
+                                                    $('#edit-desc').val(desc);
+                                                    $('#editSliderModal').modal('show');
+                                                }
 
-            function confirmDeleteSlider(id) {
-                if (confirm('Bạn có chắc chắn muốn xóa slider này?')) {
-                    $('#delete-id').val(id);
-                    $('#deleteSliderForm').submit();
-                }
-            }
+                                                function confirmDeleteSlider(id) {
+                                                    if (confirm('Bạn có chắc chắn muốn xóa slider này?')) {
+                                                        $('#delete-id').val(id);
+                                                        $('#deleteSliderForm').submit();
+                                                    }
+                                                }
         </script>
     </body>
 </html>
