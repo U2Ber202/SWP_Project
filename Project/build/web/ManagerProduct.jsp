@@ -284,7 +284,7 @@
 
 
 
-                                <c:if test="${sessionScope.acc.role == 'warehouse_manager' or sessionScope.acc.role == 'owner' or sessionScope.acc.role == 'admin'}">
+                                <c:if test="${sessionScope.acc.role == 'warehouse_manager' or sessionScope.acc.role == 'admin'}">
                                     <div class="card mb-5">
                                         <div class="card-header">
                                             <i class="fa-solid fa-warehouse text-info mr-2"></i>Nhập kho theo size
