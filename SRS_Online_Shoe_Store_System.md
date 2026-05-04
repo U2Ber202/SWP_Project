@@ -600,30 +600,34 @@ Core entities in the system:
 |---|---|---|
 | 1 | Role | Stores role keys such as `admin`, `owner`, `shipper`, `warehouse_manager`, and `customer`. |
 | 2 | Account | Stores login credentials, status, role, name, phone, email, address, and token. |
-| 3 | Store | Represents one shoe store and links owner, shipper, and warehouse manager. |
-| 4 | Category | Stores shoe categories and optional manufacturer/brand information. |
-| 5 | Product | Stores shoe information such as name, image, price, title, description, category, quantity, and store. |
-| 6 | Cart | Stores reserved product items of customers. |
-| 7 | Shipping | Stores receiver info, shipping status, store, shipper assignment, and shipped date. |
-| 8 | Orders | Stores order header, customer, total price, note, shipping id, store id, and VAT percent. |
-| 9 | OrderDetail | Stores purchased item snapshots per order. |
-| 10 | StockImport | Stores inventory import records by product and store. |
-| 11 | Voucher | Stores discount code rules per store. |
-| 12 | Feedback | Stores product reviews from customers. |
-| 13 | Contact | Stores customer support/contact messages related to orders and stores. |
-| 14 | News | Stores system-wide or store-specific news posts. |
-| 15 | StaffActionHistory | Stores owner actions performed on staff management operations. |
-| 16 |r HomeSetting / Slide | Stores homepage and content-management display data. |
+| 3 | Store | Represents one shoe store. |
+| 4 | StoreStaff | Stores staff assignments (shipper, warehouse manager) to stores. |
+| 5 | Manufacturer | Stores product brands/manufacturers. |
+| 6 | Category | Stores shoe categories. |
+| 7 | Product | Stores general shoe information. |
+| 8 | Color | Stores variant colors. |
+| 9 | ProductVariant | Stores specific size/color variants with price and quantity. |
+| 10 | Cart | Stores reserved product items of customers. |
+| 11 | Shipping | Stores delivery information and status. |
+| 12 | StockImport | Stores inventory import records (In Cost tracking). |
+| 13 | Orders | Stores order header data. |
+| 14 | OrderDetail | Stores purchased item snapshots. |
+| 15 | Voucher | Stores discount code rules. |
+| 16 | Feedback | Stores product reviews and ratings. |
+| 17 | Contact | Stores customer support messages. |
+| 18 | News | Stores news posts. |
+| 19 | StaffActionHistory | Stores owner actions on staff. |
+| 20 | HomeSetting / Slide | Stores homepage content display data. |
 
 Entity relationships summary:
 
 - One `Role` can be assigned to many `Account` records.
-- One `Store` has one `Owner`, optionally one `Shipper`, and optionally one `Warehouse Manager`.
-- One `Store` has many `Category`, `Product`, `Voucher`, `Shipping`, `StockImport`, and `Feedback` records.
-- One `Store` has many `News` and `Contact` records, where `News.store_id` may be null for system-wide news.
+- One `Store` links to an `Owner` and many `StoreStaff`.
+- One `Store` has many `Category`, `Product`, `Voucher`, `Shipping`, `StockImport`, `Feedback`, `News`, and `Contact` records.
+- One `Product` has many `ProductVariant` records, which link to `Color`.
 - One `Customer Account` can have many `Cart`, `Orders`, `Feedback`, and `Contact` records.
-- One `Owner Account` can create many `StaffActionHistory` records, and one staff account can appear in many history rows.
 - One `Order` has many `OrderDetail` rows and links to one `Shipping` record.
+- `StockImport` tracks the inventory history for each `ProductVariant`.
 
 #### PlantUML: ERD Overview
 
@@ -645,6 +649,7 @@ entity Account {
   --
   user : varchar
   pass : varchar
+  isAdmin : int
   role : varchar
   active : bit
   fullname : nvarchar
@@ -659,9 +664,28 @@ entity Store {
   --
   store_name : nvarchar
   owner_id : int
-  shipper_id : int
-  warehouse_manager_id : int
   active : bit
+}
+
+entity StoreStaff {
+  *store_id : int
+  *account_id : int
+  --
+  staff_role : varchar
+}
+
+entity Manufacturer {
+  *id : int
+  --
+  name : nvarchar
+  country : nvarchar
+}
+
+entity Color {
+  *id : int
+  --
+  color_name : nvarchar
+  color_code : varchar
 }
 
 entity Category {
@@ -669,22 +693,34 @@ entity Category {
   --
   cname : nvarchar
   store_id : int
-  manufacturer : nvarchar
 }
 
 entity Product {
   *id : int
   --
   name : nvarchar
-  price : int
+  description : nvarchar
   cateID : int
-  quantity : int
   store_id : int
+  manufacturer_id : int
+}
+
+entity ProductVariant {
+  *id : int
+  --
+  product_id : int
+  color_id : int
+  size : nvarchar
+  sku : varchar
+  price : int
+  quantity : int
+  image : nvarchar
+  status : nvarchar
 }
 
 entity Cart {
   *AccountID : int
-  *ProductID : int
+  *VariantID : int
   --
   Amount : int
   reserved_at : datetime
@@ -700,6 +736,7 @@ entity Shipping {
   status : varchar
   shipper_id : int
   store_id : int
+  shipped_date : datetime
 }
 
 entity Orders {
@@ -707,6 +744,8 @@ entity Orders {
   --
   account_id : int
   totalPrice : int
+  note : nvarchar
+  create_date : date
   shipping_id : int
   store_id : int
   vat_percent : int
@@ -716,7 +755,7 @@ entity OrderDetail {
   *id : int
   --
   order_id : int
-  productName : nvarchar
+  variant_id : int
   productPrice : int
   quantity : int
 }
@@ -724,9 +763,13 @@ entity OrderDetail {
 entity StockImport {
   *id : int
   --
-  product_id : int
+  variant_id : int
   store_id : int
   import_quantity : int
+  unit_cost : int
+  batch_number : varchar
+  note : nvarchar
+  created_at : datetime
   created_by : int
 }
 
@@ -737,6 +780,8 @@ entity Voucher {
   discount_percent : int
   max_discount : int
   min_order_value : int
+  expiry_date : datetime
+  start_date : datetime
   store_id : int
 }
 
@@ -747,12 +792,19 @@ entity Feedback {
   product_id : int
   store_id : int
   rating : int
+  content : nvarchar
+  create_date : datetime
+  is_edited : bit
+  is_hidden : bit
 }
 
 entity News {
   *id : int
   --
   title : nvarchar
+  content : nvarchar
+  image : nvarchar
+  created_at : datetime
   store_id : int
   is_visible : bit
 }
@@ -763,6 +815,10 @@ entity Contact {
   account_id : int
   order_id : int
   store_id : int
+  message : nvarchar
+  response_message : nvarchar
+  responded_at : datetime
+  created_at : datetime
   status : nvarchar
 }
 
@@ -772,12 +828,41 @@ entity StaffActionHistory {
   owner_id : int
   staff_id : int
   action_type : nvarchar
+  details : nvarchar
+  action_at : datetime
+}
+
+entity HomeSetting {
+  *id : int
+  --
+  hero_badge : nvarchar
+  hero_title : nvarchar
+  hero_highlight : nvarchar
+  hero_description : nvarchar
+  primary_button_text : nvarchar
+  secondary_button_text : nvarchar
+  featured_title : nvarchar
+  show_stats : bit
+  show_filter_sidebar : bit
+  show_featured_section : bit
+  featured_mode : varchar
+  featured_product_id : int
+}
+
+entity Slider {
+  *id : int
+  --
+  title : nvarchar
+  image_url : nvarchar
+  product_id : int
+  status : bit
+  description : nvarchar
 }
 
 Role ||--o{ Account
 Account ||--o| Store : owner_id
-Account ||--o| Store : shipper_id
-Account ||--o| Store : warehouse_manager_id
+Store ||--o{ StoreStaff
+Account ||--o{ StoreStaff
 Store ||--o{ Category
 Store ||--o{ Product
 Store ||--o{ Shipping
@@ -787,19 +872,26 @@ Store ||--o{ Feedback
 Store ||--o{ News
 Store ||--o{ Contact
 Category ||--o{ Product
+Manufacturer ||--o{ Product
+Product ||--o{ ProductVariant
+Color ||--o{ ProductVariant
 Account ||--o{ Cart
-Product ||--o{ Cart
+ProductVariant ||--o{ Cart
 Account ||--o{ Orders
 Shipping ||--|| Orders
 Orders ||--o{ OrderDetail
-Product ||..o{ OrderDetail
+ProductVariant ||--o{ OrderDetail
 Account ||--o{ Feedback
 Product ||--o{ Feedback
-Product ||--o{ StockImport
+ProductVariant ||--o{ StockImport
 Account ||--o{ Contact
 Orders ||--o{ Contact
 Account ||--o{ StaffActionHistory : owner_id
 Account ||--o{ StaffActionHistory : staff_id
+Product ||--o{ HomeSetting : featured_product_id
+Product ||--o{ Slider : product_id
+Account ||--o{ Shipping : shipper_id
+Account ||--o{ StockImport : created_by
 @enduml
 ```
 
@@ -2410,7 +2502,7 @@ ORDER BY report_date;
 #### 6.5.10 Complete Database Script Reference
 
 - Main schema and seed script: `Project/DBScript.sql`
-- Main tables covered by implementation: `Role`, `Account`, `Store`, `Category`, `Product`, `Cart`, `Shipping`, `StockImport`, `Orders`, `OrderDetail`, `HomeSetting`, `Slider`, `Voucher`, `Feedback`, `News`, `Contact`, `StaffActionHistory`
+- Main tables covered by implementation: `Role`, `Account`, `Store`, `StoreStaff`, `Manufacturer`, `Category`, `Product`, `Color`, `ProductVariant`, `Cart`, `Shipping`, `StockImport`, `Orders`, `OrderDetail`, `HomeSetting`, `Slider`, `Voucher`, `Feedback`, `News`, `Contact`, `StaffActionHistory`
 
 Suggested note for final report submission:
 
