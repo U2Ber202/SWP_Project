@@ -155,7 +155,8 @@
                                                                 class="badge store-badge px-3 py-2">${v.storeName}</span>
                                                         </c:if>
                                                     </div>
-                                                    <p class="small text-muted mb-1">Thời gian: ${v.startDate} đến ${v.expiryDate}</p>
+                                                    <p class="small text-muted mb-1">Thời gian: ${v.startDate} đến
+                                                        ${v.expiryDate}</p>
                                                     <p class="small text-muted mb-1">Tối thiểu:
                                                         <c:choose>
                                                             <c:when test="${v.minOrderValue != null}">
@@ -245,8 +246,7 @@
                                         <input type="hidden" name="action" value="add">
                                         <div class="modal-header border-0">
                                             <h5 class="modal-title font-weight-bold">Tạo voucher mới</h5>
-                                            <button type="button" class="close"
-                                                data-dismiss="modal">&times;</button>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
                                             <c:if test="${voucherScope == 'admin'}">
@@ -282,14 +282,16 @@
                                             <div class="row">
                                                 <div class="col-6">
                                                     <div class="form-group">
-                                                        <label>Ngày bắt đầu</label>
-                                                        <input type="date" name="startDate" class="form-control" required>
+                                                        <label>Ngày giờ bắt đầu</label>
+                                                        <input type="datetime-local" name="startDate" class="form-control"
+                                                            required>
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="form-group">
-                                                        <label>Ngày hết hạn</label>
-                                                        <input type="date" name="expiryDate" class="form-control" required>
+                                                        <label>Ngày giờ hết hạn</label>
+                                                        <input type="datetime-local" name="expiryDate" class="form-control"
+                                                            required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -312,8 +314,7 @@
                                         <input type="hidden" name="id" id="editVoucherId">
                                         <div class="modal-header border-0">
                                             <h5 class="modal-title font-weight-bold">Cập nhật voucher</h5>
-                                            <button type="button" class="close"
-                                                data-dismiss="modal">&times;</button>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
                                         </div>
                                         <div class="modal-body">
                                             <c:if test="${voucherScope == 'admin'}">
@@ -351,15 +352,15 @@
                                             <div class="row">
                                                 <div class="col-6">
                                                     <div class="form-group">
-                                                        <label>Ngày bắt đầu</label>
-                                                        <input type="date" name="startDate" id="editVoucherStart"
+                                                        <label>Ngày giờ bắt đầu</label>
+                                                        <input type="datetime-local" name="startDate" id="editVoucherStart"
                                                             class="form-control" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="form-group">
-                                                        <label>Ngày hết hạn</label>
-                                                        <input type="date" name="expiryDate" id="editVoucherExpiry"
+                                                        <label>Ngày giờ hết hạn</label>
+                                                        <input type="datetime-local" name="expiryDate" id="editVoucherExpiry"
                                                             class="form-control" required>
                                                     </div>
                                                 </div>
@@ -385,15 +386,55 @@
                                 $('#editVoucherDiscount').val(button.data('discount'));
                                 $('#editVoucherMinOrder').val(button.data('min-order') || '');
                                 $('#editVoucherMaxDiscount').val(button.data('max-discount') || '');
-                                $('#editVoucherExpiry').val(button.data('expiry'));
-                                $('#editVoucherStart').val(button.data('start'));
+                                
+                                // Format date for datetime-local
+                                let expiry = button.data('expiry');
+                                let start = button.data('start');
+                                if(expiry) $('#editVoucherExpiry').val(expiry.replace(' ', 'T').substring(0, 16));
+                                if(start) $('#editVoucherStart').val(start.replace(' ', 'T').substring(0, 16));
+                                
                                 if ($('#editVoucherStoreId').length) {
                                     $('#editVoucherStoreId').val(button.data('store-id'));
+                                }
+                            });
+
+                            // Real-time validation for start and expiry dates
+                            function validateDates(startId, endId, submitBtn) {
+                                const startDate = new Date($('#' + startId).val());
+                                const endDate = new Date($('#' + endId).val());
+                                const btn = $(submitBtn);
+
+                                if (startDate && endDate && endDate <= startDate) {
+                                    $('#' + endId).addClass('is-invalid');
+                                    btn.prop('disabled', true);
+                                    if(!$('#' + endId + '-error').length) {
+                                        $('#' + endId).after('<div id="' + endId + '-error" class="invalid-feedback">Ngày hết hạn phải sau ngày bắt đầu.</div>');
+                                    }
+                                } else {
+                                    $('#' + endId).removeClass('is-invalid');
+                                    $('#' + endId + '-error').remove();
+                                    btn.prop('disabled', false);
+                                }
+                            }
+
+                            $('input[name="startDate"], input[name="expiryDate"]').on('change', function() {
+                                const form = $(this).closest('form');
+                                const startInput = form.find('input[name="startDate"]');
+                                const endInput = form.find('input[name="expiryDate"]');
+                                const submitBtn = form.find('button[type="submit"]');
+                                
+                                const startDate = new Date(startInput.val());
+                                const endDate = new Date(endInput.val());
+
+                                if (startDate && endDate && endDate <= startDate) {
+                                    endInput.addClass('is-invalid');
+                                    submitBtn.prop('disabled', true);
+                                } else {
+                                    endInput.removeClass('is-invalid');
+                                    submitBtn.prop('disabled', false);
                                 }
                             });
                         </script>
             </body>
 
             </html>
-
-

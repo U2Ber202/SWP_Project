@@ -15,7 +15,11 @@ public class StoreDAO extends DBContext {
     private static final Logger LOGGER = Logger.getLogger(StoreDAO.class.getName());
 
     private Store mapStore(ResultSet rs) throws SQLException {
-        Store store = new Store(rs.getInt("store_id"), rs.getString("store_name"), rs.getInt("owner_id"));
+        Store store = new Store();
+        store.setStoreId(rs.getInt("store_id"));
+        store.setStoreName(rs.getString("store_name"));
+        store.setOwnerId(rs.getInt("owner_id"));
+
         try {
             store.setShipperId(rs.getInt("shipper_id"));
         } catch (SQLException ex) {
@@ -45,6 +49,8 @@ public class StoreDAO extends DBContext {
     }
 
     private static final String STORE_SELECT = "SELECT s.*, "
+            + "(SELECT TOP 1 account_id FROM StoreStaff WHERE store_id = s.store_id AND staff_role = 'shipper') as shipper_id, "
+            + "(SELECT TOP 1 account_id FROM StoreStaff WHERE store_id = s.store_id AND staff_role = 'warehouse_manager') as warehouse_manager_id, "
             + "(SELECT COUNT(*) FROM Product p WHERE p.store_id = s.store_id) as product_count, "
             + "(SELECT AVG(CAST(rating AS FLOAT)) FROM Feedback f WHERE f.store_id = s.store_id) as avg_rating "
             + "FROM Store s";
@@ -62,11 +68,11 @@ public class StoreDAO extends DBContext {
     }
 
     public Store getStoreByWarehouseManagerId(int warehouseManagerId) {
-        return getSingleStore(STORE_SELECT + " WHERE s.warehouse_manager_id = ?", warehouseManagerId);
+        return getSingleStore(STORE_SELECT + " WHERE s.store_id IN (SELECT store_id FROM StoreStaff WHERE account_id = ? AND staff_role = 'warehouse_manager')", warehouseManagerId);
     }
 
     public Store getStoreByShipperId(int shipperId) {
-        return getSingleStore(STORE_SELECT + " WHERE s.shipper_id = ?", shipperId);
+        return getSingleStore(STORE_SELECT + " WHERE s.store_id IN (SELECT store_id FROM StoreStaff WHERE account_id = ? AND staff_role = 'shipper')", shipperId);
     }
 
     public boolean hasStoreByOwnerId(int ownerId) {
@@ -86,7 +92,7 @@ public class StoreDAO extends DBContext {
     }
 
     public boolean storeAlreadyHasShipper(int storeId) {
-        return exists("SELECT 1 FROM Store WHERE store_id = ? AND shipper_id IS NOT NULL", storeId);
+        return exists("SELECT 1 FROM StoreStaff WHERE store_id = ? AND staff_role = 'shipper'", storeId);
     }
 
     public boolean ownerAlreadyHasAnotherStore(int ownerId, int storeId) {
@@ -106,7 +112,14 @@ public class StoreDAO extends DBContext {
     }
 
     public boolean insertStore(String name, int ownerId, Integer warehouseManagerId) {
-        return executeUpdate("INSERT INTO Store (store_name, owner_id, warehouse_manager_id, active) VALUES (?, ?, ?, 1)", name, ownerId, warehouseManagerId) > 0;
+        boolean success = executeUpdate("INSERT INTO Store (store_name, owner_id, active) VALUES (?, ?, 1)", name, ownerId) > 0;
+        if (success && warehouseManagerId != null) {
+            Store s = getStoreByOwnerId(ownerId);
+            if (s != null) {
+                assignWarehouseManagerToStore(s.getStoreId(), warehouseManagerId);
+            }
+        }
+        return success;
     }
 
     public boolean updateStore(int id, String name, int ownerId) {
@@ -114,7 +127,11 @@ public class StoreDAO extends DBContext {
     }
 
     public boolean updateStore(int id, String name, int ownerId, Integer warehouseManagerId) {
-        return executeUpdate("UPDATE Store SET store_name = ?, owner_id = ?, warehouse_manager_id = ? WHERE store_id = ?", name, ownerId, warehouseManagerId, id) > 0;
+        boolean success = executeUpdate("UPDATE Store SET store_name = ?, owner_id = ? WHERE store_id = ?", name, ownerId, id) > 0;
+        if (success && warehouseManagerId != null) {
+            assignWarehouseManagerToStore(id, warehouseManagerId);
+        }
+        return success;
     }
 
     public boolean toggleStoreStatus(int storeId) {
@@ -122,11 +139,13 @@ public class StoreDAO extends DBContext {
     }
 
     public boolean assignShipperToStore(int storeId, int shipperId) {
-        return executeUpdate("UPDATE Store SET shipper_id = ? WHERE store_id = ?", shipperId, storeId) > 0;
+        executeUpdate("DELETE FROM StoreStaff WHERE store_id = ? AND staff_role = 'shipper'", storeId);
+        return executeUpdate("INSERT INTO StoreStaff (store_id, account_id, staff_role) VALUES (?, ?, 'shipper')", storeId, shipperId) > 0;
     }
 
     public boolean assignWarehouseManagerToStore(int storeId, int warehouseManagerId) {
-        return executeUpdate("UPDATE Store SET warehouse_manager_id = ? WHERE store_id = ?", warehouseManagerId, storeId) > 0;
+        executeUpdate("DELETE FROM StoreStaff WHERE store_id = ? AND staff_role = 'warehouse_manager'", storeId);
+        return executeUpdate("INSERT INTO StoreStaff (store_id, account_id, staff_role) VALUES (?, ?, 'warehouse_manager')", storeId, warehouseManagerId) > 0;
     }
 
     public void deleteStore(int id) {

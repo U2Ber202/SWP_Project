@@ -4,18 +4,18 @@ public class Slider {
     private int id;
     private String title;
     private String imageUrl;
-    private String backLink;
+    private int productId;
     private boolean status;
     private String description;
 
     public Slider() {
     }
 
-    public Slider(int id, String title, String imageUrl, String backLink, boolean status, String description) {
+    public Slider(int id, String title, String imageUrl, int productId, boolean status, String description) {
         this.id = id;
         this.title = title;
         this.imageUrl = imageUrl;
-        this.backLink = backLink;
+        this.productId = productId;
         this.status = status;
         this.description = description;
     }
@@ -44,12 +44,12 @@ public class Slider {
         this.imageUrl = imageUrl;
     }
 
-    public String getBackLink() {
-        return backLink;
+    public int getProductId() {
+        return productId;
     }
 
-    public void setBackLink(String backLink) {
-        this.backLink = backLink;
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 
     public boolean isStatus() {

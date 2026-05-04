@@ -90,7 +90,7 @@ public class AdminFilter implements Filter {
         }
 
         if (url.equals("/manager") || url.equals("/managerCategory")) {
-            if ((RoleHelper.isOwner(acc) && ownerStore != null) || (RoleHelper.isWarehouseManager(acc) && warehouseStore != null)) {
+            if (RoleHelper.isAdmin(acc) || RoleHelper.isOwner(acc) || RoleHelper.isWarehouseManager(acc)) {
                 chain.doFilter(request, response);
             } else {
                 res.sendRedirect(req.getContextPath() + "/home");
@@ -99,7 +99,7 @@ public class AdminFilter implements Filter {
         }
 
         if (url.equals("/orders") || url.equals("/shipping") || url.equals("/orderdetail")) {
-            if ((RoleHelper.isOwner(acc) && ownerStore != null) || RoleHelper.isShipper(acc)) {
+            if (RoleHelper.isAdmin(acc) || RoleHelper.isOwner(acc) || RoleHelper.isShipper(acc)) {
                 chain.doFilter(request, response);
             } else {
                 res.sendRedirect(req.getContextPath() + "/home");
@@ -108,7 +108,7 @@ public class AdminFilter implements Filter {
         }
 
         if (url.equals("/statistic") || url.equals("/feedbacks")) {
-            if (RoleHelper.isAdmin(acc) || (RoleHelper.isOwner(acc) && ownerStore != null)) {
+            if (RoleHelper.isAdmin(acc) || RoleHelper.isOwner(acc)) {
                 chain.doFilter(request, response);
             } else {
                 res.sendRedirect(req.getContextPath() + "/home");

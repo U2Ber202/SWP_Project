@@ -27,7 +27,6 @@ public class AddCategoryController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String name = ValidationUtil.normalize(request.getParameter("name"));
-        String manufacturer = ValidationUtil.normalize(request.getParameter("manufacturer"));
         
         HttpSession session = request.getSession();
         Account a = (Account) session.getAttribute("acc");
@@ -53,7 +52,7 @@ public class AddCategoryController extends HttpServlet {
         }
 
         CategoryDAO categoryDAO = new CategoryDAO();
-        categoryDAO.insertCategory(name, manufacturer, store.getId());
+        categoryDAO.insertCategory(name, store.getStoreId());
         
         session.setAttribute("success", "Thêm danh mục [" + name + "] thành công!");
         response.sendRedirect("managerCategory");

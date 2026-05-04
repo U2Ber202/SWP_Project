@@ -71,8 +71,9 @@ public class HomeSettingController extends HttpServlet {
                 Slider s = new Slider();
                 s.setTitle(request.getParameter("title"));
                 s.setImageUrl(request.getParameter("imageUrl"));
-                s.setBackLink(request.getParameter("backLink"));
+                s.setProductId(ValidationUtil.parsePositiveInt(request.getParameter("productId")) != null ? ValidationUtil.parsePositiveInt(request.getParameter("productId")) : 0);
                 s.setDescription(request.getParameter("description"));
+
                 s.setStatus(request.getParameter("status") != null);
 
                 if (sliderDAO.addSlider(s)) {
@@ -86,8 +87,9 @@ public class HomeSettingController extends HttpServlet {
                 if (s != null) {
                     s.setTitle(request.getParameter("title"));
                     s.setImageUrl(request.getParameter("imageUrl"));
-                    s.setBackLink(request.getParameter("backLink"));
+                    s.setProductId(ValidationUtil.parsePositiveInt(request.getParameter("productId")) != null ? ValidationUtil.parsePositiveInt(request.getParameter("productId")) : 0);
                     s.setDescription(request.getParameter("description"));
+
                     s.setStatus(request.getParameter("status") != null);
                     if (sliderDAO.updateSlider(s)) {
                         message = "Cập nhật slider thành công.";

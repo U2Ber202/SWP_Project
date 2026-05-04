@@ -215,8 +215,8 @@
                                                 style="bottom: 20%; left: 10%; right: auto; background: rgba(0,0,0,0.5); padding: 30px; border-radius: 20px; backdrop-filter: none !important; border: 1px solid rgba(255,255,255,0.1); max-width: 600px;">
                                                 <h1 class="display-4 font-weight-bold mb-3">${s.title}</h1>
                                                 <p class="lead mb-4">${s.description}</p>
-                                                <c:if test="${not empty s.backLink}">
-                                                    <a href="${s.backLink}" class="btn btn-primary px-4 py-2">Khám phá
+                                                <c:if test="${not empty s.productId and s.productId > 0}">
+                                                    <a href="detail?productId=${s.productId}" class="btn btn-primary px-4 py-2">Khám phá
                                                         ngay</a>
                                                 </c:if>
                                             </div>

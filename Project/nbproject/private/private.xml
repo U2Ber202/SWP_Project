@@ -4,25 +4,39 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/AddProductController.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/UpdateCartQuantityController.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/META-INF/context.xml</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/components/toastNotification.jsp</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/ManagerNews.jsp</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/ManagerStaff.jsp</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/util/PasswordUtil.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/FeedbackStatistic.jsp</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/EditProductController.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/model/ProductVariant.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/DeleteProductController.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/vnpay/VnPayConfig.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/dal/OrderDetailDAO.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/model/Feedback.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/AdminFilter.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/dal/StockImportDAO.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/VoucherManager.jsp</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/test/model/NewsTest.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/LoadCategoryController.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/dal/ProductDAO.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/js/scripts.js</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/dal/NewsDAO.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/CartController.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/CheckOutController.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/HomeSettingController.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/AddToCartController.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/BaseRequiredAuthenController.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/login.jsp</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/StockImportController.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/shiping.jsp</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/SignupController.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/dal/FeedbackDAO.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/ManagerContactController.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/js/theme.js</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/ManagerStaffController.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/HomeSetting.jsp</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/DeleteCartController.java</file>
@@ -33,6 +47,9 @@
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/ManagerNewsController.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/util/RoleHelper.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/util/SendMail.java</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/signup.jsp</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/web/ManagerProduct.jsp</file>
+            <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/StockHistoryController.java</file>
             <file>file:/C:/Users/phuoc/Downloads/Project%20(3)/Project/src/java/controller/NewsDetailController.java</file>
         </group>
     </open-files>

@@ -9,17 +9,17 @@ package model;
 public class Cart {
     public static final long DEFAULT_TIMEOUT_MILLIS = 15L * 60L * 1000L;
 
-    private Product product;
+    private ProductVariant variant;
     private int quantity;
     private long reservedAt;
     private long expiresAt;
 
-    public Product getProduct() {
-        return product;
+    public ProductVariant getVariant() {
+        return variant;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setVariant(ProductVariant variant) {
+        this.variant = variant;
     }
 
     public int getQuantity() {
@@ -67,11 +67,9 @@ public class Cart {
     public Cart() {
     }
 
-    public Cart(Product product, int quantity) {
-        this.product = product;
+    public Cart(ProductVariant variant, int quantity) {
+        this.variant = variant;
         this.quantity = quantity;
         refreshTimeout();
     }
-    
-    
 }

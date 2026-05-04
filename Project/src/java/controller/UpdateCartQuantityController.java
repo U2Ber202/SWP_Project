@@ -39,16 +39,16 @@ public class UpdateCartQuantityController extends HttpServlet {
             return;
         }
 
-        Integer productId = ValidationUtil.parsePositiveInt(request.getParameter("productId"));
+        Integer variantId = ValidationUtil.parsePositiveInt(request.getParameter("variantId"));
         Integer newQuantity = ValidationUtil.parseNonNegativeInt(request.getParameter("quantity"));
-        if (productId == null || newQuantity == null) {
-            session.setAttribute("cartMessage", "Số lượnng cập nhật không hợp lệ.");
+        if (variantId == null || newQuantity == null) {
+            session.setAttribute("cartMessage", "Số lượng cập nhật không hợp lệ.");
             response.sendRedirect("carts");
             return;
         }
 
         Map<Integer, Cart> carts = CartService.getCartMap(session);
-        Cart cart = carts.get(productId);
+        Cart cart = carts.get(variantId);
         if (cart == null) {
             response.sendRedirect("carts");
             return;
@@ -57,27 +57,28 @@ public class UpdateCartQuantityController extends HttpServlet {
         ProductDAO productDAO = new ProductDAO();
         int currentQuantity = cart.getQuantity();
         if (newQuantity <= 0) {
-            productDAO.releaseStock(productId, currentQuantity);
-            carts.remove(productId);
+            productDAO.releaseStock(variantId, currentQuantity);
+            carts.remove(variantId);
         } else if (newQuantity > currentQuantity) {
             int increase = newQuantity - currentQuantity;
-            if (!productDAO.reserveStock(productId, increase)) {
+            if (!productDAO.reserveStock(variantId, increase)) {
                 session.setAttribute("cartMessage", "Kho không đủ để tăng thêm số lượng này.");
                 response.sendRedirect("carts");
                 return;
             }
             cart.setQuantity(newQuantity);
-            cart.setProduct(productDAO.getProductById(productId));
+            cart.setVariant(productDAO.getVariantById(variantId));
             cart.refreshTimeout();
         } else if (newQuantity < currentQuantity) {
             int decrease = currentQuantity - newQuantity;
-            productDAO.releaseStock(productId, decrease);
+            productDAO.releaseStock(variantId, decrease);
             cart.setQuantity(newQuantity);
-            cart.setProduct(productDAO.getProductById(productId));
+            cart.setVariant(productDAO.getVariantById(variantId));
             cart.refreshTimeout();
         } else {
             cart.refreshTimeout();
         }
+
 
         CartService.clearPendingVnpay(session);
         if (carts.isEmpty()) {

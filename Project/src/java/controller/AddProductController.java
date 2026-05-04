@@ -25,10 +25,11 @@ public class AddProductController extends HttpServlet {
 
         String pName = ValidationUtil.normalize(request.getParameter("name"));
         String img = ValidationUtil.normalize(request.getParameter("image"));
-        String price = ValidationUtil.normalize(request.getParameter("price"));
-        String title = ValidationUtil.normalize(request.getParameter("title"));
-        String manufacturer = ValidationUtil.normalize(request.getParameter("manufacturer"));
-        String cid = ValidationUtil.normalize(request.getParameter("category"));
+        String priceStr = ValidationUtil.normalize(request.getParameter("price"));
+        String title = ValidationUtil.normalize(request.getParameter("title")); // Sizes
+        String manufacturerIdStr = ValidationUtil.normalize(request.getParameter("manufacturerId"));
+        String colorIdStr = ValidationUtil.normalize(request.getParameter("colorId"));
+        String cidStr = ValidationUtil.normalize(request.getParameter("category"));
         String des = ValidationUtil.normalize(request.getParameter("description"));
 
         HttpSession session = request.getSession();
@@ -44,32 +45,54 @@ public class AddProductController extends HttpServlet {
             return;
         }
 
-        if (!isValidProductInput(pName, img, price, title, manufacturer, cid, des)) {
-            forwardWithValidationError(request, response, store.getId(),
-                    "Vui long nhap day du thong tin hop le.");
+        if (!isValidProductInput(pName, img, priceStr, title, manufacturerIdStr, colorIdStr, cidStr, des)) {
+            forwardWithValidationError(request, response, store.getStoreId(),
+                    "Vui lòng nhập đầy đủ thông tin hợp lệ.");
             return;
         }
 
-        int categoryId = Integer.parseInt(cid);
-        CategoryDAO categoryDAO = new CategoryDAO();
-        if (categoryDAO.getCategoryByIdAndStore(categoryId, store.getId()) == null) {
-            response.sendRedirect("manager");
-            return;
-        }
+        int categoryId = Integer.parseInt(cidStr);
+        int manufacturerId = Integer.parseInt(manufacturerIdStr);
+        int colorId = Integer.parseInt(colorIdStr);
+        int price = Integer.parseInt(priceStr);
 
-        int productPrice = Integer.parseInt(price);
         ProductDAO productDAO = new ProductDAO();
-        productDAO.insertProduct(pName, img, productPrice, title, des, manufacturer, categoryId, 0, account.getUid(), store.getId());
-        session.setAttribute("success", "Thêm sản phẩm mới thành công!");
+        model.Product p = new model.Product();
+        p.setName(pName);
+        p.setDescription(des);
+        p.setCategoryId(categoryId);
+        p.setStoreId(store.getStoreId());
+        p.setManufacturerId(manufacturerId);
+
+        int productId = productDAO.insertProduct(p);
+        if (productId > 0) {
+            String[] sizes = title.split(",");
+            for (String s : sizes) {
+                model.ProductVariant v = new model.ProductVariant();
+                v.setProductId(productId);
+                v.setColorId(colorId);
+                v.setSize(s.trim());
+                v.setPrice(price);
+                v.setQuantity(0); // Initial quantity is 0, updated via Stock Import
+                v.setImage(img);
+                v.setSku("P" + productId + "C" + colorId + "S" + s.trim());
+                productDAO.insertVariant(v);
+            }
+            session.setAttribute("success", "Thêm sản phẩm và các biến thể thành công!");
+        } else {
+            session.setAttribute("error", "Lỗi khi thêm sản phẩm.");
+        }
+        
         response.sendRedirect("manager");
     }
 
-    private boolean isValidProductInput(String pName, String img, String price, String title, String manufacturer, String cid, String des) {
+    private boolean isValidProductInput(String pName, String img, String price, String title, String mid, String colid, String cid, String des) {
         return !ValidationUtil.isBlank(pName)
                 && !ValidationUtil.isBlank(img)
                 && ValidationUtil.isNonNegativeInteger(price)
                 && ValidationUtil.isValidSizeList(title)
-                && !ValidationUtil.isBlank(manufacturer)
+                && ValidationUtil.isNonNegativeInteger(mid)
+                && ValidationUtil.isNonNegativeInteger(colid)
                 && ValidationUtil.isNonNegativeInteger(cid)
                 && !ValidationUtil.isBlank(des);
     }
@@ -79,8 +102,13 @@ public class AddProductController extends HttpServlet {
         ProductDAO productDAO = new ProductDAO();
         CategoryDAO categoryDAO = new CategoryDAO();
         StockImportDAO stockImportDAO = new StockImportDAO();
+        dal.ColorDAO colorDAO = new dal.ColorDAO();
+        dal.ManufacturerDAO manufacturerDAO = new dal.ManufacturerDAO();
+
         request.setAttribute("products", productDAO.getProductsByStoreId(storeId));
         request.setAttribute("listCategories", categoryDAO.getCategoriesByStore(storeId));
+        request.setAttribute("listColors", colorDAO.getAll());
+        request.setAttribute("listManufacturers", manufacturerDAO.getAll());
         request.setAttribute("stockImports", stockImportDAO.getStockImportsByStoreId(storeId));
         request.setAttribute("dailyStockImports", stockImportDAO.getDailyStockSummaryByStoreId(storeId));
         request.setAttribute("productError", message);
@@ -88,7 +116,8 @@ public class AddProductController extends HttpServlet {
         request.setAttribute("formImage", ValidationUtil.normalize(request.getParameter("image")));
         request.setAttribute("formPrice", ValidationUtil.normalize(request.getParameter("price")));
         request.setAttribute("formTitle", ValidationUtil.normalize(request.getParameter("title")));
-        request.setAttribute("formManufacturer", ValidationUtil.normalize(request.getParameter("manufacturer")));
+        request.setAttribute("formManufacturerId", ValidationUtil.normalize(request.getParameter("manufacturerId")));
+        request.setAttribute("formColorId", ValidationUtil.normalize(request.getParameter("colorId")));
         request.setAttribute("formCategory", ValidationUtil.normalize(request.getParameter("category")));
         request.setAttribute("formDescription", ValidationUtil.normalize(request.getParameter("description")));
         request.getRequestDispatcher("ManagerProduct.jsp").forward(request, response);

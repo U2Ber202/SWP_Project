@@ -53,16 +53,29 @@ CREATE TABLE [dbo].[Store] (
     [store_id] INT IDENTITY(1,1) NOT NULL,
     [store_name] NVARCHAR(255) NOT NULL,
     [owner_id] INT NOT NULL,
-    [shipper_id] INT NULL,
-    [warehouse_manager_id] INT NULL,
     [active] BIT NOT NULL DEFAULT 1,
     CONSTRAINT [PK_Store] PRIMARY KEY CLUSTERED ([store_id] ASC),
     CONSTRAINT [UQ_Store_owner_id] UNIQUE ([owner_id]),
-    CONSTRAINT [UQ_Store_shipper_id] UNIQUE ([shipper_id]),
-    CONSTRAINT [UQ_Store_warehouse_manager_id] UNIQUE ([warehouse_manager_id]),
-    CONSTRAINT [FK_Store_Account] FOREIGN KEY ([owner_id]) REFERENCES [dbo].[Account]([uID]),
-    CONSTRAINT [FK_Store_Shipper] FOREIGN KEY ([shipper_id]) REFERENCES [dbo].[Account]([uID]),
-    CONSTRAINT [FK_Store_WarehouseManager] FOREIGN KEY ([warehouse_manager_id]) REFERENCES [dbo].[Account]([uID])
+    CONSTRAINT [FK_Store_Account] FOREIGN KEY ([owner_id]) REFERENCES [dbo].[Account]([uID])
+);
+GO
+
+-- Store Staff assignment (3NF)
+CREATE TABLE [dbo].[StoreStaff] (
+    [store_id] INT NOT NULL,
+    [account_id] INT NOT NULL,
+    [staff_role] VARCHAR(20) NOT NULL, -- 'shipper', 'warehouse_manager'
+    CONSTRAINT [PK_StoreStaff] PRIMARY KEY ([store_id], [account_id]),
+    CONSTRAINT [FK_StoreStaff_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id]),
+    CONSTRAINT [FK_StoreStaff_Account] FOREIGN KEY ([account_id]) REFERENCES [dbo].[Account]([uID])
+);
+GO
+
+CREATE TABLE [dbo].[Manufacturer] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [name] NVARCHAR(100) NOT NULL,
+    [country] NVARCHAR(100) NULL,
+    CONSTRAINT [PK_Manufacturer] PRIMARY KEY ([id])
 );
 GO
 
@@ -75,54 +88,53 @@ CREATE TABLE [dbo].[Category] (
 );
 GO
 
-IF COL_LENGTH('dbo.Category', 'manufacturer') IS NULL
-BEGIN
-    ALTER TABLE [dbo].[Category]
-    ADD [manufacturer] NVARCHAR(100) NULL;
-END
-GO
-
-UPDATE [dbo].[Category]
-SET [manufacturer] = ISNULL([manufacturer], N'Vietnam');
-GO
-
 CREATE TABLE [dbo].[Product] (
     [id] INT IDENTITY(1,1) NOT NULL,
-    [name] NVARCHAR(MAX) NULL,
-    [image] NVARCHAR(MAX) NULL,
-    [price] INT NULL,
-    [title] NVARCHAR(MAX) NULL,
+    [name] NVARCHAR(255) NOT NULL,
     [description] NVARCHAR(MAX) NULL,
     [cateID] INT NULL,
-    [quantity] INT NOT NULL DEFAULT 0,
-    [sell_ID] INT NULL,
     [store_id] INT NULL,
+    [manufacturer_id] INT NULL,
     CONSTRAINT [PK_Product] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [FK_Product_Category] FOREIGN KEY ([cateID]) REFERENCES [dbo].[Category]([cid]),
-    CONSTRAINT [FK_Product_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id]) ON DELETE CASCADE
+    CONSTRAINT [FK_Product_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Product_Manufacturer] FOREIGN KEY ([manufacturer_id]) REFERENCES [dbo].[Manufacturer]([id])
 );
 GO
 
-IF COL_LENGTH('dbo.Product', 'manufacturer') IS NULL
-BEGIN
-    ALTER TABLE [dbo].[Product]
-    ADD [manufacturer] NVARCHAR(100) NULL;
-END
+CREATE TABLE [dbo].[Color] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [color_name] NVARCHAR(50) NOT NULL,
+    [color_code] VARCHAR(7) NULL, -- Hex code #RRGGBB
+    CONSTRAINT [PK_Color] PRIMARY KEY ([id])
+);
 GO
 
-UPDATE [dbo].[Product]
-SET [manufacturer] = ISNULL([manufacturer], N'Vietnam');
+CREATE TABLE [dbo].[ProductVariant] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [product_id] INT NOT NULL,
+    [color_id] INT NULL,
+    [size] NVARCHAR(20) NULL,
+    [sku] VARCHAR(50) NULL,
+    [price] INT NOT NULL DEFAULT 0, -- This is the current "Out Cost" (selling price)
+    [quantity] INT NOT NULL DEFAULT 0,
+    [image] NVARCHAR(MAX) NULL,
+    [status] NVARCHAR(50) DEFAULT N'Active', -- Active, Inactive, Discontinued
+    CONSTRAINT [PK_ProductVariant] PRIMARY KEY CLUSTERED ([id] ASC),
+    CONSTRAINT [FK_Variant_Product] FOREIGN KEY ([product_id]) REFERENCES [dbo].[Product]([id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Variant_Color] FOREIGN KEY ([color_id]) REFERENCES [dbo].[Color]([id])
+);
 GO
 
 CREATE TABLE [dbo].[Cart] (
     [AccountID] INT NOT NULL,
-    [ProductID] INT NOT NULL,
+    [VariantID] INT NOT NULL,
     [Amount] INT NULL,
     [reserved_at] DATETIME NULL,
     [expires_at] DATETIME NULL,
-    CONSTRAINT [PK_Cart] PRIMARY KEY CLUSTERED ([AccountID] ASC, [ProductID] ASC),
+    CONSTRAINT [PK_Cart] PRIMARY KEY CLUSTERED ([AccountID] ASC, [VariantID] ASC),
     CONSTRAINT [FK_Cart_Account] FOREIGN KEY ([AccountID]) REFERENCES [dbo].[Account]([uID]),
-    CONSTRAINT [FK_Cart_Product] FOREIGN KEY ([ProductID]) REFERENCES [dbo].[Product]([id])
+    CONSTRAINT [FK_Cart_Variant] FOREIGN KEY ([VariantID]) REFERENCES [dbo].[ProductVariant]([id])
 );
 GO
 
@@ -143,15 +155,17 @@ GO
 
 CREATE TABLE [dbo].[StockImport] (
     [id] INT IDENTITY(1,1) NOT NULL,
-    [product_id] INT NOT NULL,
+    [variant_id] INT NOT NULL,
     [store_id] INT NOT NULL,
     [import_quantity] INT NOT NULL,
+    [unit_cost] INT NOT NULL DEFAULT 0, -- "In Cost"
+    [batch_number] VARCHAR(50) NULL,    -- Lot/Batch
     [note] NVARCHAR(255) NULL,
     [created_at] DATETIME NOT NULL CONSTRAINT [DF_StockImport_created_at] DEFAULT (GETDATE()),
     [created_by] INT NULL,
     CONSTRAINT [PK_StockImport] PRIMARY KEY CLUSTERED ([id] ASC),
     CONSTRAINT [CK_StockImport_quantity] CHECK ([import_quantity] > 0),
-    CONSTRAINT [FK_StockImport_Product] FOREIGN KEY ([product_id]) REFERENCES [dbo].[Product]([id]),
+    CONSTRAINT [FK_StockImport_Variant] FOREIGN KEY ([variant_id]) REFERENCES [dbo].[ProductVariant]([id]),
     CONSTRAINT [FK_StockImport_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id]),
     CONSTRAINT [FK_StockImport_Account] FOREIGN KEY ([created_by]) REFERENCES [dbo].[Account]([uID])
 );
@@ -176,12 +190,12 @@ GO
 CREATE TABLE [dbo].[OrderDetail] (
     [id] INT IDENTITY(1,1) NOT NULL,
     [order_id] INT NULL,
-    [productName] NVARCHAR(255) NULL,
-    [productImage] NVARCHAR(255) NULL,
-    [productPrice] INT NULL,
+    [variant_id] INT NULL,
+    [productPrice] INT NULL, -- "Out Cost" at time of purchase
     [quantity] INT NULL,
     CONSTRAINT [PK_OrderDetail] PRIMARY KEY CLUSTERED ([id] ASC),
-    CONSTRAINT [FK_OrderDetail_Orders] FOREIGN KEY ([order_id]) REFERENCES [dbo].[Orders]([id])
+    CONSTRAINT [FK_OrderDetail_Orders] FOREIGN KEY ([order_id]) REFERENCES [dbo].[Orders]([id]),
+    CONSTRAINT [FK_OrderDetail_Variant] FOREIGN KEY ([variant_id]) REFERENCES [dbo].[ProductVariant]([id])
 );
 GO
 
@@ -210,10 +224,11 @@ CREATE TABLE [dbo].[Slider] (
     [id] INT IDENTITY(1,1) NOT NULL,
     [title] NVARCHAR(255) NULL,
     [image_url] NVARCHAR(MAX) NOT NULL,
-    [back_link] NVARCHAR(MAX) NULL,
+    [product_id] INT NULL, -- Foreign key for 3NF instead of string link
     [status] BIT NOT NULL DEFAULT 1,
     [description] NVARCHAR(1000) NULL,
-    CONSTRAINT [PK_Slider] PRIMARY KEY CLUSTERED ([id] ASC)
+    CONSTRAINT [PK_Slider] PRIMARY KEY CLUSTERED ([id] ASC),
+    CONSTRAINT [FK_Slider_Product] FOREIGN KEY ([product_id]) REFERENCES [dbo].[Product]([id])
 );
 GO
 
@@ -223,12 +238,14 @@ CREATE TABLE [dbo].[Voucher] (
     [discount_percent] INT NOT NULL,
     [max_discount] INT NULL,
     [min_order_value] INT NULL,
-    [expiry_date] DATE NOT NULL, -- Đã đổi sang kiểu DATE để dễ nhập liệu
-    [start_date] DATE NOT NULL DEFAULT GETDATE(),
+    [expiry_date] DATETIME NOT NULL,
+    [start_date] DATETIME NOT NULL DEFAULT GETDATE(),
     [store_id] INT NOT NULL,
     CONSTRAINT [PK_Voucher] PRIMARY KEY ([id]),
     CONSTRAINT [FK_Voucher_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id])
 );
+GO
+
 CREATE TABLE [dbo].[Feedback] (
     [id] INT IDENTITY(1,1) NOT NULL,
     [account_id] INT NOT NULL,
@@ -239,13 +256,10 @@ CREATE TABLE [dbo].[Feedback] (
     [create_date] DATETIME DEFAULT GETDATE(),
     [is_edited] BIT NOT NULL DEFAULT 0,
     [is_hidden] BIT NOT NULL DEFAULT 0,
-    CONSTRAINT [PK_Feedback] PRIMARY KEY ([id]),
-    CONSTRAINT [FK_Feedback_Account] FOREIGN KEY ([account_id]) REFERENCES [dbo].[Account]([uID]),
     CONSTRAINT [FK_Feedback_Product] FOREIGN KEY ([product_id]) REFERENCES [dbo].[Product]([id]),
     CONSTRAINT [FK_Feedback_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id])
 );
 GO
-
 
 SET IDENTITY_INSERT [dbo].[Account] ON;
 GO
@@ -269,6 +283,34 @@ GO
 SET IDENTITY_INSERT [dbo].[Account] OFF;
 GO
 
+INSERT INTO [dbo].[Manufacturer] ([name], [country]) VALUES
+(N'Nike', N'USA'),
+(N'Adidas', N'Germany'),
+(N'Vans', N'USA'),
+(N'Converse', N'USA');
+GO
+
+INSERT INTO [dbo].[Color] ([color_name], [color_code]) VALUES
+(N'White', '#FFFFFF'),
+(N'Black', '#000000'),
+(N'Cream', '#FFFDD0'),
+(N'Green', '#008000'),
+(N'Blue', '#0000FF'),
+(N'Red', '#FF0000');
+GO
+
+INSERT INTO [dbo].[Store] ([store_name], [owner_id]) VALUES
+(N'Alpha Sneaker Store', 2),
+(N'Beta Shoe House', 3);
+GO
+
+INSERT INTO [dbo].[StoreStaff] ([store_id], [account_id], [staff_role]) VALUES
+(1, 9, 'shipper'),
+(1, 11, 'warehouse_manager'),
+(2, 10, 'shipper'),
+(2, 12, 'warehouse_manager');
+GO
+
 INSERT INTO [dbo].[HomeSetting] (
     [id], [hero_badge], [hero_title], [hero_highlight], [hero_description],
     [primary_button_text], [secondary_button_text], [featured_title],
@@ -278,7 +320,7 @@ INSERT INTO [dbo].[HomeSetting] (
     N'Bộ sưu tập nổi bật',
     N'Nâng cấp phong cách mỗi ngày',
     N'Sneaker',
-    N'Khám phá bộ sưu tập giày sneaker đa dạng và thời thượng của chúng tôi, nơi phong cách gặp gỡ sự thoải mái. Từ những thiết kế cổ điển đến những mẫu mã mới nhất, chúng tôi có tất cả để bạn lựa chọn. Nâng cấp phong cách của bạn mỗi ngày với những đôi giày sneaker chất lượng cao, phù hợp với mọi dịp và cá tính.',
+    N'Khám phá bộ sưu tập giày sneaker đa dạng và thời thượng của chúng tôi, nơi phong cách gặp gỡ sự thoải mái. Từ những thiết kế cổ điển đến những mẫu mã mới nhất, chúng tôi có tất cả để bạn lựa chọn.',
     N'Xem thêm',
     N'Mua ngay',
     N'Sản phẩm nổi bật',
@@ -290,19 +332,6 @@ INSERT INTO [dbo].[HomeSetting] (
 );
 GO
 
-INSERT INTO [dbo].[Slider] (title, image_url, back_link, status, description) VALUES
-(N'Adidas Stan Smith Special', N'https://th.bing.com/th/id/OIP.YdN1gfY_9e6RpjFnMm7a1gHaHa?w=201&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', N'detail?productId=1', 1, N'Mẫu giày huyền thoại với phong cách tối giản.'),
-(N'Vans Old Skool Collection', N'https://th.bing.com/th/id/OIP.B56S_fHRq-6NHGKS4I1WmQHaGC?w=247&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', N'detail?productId=2', 1, N'Sự lựa chọn hoàn hảo cho phong cách đường phố.'),
-(N'Khám Phá Converse Chuck 70', N'https://th.bing.com/th/id/OIP.ZIVkD33qBh_HLeE8i6PTjAHaLH?w=134&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', N'detail?productId=3', 1, N'Thiết kế cổ điển kết hợp phong cách hiện đại.');
-GO
-
-INSERT INTO [dbo].[Store] ([store_name], [owner_id], [shipper_id], [warehouse_manager_id]) VALUES
-(N'Alpha Sneaker Store', 2, 9, 11),
-(N'Beta Shoe House', 3, 10, 12);
-GO
--- =============================================
--- 1. Insert Categories (Danh mục sản phẩm)
--- =============================================
 SET IDENTITY_INSERT [dbo].[Category] ON;
 GO
 INSERT INTO [dbo].[Category] ([cid], [cname], [store_id]) VALUES
@@ -314,57 +343,52 @@ GO
 SET IDENTITY_INSERT [dbo].[Category] OFF;
 GO
 
--- =============================================
--- 2. Insert Products (Sản phẩm)
--- =============================================
 SET IDENTITY_INSERT [dbo].[Product] ON;
 GO
--- store_id = 1 (Alpha Store - owner_id: 2)
--- store_id = 2 (Beta Store - owner_id: 3)
-INSERT INTO [dbo].[Product] ([id], [name], [image], [price], [title], [description], [cateID], [quantity], [sell_ID], [store_id]) VALUES
-(1, N'Adidas Stan Smith', N'https://th.bing.com/th/id/OIP.YdN1gfY_9e6RpjFnMm7a1gHaHa?w=201&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', 2100000, 45, N'Giày sneaker cổ điển Stan Smith thiết kế tối giản.', 2, 60, 2, 1),
-(2, N'Vans Old Skool', N'https://th.bing.com/th/id/OIP.B56S_fHRq-6NHGKS4I1WmQHaGC?w=247&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', 1800000, 44, N'Giày trượt ván Vans Old Skool đen trắng huyền thoại.', 3, 100, 3, 2),
-(3, N'Converse Chuck 70', N'https://th.bing.com/th/id/OIP.ZIVkD33qBh_HLeE8i6PTjAHaLH?w=134&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', 2000000, 35, N'Giày Converse cổ cao Chuck 70 Vintage chất liệu canvas cao cấp.', 4, 80, 3, 2),
-(4, N'Adidas Stan Smith', N'https://th.bing.com/th/id/OIP.TEjla2lz1uDJkQCJFbCCLgHaHa?w=180&h=180&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', 2100000, 45, N'Giày sneaker cổ điển Stan Smith thiết kế tối giản.', 2, 60, 2, 1),
-(5, N'Vans Old Skool', N'https://th.bing.com/th/id/OIP.oW2GArOVmCsVD6suv5bEwAHaHa?w=219&h=219&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', 1800000, 44, N'Giày trượt ván Vans Old Skool đen trắng huyền thoại.', 3, 100, 3, 2),
-(6, N'Converse Chuck 70', N'https://th.bing.com/th/id/OIP.RISGC4rnftddlIoEQnWjfQHaHa?w=219&h=219&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', 2000000, 35, N'Giày Converse cổ cao Chuck 70 Vintage chất liệu canvas cao cấp.', 4, 80, 3, 2);
-
+INSERT INTO [dbo].[Product] ([id], [name], [description], [cateID], [store_id], [manufacturer_id]) VALUES
+(1, N'Adidas Stan Smith', N'Giày sneaker cổ điển Stan Smith thiết kế tối giản.', 2, 1, 2),
+(2, N'Vans Old Skool', N'Giày trượt ván Vans Old Skool đen trắng huyền thoại.', 3, 2, 3),
+(3, N'Converse Chuck 70', N'Giày Converse cổ cao Chuck 70 Vintage chất liệu canvas cao cấp.', 4, 2, 4);
 GO
 SET IDENTITY_INSERT [dbo].[Product] OFF;
 GO
 
--- =============================================
--- 3. Insert StockImport (Lịch sử nhập kho)
--- =============================================
+INSERT INTO [dbo].[Slider] (title, image_url, product_id, status, description) VALUES
+(N'Adidas Stan Smith Special', N'https://th.bing.com/th/id/OIP.YdN1gfY_9e6RpjFnMm7a1gHaHa?w=201&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', 1, 1, N'Mẫu giày huyền thoại với phong cách tối giản.'),
+(N'Vans Old Skool Collection', N'https://th.bing.com/th/id/OIP.B56S_hrq-6NHGKS4I1WmQHaGC?w=247&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', 2, 1, N'Sự lựa chọn hoàn hảo cho phong cách đường phố.'),
+(N'Khám Phá Converse Chuck 70', N'https://th.bing.com/th/id/OIP.ZIVkD33qBh_HLeE8i6PTjAHaLH?w=134&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3', 3, 1, N'Thiết kế cổ điển kết hợp phong cách hiện đại.');
+GO
+
+SET IDENTITY_INSERT [dbo].[ProductVariant] ON;
+GO
+INSERT INTO [dbo].[ProductVariant] ([id], [product_id], [color_id], [size], [sku], [price], [quantity], [image]) VALUES
+(1, 1, 1, N'45', 'ADI-SS-W-45', 2100000, 60, N'https://th.bing.com/th/id/OIP.YdN1gfY_9e6RpjFnMm7a1gHaHa?w=201&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3'),
+(2, 2, 2, N'44', 'VAN-OS-B-44', 1800000, 100, N'https://th.bing.com/th/id/OIP.B56S_fHRq-6NHGKS4I1WmQHaGC?w=247&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3'),
+(3, 3, 3, N'35', 'CON-C70-C-35', 2000000, 80, N'https://th.bing.com/th/id/OIP.ZIVkD33qBh_HLeE8i6PTjAHaLH?w=134&h=201&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3'),
+(4, 1, 4, N'42', 'ADI-SS-G-42', 2100000, 30, N'https://th.bing.com/th/id/OIP.TEjla2lz1uDJkQCJFbCCLgHaHa?w=180&h=180&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3');
+GO
+SET IDENTITY_INSERT [dbo].[ProductVariant] OFF;
+GO
+
 SET IDENTITY_INSERT [dbo].[StockImport] ON;
 GO
-INSERT INTO [dbo].[StockImport] ([id], [product_id], [store_id], [import_quantity], [note], [created_at], [created_by]) VALUES
-(1, 1, 1, 50, N'Nhập hàng đợt 1', GETDATE(), 2),
-(2, 2, 1, 30, N'Size 39: 10 đôi, Size 40: 20 đôi', GETDATE(), 11),
-(3, 3, 1, 40, N'Size 41: 18 đôi, Size 42: 22 đôi', GETDATE(), 11),
-(4, 4, 1, 60, N'Size 42: 30 đôi, Size 43: 30 đôi', GETDATE(), 11),
-(5, 5, 2, 100, N'Size 39: 50 đôi, Size 40: 50 đôi', GETDATE(), 12),
-(6, 6, 2, 80, N'Size 41: 40 đôi, Size 42: 40 đôi', GETDATE(), 12);
+INSERT INTO [dbo].[StockImport] ([id], [variant_id], [store_id], [import_quantity], [unit_cost], [batch_number], [note], [created_at], [created_by]) VALUES
+(1, 1, 1, 60, 1500000, 'LOT-2026-001', N'Nhập hàng Stan Smith White', GETDATE(), 2),
+(2, 2, 2, 100, 1200000, 'LOT-2026-002', N'Nhập hàng Vans Old Skool', GETDATE(), 3),
+(3, 3, 2, 80, 1400000, 'LOT-2026-003', N'Nhập hàng Converse Chuck 70', GETDATE(), 3),
+(4, 4, 1, 30, 1550000, 'LOT-2026-004', N'Nhập hàng Stan Smith Green', GETDATE(), 2);
 GO
 SET IDENTITY_INSERT [dbo].[StockImport] OFF;
 GO
 
--- =============================================
--- 4. Insert Cart (Giỏ hàng)
--- =============================================
--- AccountID 4, 5 là customer
-INSERT INTO [dbo].[Cart] ([AccountID], [ProductID], [Amount], [reserved_at], [expires_at]) VALUES
+INSERT INTO [dbo].[Cart] ([AccountID], [VariantID], [Amount], [reserved_at], [expires_at]) VALUES
 (4, 1, 1, GETDATE(), DATEADD(day, 1, GETDATE())),
 (4, 3, 2, GETDATE(), DATEADD(day, 1, GETDATE())),
-(5, 5, 1, GETDATE(), DATEADD(day, 1, GETDATE()));
+(5, 2, 1, GETDATE(), DATEADD(day, 1, GETDATE()));
 GO
 
--- =============================================
--- 5. Insert Shipping (Giao hàng)
--- =============================================
 SET IDENTITY_INSERT [dbo].[Shipping] ON;
 GO
--- shipper_id = 9 cho store 1, shipper_id = 10 cho store 2
 INSERT INTO [dbo].[Shipping] ([id], [name], [phone], [address], [Status], [shipper_id], [store_id], [shipped_date]) VALUES
 (1, N'Giao cho khách Hoàng Khách 03', N'0900000006', N'Nghệ An', 'Shipped', 9, 1, GETDATE()),
 (2, N'Giao cho khách Vũ Khách 04', N'0900000007', N'Bình Dương', 'In Transit', 10, 2, NULL),
@@ -373,63 +397,40 @@ GO
 SET IDENTITY_INSERT [dbo].[Shipping] OFF;
 GO
 
--- =============================================
--- 6. Insert Orders (Đơn hàng)
--- =============================================
 SET IDENTITY_INSERT [dbo].[Orders] ON;
 GO
 INSERT INTO [dbo].[Orders] ([id], [account_id], [totalPrice], [note], [create_date], [shipping_id], [store_id]) VALUES
-(1, 6, 2500000, N'Giao trong giờ hành chính', GETDATE(), 1, 1),
+(1, 6, 2100000, N'Giao trong giờ hành chính', GETDATE(), 1, 1),
 (2, 7, 3800000, N'Gói quà tặng', GETDATE(), 2, 2),
-(3, 4, 2500000, N'Gọi trước khi giao', GETDATE(), 3, 1);
+(3, 4, 2100000, N'Gọi trước khi giao', GETDATE(), 3, 1);
 GO
 SET IDENTITY_INSERT [dbo].[Orders] OFF;
 GO
 
--- =============================================
--- 7. Insert OrderDetail (Chi tiết đơn hàng)
--- =============================================
 SET IDENTITY_INSERT [dbo].[OrderDetail] ON;
+GO
+INSERT INTO [dbo].[OrderDetail] ([id], [order_id], [variant_id], [productPrice], [quantity]) VALUES
+(1, 1, 1, 2100000, 1),
+(2, 2, 2, 1800000, 1),
+(3, 2, 3, 2000000, 1),
+(4, 3, 1, 2100000, 1);
+GO
+SET IDENTITY_INSERT [dbo].[OrderDetail] OFF;
+GO
 
-INSERT INTO [dbo].[OrderDetail]
-([id], [order_id], [productName], [productImage], [productPrice], [quantity])
-VALUES
--- Order 1
-(1, 1, N'Adidas Stan Smith',
- N'https://th.bing.com/th/id/OIP.TEjla2lz1uDJkQCJFbCCLgHaHa?w=180&h=180&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3',
- 2100000, 1),
-
--- Order 2
-(2, 2, N'Vans Old Skool',
- N'https://th.bing.com/th/id/OIP.oW2GArOVmCsVD6suv5bEwAHaHa?w=219&h=219&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3',
- 1800000, 1),
-
-(3, 2, N'Converse Chuck 70',
- N'https://th.bing.com/th/id/OIP.RISGC4rnftddlIoEQnWjfQHaHa?w=219&h=219&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3',
- 2000000, 1),
-
--- Order 3
-(4, 3, N'Adidas Stan Smith',
- N'https://th.bing.com/th/id/OIP.TEjla2lz1uDJkQCJFbCCLgHaHa?w=180&h=180&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3',
- 2100000, 1);
- go
- INSERT INTO [dbo].[Feedback] ([account_id], [product_id], [store_id], [rating], [content]) VALUES
+INSERT INTO [dbo].[Feedback] ([account_id], [product_id], [store_id], [rating], [content]) VALUES
 (4, 1, 1, 5, N'Giày đi rất êm và đẹp, đúng size.'),
 (5, 2, 2, 4, N'Chất lượng tốt, đóng gói kỹ.'),
 (6, 3, 2, 5, N'Hàng chính hãng, rất hài lòng.');
 GO
-SET IDENTITY_INSERT [dbo].[OrderDetail] OFF;
-GO
--- =============================================
--- 8. Insert News (Tin tức)
--- =============================================
+
 CREATE TABLE [dbo].[News] (
     [id] INT IDENTITY(1,1) NOT NULL,
     [title] NVARCHAR(255) NOT NULL,
     [content] NVARCHAR(MAX) NOT NULL,
     [image] NVARCHAR(MAX) NULL,
     [created_at] DATETIME DEFAULT GETDATE(),
-    [store_id] INT NULL, -- NULL = Tin tức hệ thống (Admin), NOT NULL = Tin tức của Store
+    [store_id] INT NULL, 
     [is_visible] BIT NOT NULL DEFAULT 1,
     CONSTRAINT [PK_News] PRIMARY KEY ([id]),
     CONSTRAINT [FK_News_Store] FOREIGN KEY ([store_id]) REFERENCES [dbo].[Store]([store_id]) ON DELETE CASCADE
@@ -441,9 +442,6 @@ INSERT INTO [dbo].[News] ([title], [content], [image], [store_id]) VALUES
 (N'Khuyến mãi khai trương Shop Alpha', N'Giảm giá toàn bộ sản phẩm tại Alpha Sneakers trong tuần lễ đầu tiên.', 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop', 1);
 GO
 
--- =============================================
--- 9. Insert Contact (Liên hệ hỗ trợ đơn hàng)
--- =============================================
 CREATE TABLE [dbo].[Contact] (
     [id] INT IDENTITY(1,1) NOT NULL,
     [account_id] INT NOT NULL,
@@ -453,7 +451,7 @@ CREATE TABLE [dbo].[Contact] (
     [response_message] NVARCHAR(MAX) NULL,
     [responded_at] DATETIME NULL,
     [created_at] DATETIME DEFAULT GETDATE(),
-    [status] NVARCHAR(50) DEFAULT N'Chờ xử lý', -- Chờ xử lý, Đã phản hồi
+    [status] NVARCHAR(50) DEFAULT N'Chờ xử lý', 
     CONSTRAINT [PK_Contact] PRIMARY KEY ([id]),
     CONSTRAINT [FK_Contact_Account] FOREIGN KEY ([account_id]) REFERENCES [dbo].[Account]([uID]),
     CONSTRAINT [FK_Contact_Orders] FOREIGN KEY ([order_id]) REFERENCES [dbo].[Orders]([id]),
@@ -464,18 +462,17 @@ GO
 INSERT INTO [dbo].[Contact] ([account_id], [order_id], [store_id], [message]) VALUES
 (4, 3, 1, N'Tôi nhận hàng rồi nhưng size hơi chật, shop hỗ trợ đổi trả được không?');
 GO
--- =============================================
--- 10. Staff Action History (Lịch sử quản lý nhân viên)
--- =============================================
+
 CREATE TABLE [dbo].[StaffActionHistory] (
     [id] INT IDENTITY(1,1) NOT NULL,
-    [owner_id] INT NOT NULL,          -- Người thực hiện (Owner)
-    [staff_id] INT NOT NULL,          -- Nhân viên bị tác động
-    [action_type] NVARCHAR(50) NOT NULL, -- 'ADD' or 'UPDATE'
-    [details] NVARCHAR(MAX) NULL,     -- Chi tiết thay đổi
+    [owner_id] INT NOT NULL,          
+    [staff_id] INT NOT NULL,          
+    [action_type] NVARCHAR(50) NOT NULL, 
+    [details] NVARCHAR(MAX) NULL,     
     [action_at] DATETIME DEFAULT GETDATE(),
     CONSTRAINT [PK_StaffActionHistory] PRIMARY KEY ([id]),
     CONSTRAINT [FK_History_Owner] FOREIGN KEY ([owner_id]) REFERENCES [dbo].[Account]([uID]),
     CONSTRAINT [FK_History_Staff] FOREIGN KEY ([staff_id]) REFERENCES [dbo].[Account]([uID])
 );
 GO
+

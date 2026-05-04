@@ -25,16 +25,13 @@ public class EditProductController extends HttpServlet {
 
         String id = ValidationUtil.normalize(request.getParameter("id"));
         String pName = ValidationUtil.normalize(request.getParameter("name"));
-        String img = ValidationUtil.normalize(request.getParameter("image"));
-        String price = ValidationUtil.normalize(request.getParameter("price"));
-        String title = ValidationUtil.normalize(request.getParameter("title"));
-        String manufacturer = ValidationUtil.normalize(request.getParameter("manufacturer"));
+        String manufacturerIdStr = ValidationUtil.normalize(request.getParameter("manufacturerId"));
         String cid = ValidationUtil.normalize(request.getParameter("category"));
         String des = ValidationUtil.normalize(request.getParameter("description"));
 
         HttpSession session = request.getSession();
         Account account = (Account) session.getAttribute("acc");
-        if (!RoleHelper.isOwner(account)) {
+        if (!RoleHelper.canManageProduct(account)) {
             response.sendRedirect("home");
             return;
         }
@@ -45,65 +42,61 @@ public class EditProductController extends HttpServlet {
             return;
         }
 
-        if (!ValidationUtil.isNonNegativeInteger(id)) {
+        Integer productId = ValidationUtil.parsePositiveInt(id);
+        if (productId == null) {
             response.sendRedirect("manager");
             return;
         }
 
         ProductDAO productDAO = new ProductDAO();
-        Product existingProduct = productDAO.getProductByIdAndStoreId(Integer.parseInt(id), store.getId());
-        if (existingProduct == null) {
+        Product existingProduct = productDAO.getProductById(productId);
+        if (existingProduct == null || existingProduct.getStoreId() != store.getStoreId()) {
             response.sendRedirect("manager");
             return;
         }
 
-        if (!isValidProductInput(pName, img, price, title, manufacturer, cid, des)) {
-            forwardWithValidationError(request, response, store.getId(),
-                    "Vui lòng nhập đầy đủ thông tin hợp lệ.",
-                    existingProduct.getQuantity());
+        if (!isValidProductInput(pName, manufacturerIdStr, cid, des)) {
+            forwardWithValidationError(request, response, store.getStoreId(),
+                    "Vui lòng nhập đầy đủ thông tin hợp lệ.");
             return;
         }
 
-        int productId = Integer.parseInt(id);
-        int productPrice = Integer.parseInt(price);
+        int manufacturerId = Integer.parseInt(manufacturerIdStr);
         int categoryId = Integer.parseInt(cid);
 
-        productDAO.updateProductByStore(pName, img, productPrice, title, des, manufacturer, categoryId, existingProduct.getQuantity(), productId, store.getId());
+        existingProduct.setName(pName);
+        existingProduct.setManufacturerId(manufacturerId);
+        existingProduct.setCategoryId(categoryId);
+        existingProduct.setDescription(des);
+
+        productDAO.updateProduct(existingProduct);
         session.setAttribute("success", "Cập nhật sản phẩm thành công!");
         response.sendRedirect("manager");
     }
 
-    private boolean isValidProductInput(String pName, String img, String price, String title, String manufacturer, String cid, String des) {
+    private boolean isValidProductInput(String pName, String mId, String cid, String des) {
         return !ValidationUtil.isBlank(pName)
-                && !ValidationUtil.isBlank(img)
-                && ValidationUtil.isNonNegativeInteger(price)
-                && ValidationUtil.isValidSizeList(title)
-                && !ValidationUtil.isBlank(manufacturer)
+                && ValidationUtil.isNonNegativeInteger(mId)
                 && ValidationUtil.isNonNegativeInteger(cid)
                 && !ValidationUtil.isBlank(des);
     }
 
-    private void forwardWithValidationError(HttpServletRequest request, HttpServletResponse response, int storeId, String message, int quantity)
+    private void forwardWithValidationError(HttpServletRequest request, HttpServletResponse response, int storeId, String message)
             throws ServletException, IOException {
         String idParam = request.getParameter("id");
-        int id = ValidationUtil.isNonNegativeInteger(idParam) ? Integer.parseInt(idParam) : 0;
+        int id = ValidationUtil.parsePositiveInt(idParam);
         
-        Product product = new Product();
-        product.setId(id);
-        product.setName(ValidationUtil.normalize(request.getParameter("name")));
-        product.setImageUrl(ValidationUtil.normalize(request.getParameter("image")));
-        product.setPrice(ValidationUtil.isNonNegativeInteger(request.getParameter("price"))
-                ? Integer.parseInt(ValidationUtil.normalize(request.getParameter("price"))) : 0);
-        product.setQuantity(quantity);
-        product.setTiltle(ValidationUtil.normalize(request.getParameter("title")));
-        product.setManufacturer(ValidationUtil.normalize(request.getParameter("manufacturer")));
-        product.setDescription(ValidationUtil.normalize(request.getParameter("description")));
-        product.setCategoryId(ValidationUtil.isNonNegativeInteger(request.getParameter("category"))
-                ? Integer.parseInt(ValidationUtil.normalize(request.getParameter("category"))) : 0);
+        ProductDAO productDAO = new ProductDAO();
+        Product product = productDAO.getProductById(id);
+        
+        dal.ColorDAO colorDAO = new dal.ColorDAO();
+        dal.ManufacturerDAO manufacturerDAO = new dal.ManufacturerDAO();
 
         request.setAttribute("product", product);
         request.setAttribute("productError", message);
         request.setAttribute("listCategories", new CategoryDAO().getCategoriesByStore(storeId));
+        request.setAttribute("listColors", colorDAO.getAll());
+        request.setAttribute("listManufacturers", manufacturerDAO.getAll());
         request.getRequestDispatcher("Edit.jsp").forward(request, response);
     }
 

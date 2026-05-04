@@ -61,14 +61,16 @@ public class SliderDAO extends DBContext {
     }
 
     public boolean addSlider(Slider slider) {
-        String sql = "INSERT INTO Slider (title, image_url, back_link, status, description) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Slider (title, image_url, product_id, status, description) VALUES (?, ?, ?, ?, ?)";
+
         try (Connection connection = getConnection();
              PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, slider.getTitle());
             stm.setString(2, slider.getImageUrl());
-            stm.setString(3, slider.getBackLink());
+            stm.setInt(3, slider.getProductId());
             stm.setBoolean(4, slider.isStatus());
             stm.setString(5, slider.getDescription());
+
             return stm.executeUpdate() > 0;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -77,14 +79,16 @@ public class SliderDAO extends DBContext {
     }
 
     public boolean updateSlider(Slider slider) {
-        String sql = "UPDATE Slider SET title = ?, image_url = ?, back_link = ?, status = ?, description = ? WHERE id = ?";
+        String sql = "UPDATE Slider SET title = ?, image_url = ?, product_id = ?, status = ?, description = ? WHERE id = ?";
+
         try (Connection connection = getConnection();
              PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, slider.getTitle());
             stm.setString(2, slider.getImageUrl());
-            stm.setString(3, slider.getBackLink());
+            stm.setInt(3, slider.getProductId());
             stm.setBoolean(4, slider.isStatus());
             stm.setString(5, slider.getDescription());
+
             stm.setInt(6, slider.getId());
             return stm.executeUpdate() > 0;
         } catch (SQLException ex) {
@@ -110,9 +114,10 @@ public class SliderDAO extends DBContext {
         slider.setId(rs.getInt("id"));
         slider.setTitle(rs.getString("title"));
         slider.setImageUrl(rs.getString("image_url"));
-        slider.setBackLink(rs.getString("back_link"));
+        slider.setProductId(rs.getInt("product_id"));
         slider.setStatus(rs.getBoolean("status"));
         slider.setDescription(rs.getString("description"));
         return slider;
     }
+
 }

@@ -53,6 +53,15 @@ public class StatisticDAO extends DBContext {
                     statistic.setTotalSales(rs.getInt("totalSales"));
                 }
             }
+            // Add In-Cost logic
+            String inCostSql = "SELECT ISNULL(SUM(import_quantity * unit_cost), 0) FROM StockImport WHERE CONVERT(date, created_at) = CONVERT(date, GETDATE())";
+            if (params.length > 0) inCostSql += " AND store_id = ?";
+            try (PreparedStatement ps2 = connection.prepareStatement(inCostSql)) {
+                if (params.length > 0) ps2.setObject(1, params[0]);
+                try (ResultSet rs2 = ps2.executeQuery()) {
+                    if (rs2.next()) statistic.setTotalInCost(rs2.getLong(1));
+                }
+            }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -66,6 +75,15 @@ public class StatisticDAO extends DBContext {
                 if (rs.next()) {
                     statistic.setTotalOrdersMonth(rs.getInt("totalOrders"));
                     statistic.setTotalSalesMonth(rs.getInt("totalSales"));
+                }
+            }
+            // Add In-Cost Month logic
+            String inCostSql = "SELECT ISNULL(SUM(import_quantity * unit_cost), 0) FROM StockImport WHERE MONTH(created_at) = MONTH(GETDATE()) AND YEAR(created_at) = YEAR(GETDATE())";
+            if (params.length > 0) inCostSql += " AND store_id = ?";
+            try (PreparedStatement ps2 = connection.prepareStatement(inCostSql)) {
+                if (params.length > 0) ps2.setObject(1, params[0]);
+                try (ResultSet rs2 = ps2.executeQuery()) {
+                    if (rs2.next()) statistic.setTotalInCostMonth(rs2.getLong(1));
                 }
             }
         } catch (SQLException ex) {

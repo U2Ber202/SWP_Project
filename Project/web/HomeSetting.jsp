@@ -234,7 +234,8 @@
                                             </c:choose>
                                         </td>
                                         <td class="pr-4 text-right align-middle">
-                                            <button class="btn btn-sm btn-info mr-1" onclick="editSlider(${s.id}, '${s.title}', '${s.imageUrl}', '${s.backLink}', ${s.status}, '${s.description}')">
+                                            <button class="btn btn-sm btn-info mr-1" onclick="editSlider(${s.id}, '${s.title}', '${s.imageUrl}', ${s.productId}, ${s.status}, '${s.description}')">
+
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <button class="btn btn-sm btn-danger" onclick="confirmDeleteSlider(${s.id})">
@@ -281,9 +282,15 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Link khi click (Optional)</label>
-                                        <input type="text" name="backLink" class="form-control" placeholder="#shop">
+                                        <label>Sản phẩm liên kết</label>
+                                        <select name="productId" class="custom-select">
+                                            <option value="0">-- Không liên kết --</option>
+                                            <c:forEach items="${allProducts}" var="p">
+                                                <option value="${p.id}">[ID: ${p.id}] ${p.name}</option>
+                                            </c:forEach>
+                                        </select>
                                     </div>
+
                                     <div class="form-group mt-4">
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="newSliderStatus" name="status" checked>
@@ -335,9 +342,15 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Link khi click</label>
-                                        <input type="text" name="backLink" id="edit-link" class="form-control">
+                                        <label>Sản phẩm liên kết</label>
+                                        <select name="productId" id="edit-productId" class="custom-select">
+                                            <option value="0">-- Không liên kết --</option>
+                                            <c:forEach items="${allProducts}" var="p">
+                                                <option value="${p.id}">[ID: ${p.id}] ${p.name}</option>
+                                            </c:forEach>
+                                        </select>
                                     </div>
+
                                     <div class="form-group mt-4">
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="edit-status" name="status">
@@ -370,11 +383,13 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script>
-            function editSlider(id, title, image, link, status, desc) {
+            function editSlider(id, title, image, productId, status, desc) {
+
                 $('#edit-id').val(id);
                 $('#edit-title').val(title);
                 $('#edit-image').val(image);
-                $('#edit-link').val(link);
+                $('#edit-productId').val(productId);
+
                 $('#edit-status').prop('checked', status);
                 $('#edit-desc').val(desc);
                 $('#editSliderModal').modal('show');

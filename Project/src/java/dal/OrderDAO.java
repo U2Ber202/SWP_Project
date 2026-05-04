@@ -116,9 +116,10 @@ public class OrderDAO extends DBContext {
             }
         } catch (SQLException e) {}
 
-        // If not found, look through Products in OrderDetail
+        // If not found, look through ProductVariant in OrderDetail
         String sql2 = "SELECT TOP 1 p.store_id FROM OrderDetail od "
-                      + "JOIN Product p ON od.productName = p.name " // Using name or other unique field
+                      + "JOIN ProductVariant v ON od.variant_id = v.id "
+                      + "JOIN Product p ON v.product_id = p.id "
                       + "WHERE od.order_id = ?";
         try (Connection conn = getConnection(); PreparedStatement st = conn.prepareStatement(sql2)) {
             st.setInt(1, orderId);

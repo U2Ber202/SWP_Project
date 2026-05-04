@@ -46,13 +46,17 @@ public class StockImportController extends HttpServlet {
         }
 
         Integer productId = ValidationUtil.parsePositiveInt(request.getParameter("productId"));
+        Integer colorId = ValidationUtil.parsePositiveInt(request.getParameter("colorId"));
         String note = ValidationUtil.normalize(request.getParameter("note"));
+        Integer unitCost = ValidationUtil.parsePositiveInt(request.getParameter("unitCost"));
+        String batchNumber = ValidationUtil.normalize(request.getParameter("batchNumber"));
 
         ProductDAO productDAO = new ProductDAO();
-        Product product = productId == null ? null : productDAO.getProductByIdAndStoreId(productId, store.getId());
-        if (product == null) {
-            forwardWithError(request, response, store.getId(), productId, new LinkedHashMap<>(),
-                    "Thông tin nhập kho không hợp lệ. Vui lòng chọn đúng sản phẩm của kho.");
+        Product product = productId == null ? null : productDAO.getProductById(productId);
+        
+        if (product == null || colorId == null || unitCost == null || ValidationUtil.isBlank(batchNumber)) {
+            forwardWithError(request, response, store.getStoreId(), productId, new LinkedHashMap<>(),
+                    "Thông tin nhập kho không hợp lệ. Vui lòng nhập đầy đủ giá nhập và số lô.");
             return;
         }
 
@@ -60,31 +64,40 @@ public class StockImportController extends HttpServlet {
         Map<String, String> submittedSizeValues = new LinkedHashMap<>();
         Map<String, Integer> sizeQuantities = new LinkedHashMap<>();
         int totalQuantity = 0;
-        for (String size : parseProductSizes(product.getTiltle())) {
+        
+        // Get all sizes available for this product from its title (which aggregates all variant sizes)
+        String sizesAttr = product.getTiltle() != null ? product.getTiltle() : "";
+        String[] sizes = sizesAttr.split(",");
+        
+        for (String s : sizes) {
+            String size = s.trim();
+            if (size.isEmpty()) continue;
+            
             String sizeParam = ValidationUtil.normalize(request.getParameter("size_" + size));
             submittedSizeValues.put(size, sizeParam);
             Integer qty = ValidationUtil.parsePositiveInt(sizeParam);
-            if (qty != null) {
+            
+            if (qty != null && qty > 0) {
                 totalQuantity += qty;
                 sizeQuantities.put(size, qty);
-                sizeLines.add("Size " + size + ": " + qty + " đôi");
+                sizeLines.add("S" + size + ":" + qty);
             }
         }
 
         if (totalQuantity <= 0) {
-            forwardWithError(request, response, store.getId(), productId, submittedSizeValues,
-                    "Bạn cần nhập ít nhất một size với số lượng > 0.");
+            forwardWithError(request, response, store.getStoreId(), productId, submittedSizeValues,
+                    "Bạn cần nhập ít nhất một size với số lượng > 0 cho màu đã chọn.");
             return;
         }
 
         String combinedNote = String.join(", ", sizeLines);
         if (!ValidationUtil.isBlank(note)) {
-            combinedNote = combinedNote + " | Ghi chu: " + note;
+            combinedNote = combinedNote + " | " + note;
         }
 
-        boolean success = new StockImportDAO().addStockImport(productId, store.getId(), totalQuantity, combinedNote, account.getUid(), sizeQuantities);
+        boolean success = new StockImportDAO().addStockImport(productId, colorId, store.getStoreId(), totalQuantity, unitCost, batchNumber, combinedNote, account.getUid(), sizeQuantities);
         if (!success) {
-            forwardWithError(request, response, store.getId(), productId, submittedSizeValues,
+            forwardWithError(request, response, store.getStoreId(), productId, submittedSizeValues,
                     "Không thể cập nhật kho lúc này. Vui lòng thử lại.");
             return;
         }
@@ -97,15 +110,20 @@ public class StockImportController extends HttpServlet {
             throws ServletException, IOException {
         ProductDAO productDAO = new ProductDAO();
         StockImportDAO stockImportDAO = new StockImportDAO();
+        dal.ColorDAO colorDAO = new dal.ColorDAO();
+        dal.ManufacturerDAO manufacturerDAO = new dal.ManufacturerDAO();
         Store store = new StoreDAO().getStoreById(storeId);
         List<Product> products = productDAO.getProductsByStoreId(storeId);
 
         request.setAttribute("products", products);
         request.setAttribute("allProducts", products);
         request.setAttribute("listCategories", new CategoryDAO().getCategoriesByStore(storeId));
+        request.setAttribute("listColors", colorDAO.getAll());
+        request.setAttribute("listManufacturers", manufacturerDAO.getAll());
         request.setAttribute("stockImports", stockImportDAO.getStockImportsByStoreId(storeId));
         request.setAttribute("dailyStockImports", stockImportDAO.getDailyStockSummaryByStoreId(storeId));
         request.setAttribute("stockError", message);
+        request.setAttribute("error", message);
 
         String stockProductId = productId == null ? "" : String.valueOf(productId);
         if (ValidationUtil.isBlank(stockProductId) && !products.isEmpty()) {
@@ -115,14 +133,6 @@ public class StockImportController extends HttpServlet {
         request.setAttribute("stockProductId", stockProductId);
         request.setAttribute("stockNote", ValidationUtil.normalize(request.getParameter("note")));
         request.setAttribute("stockSizeValues", submittedSizeValues == null ? new LinkedHashMap<>() : submittedSizeValues);
-        request.setAttribute("productPage", 1);
-        request.setAttribute("stockImportPage", 1);
-        request.setAttribute("dailyStockPage", 1);
-        request.setAttribute("productTotalPage", 1);
-        request.setAttribute("stockImportTotalPage", 1);
-        request.setAttribute("dailyStockTotalPage", 1);
-        request.setAttribute("storeShippers", new ArrayList<>());
-        request.setAttribute("storeWarehouseManagers", new ArrayList<>());
         request.setAttribute("managedStore", store);
         request.getRequestDispatcher("ManagerProduct.jsp").forward(request, response);
     }

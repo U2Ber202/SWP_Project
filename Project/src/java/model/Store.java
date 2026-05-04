@@ -1,47 +1,57 @@
 package model;
 
 public class Store {
-    private int id;
-    private String name;
+    private int storeId;
+    private String storeName;
     private int ownerId;
+    private boolean active;
+    
+    // Joined data
+    private String ownerName;
     private int shipperId;
     private int warehouseManagerId;
     private int productCount;
     private double averageRating;
-    private boolean active;
+
+    public int getId() { return storeId; }
+    public String getName() { return storeName; }
+
+    public int getShipperId() { return shipperId; }
+    public void setShipperId(int shipperId) { this.shipperId = shipperId; }
+
+    public int getWarehouseManagerId() { return warehouseManagerId; }
+    public void setWarehouseManagerId(int warehouseManagerId) { this.warehouseManagerId = warehouseManagerId; }
+
+    public int getProductCount() { return productCount; }
+    public void setProductCount(int productCount) { this.productCount = productCount; }
+
+    public double getAverageRating() { return averageRating; }
+    public void setAverageRating(double averageRating) { this.averageRating = averageRating; }
 
     public Store() {
     }
 
-    public Store(int id, String name, int ownerId) {
-        this.id = id;
-        this.name = name;
+    public Store(int storeId, String storeName, int ownerId, boolean active) {
+        this.storeId = storeId;
+        this.storeName = storeName;
         this.ownerId = ownerId;
-        this.active = true;
+        this.active = active;
     }
 
-    public Store(int id, String name, int ownerId, int shipperId) {
-        this.id = id;
-        this.name = name;
-        this.ownerId = ownerId;
-        this.shipperId = shipperId;
-        this.active = true;
+    public int getStoreId() {
+        return storeId;
     }
 
-    public int getId() {
-        return id;
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getStoreName() {
+        return storeName;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
     }
 
     public int getOwnerId() {
@@ -52,43 +62,19 @@ public class Store {
         this.ownerId = ownerId;
     }
 
-    public int getShipperId() {
-        return shipperId;
-    }
-
-    public void setShipperId(int shipperId) {
-        this.shipperId = shipperId;
-    }
-
-    public int getWarehouseManagerId() {
-        return warehouseManagerId;
-    }
-
-    public void setWarehouseManagerId(int warehouseManagerId) {
-        this.warehouseManagerId = warehouseManagerId;
-    }
-
-    public int getProductCount() {
-        return productCount;
-    }
-
-    public void setProductCount(int productCount) {
-        this.productCount = productCount;
-    }
-
-    public double getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(double averageRating) {
-        this.averageRating = averageRating;
-    }
-
     public boolean isActive() {
         return active;
     }
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 }

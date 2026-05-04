@@ -29,8 +29,7 @@ public class EditCategoryController extends HttpServlet {
         Store store = new StoreDAO().getStoreByOwnerId(account.getUid());
         Integer categoryId = ValidationUtil.parsePositiveInt(request.getParameter("id"));
         String categoryName = ValidationUtil.normalize(request.getParameter("name"));
-        String manufacturer = ValidationUtil.normalize(request.getParameter("manufacturer"));
-        if (store == null || categoryId == null || ValidationUtil.isBlank(categoryName) || ValidationUtil.isBlank(manufacturer)) {
+        if (store == null || categoryId == null || ValidationUtil.isBlank(categoryName)) {
             response.sendRedirect("managerCategory");
             return;
         }
@@ -38,8 +37,7 @@ public class EditCategoryController extends HttpServlet {
         Category category = new Category();
         category.setCid(categoryId);
         category.setCname(categoryName);
-        category.setManufacturer(manufacturer);
-        new CategoryDAO().updateCategoryByStore(category, store.getId());
+        new CategoryDAO().updateCategoryByStore(category, store.getStoreId());
         request.getSession().setAttribute("success", "Cập nhật danh mục thành công!");
         response.sendRedirect("managerCategory");
     }

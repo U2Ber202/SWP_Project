@@ -32,7 +32,7 @@ public class CartController extends BaseRequiredAuthenController {
         Map<Integer, Cart> carts = CartService.getCartMap(session);
         int totalMoney = 0;
         for (Cart cart : carts.values()) {
-            totalMoney += cart.getQuantity() * cart.getProduct().getPrice();
+            totalMoney += cart.getQuantity() * cart.getVariant().getPrice();
         }
         
         ProductDAO pDao = new ProductDAO();

@@ -222,7 +222,7 @@ public class CheckOutController extends HttpServlet {
         Map<Integer, Map<Integer, Cart>> cartsByStore = new LinkedHashMap<>();
         for (Map.Entry<Integer, Cart> entry : carts.entrySet()) {
             Cart cart = entry.getValue();
-            int storeId = cart.getProduct().getStoreId();
+            int storeId = cart.getVariant().getStoreId();
             cartsByStore.computeIfAbsent(storeId, key -> new LinkedHashMap<>()).put(entry.getKey(), cart);
         }
         return cartsByStore;
@@ -235,10 +235,9 @@ public class CheckOutController extends HttpServlet {
         java.time.LocalDate today = java.time.LocalDate.now();
         
         for (model.Voucher v : vouchers) {
-            // Check validity (already filtered in DAO for code search, but here we have a list)
             try {
-                java.time.LocalDate expiry = java.time.LocalDate.parse(v.getExpiryDate());
-                java.time.LocalDate start = v.getStartDate() != null ? java.time.LocalDate.parse(v.getStartDate()) : today;
+                java.time.LocalDate expiry = java.time.LocalDate.parse(v.getExpiryDate().substring(0, 10));
+                java.time.LocalDate start = v.getStartDate() != null ? java.time.LocalDate.parse(v.getStartDate().substring(0, 10)) : today;
                 if (today.isBefore(start) || today.isAfter(expiry)) continue;
             } catch (Exception e) {}
 
@@ -260,7 +259,7 @@ public class CheckOutController extends HttpServlet {
     static int calculateTotal(Map<Integer, Cart> carts) {
         int totalMoney = 0;
         for (Cart cart : carts.values()) {
-            totalMoney += cart.getQuantity() * cart.getProduct().getPrice();
+            totalMoney += cart.getQuantity() * cart.getVariant().getPrice();
         }
         return totalMoney;
     }

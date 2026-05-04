@@ -68,7 +68,7 @@ public class AcountDAO extends DBContext {
             // For Add Store modal: show only global managers (no history) who are not assigned to any store and are active
             return getAccountsBySql(ACCOUNT_SELECT
                     + " WHERE [role] = ? AND [active] = 1"
-                    + " AND NOT EXISTS (SELECT 1 FROM Store s WHERE s.warehouse_manager_id = Account.uID)"
+                    + " AND NOT EXISTS (SELECT 1 FROM StoreStaff ss WHERE ss.account_id = Account.uID AND ss.staff_role = 'warehouse_manager')"
                     + " AND NOT EXISTS (SELECT 1 FROM StaffActionHistory h WHERE h.staff_id = Account.uID)"
                     + " ORDER BY uID DESC",
                     Account.ROLE_WAREHOUSE_MANAGER);
@@ -80,9 +80,9 @@ public class AcountDAO extends DBContext {
         return getAccountsBySql(ACCOUNT_SELECT
                 + " WHERE [role] = ? AND [active] = 1"
                 + " AND ("
-                + "     EXISTS (SELECT 1 FROM Store s WHERE s.warehouse_manager_id = Account.uID AND s.store_id = ?)"
+                + "     EXISTS (SELECT 1 FROM StoreStaff ss WHERE ss.account_id = Account.uID AND ss.store_id = ? AND ss.staff_role = 'warehouse_manager')"
                 + "     OR ("
-                + "         NOT EXISTS (SELECT 1 FROM Store s WHERE s.warehouse_manager_id = Account.uID)"
+                + "         NOT EXISTS (SELECT 1 FROM StoreStaff ss WHERE ss.account_id = Account.uID AND ss.staff_role = 'warehouse_manager')"
                 + "         AND ("
                 + "             NOT EXISTS (SELECT 1 FROM StaffActionHistory h WHERE h.staff_id = Account.uID)"
                 + "             OR EXISTS (SELECT 1 FROM StaffActionHistory h JOIN Store s ON h.owner_id = s.owner_id WHERE h.staff_id = Account.uID AND s.store_id = ?)"
@@ -96,9 +96,9 @@ public class AcountDAO extends DBContext {
     public List<Account> getShippersByStoreId(int storeId) {
         return getAccountsBySql("SELECT DISTINCT a.*, ISNULL(a.[role], CASE WHEN a.isAdmin = 1 THEN 'admin' ELSE 'customer' END) as role "
                 + "FROM Account a "
-                + "LEFT JOIN Store s ON s.shipper_id = a.uID "
+                + "LEFT JOIN StoreStaff ss ON ss.account_id = a.uID AND ss.staff_role = 'shipper' "
                 + "LEFT JOIN Shipping sh ON sh.shipper_id = a.uID "
-                + "WHERE a.role = 'shipper' AND a.active = 1 AND (s.store_id = ? OR sh.store_id = ?) "
+                + "WHERE a.role = 'shipper' AND a.active = 1 AND (ss.store_id = ? OR sh.store_id = ?) "
                 + "ORDER BY a.uID DESC",
                 storeId, storeId);
     }
@@ -279,14 +279,12 @@ public class AcountDAO extends DBContext {
         String sql = ACCOUNT_SELECT + " WHERE uID IN ("
                 + "    SELECT h.staff_id FROM StaffActionHistory h WHERE h.owner_id = ?"
                 + "    UNION"
-                + "    SELECT s.shipper_id FROM Store s WHERE s.owner_id = ? AND s.shipper_id IS NOT NULL"
-                + "    UNION"
-                + "    SELECT s.warehouse_manager_id FROM Store s WHERE s.owner_id = ? AND s.warehouse_manager_id IS NOT NULL"
+                + "    SELECT ss.account_id FROM StoreStaff ss JOIN Store s ON ss.store_id = s.store_id WHERE s.owner_id = ?"
                 + "    UNION"
                 + "    SELECT sh.shipper_id FROM Shipping sh JOIN Store s ON sh.store_id = s.store_id WHERE s.owner_id = ? AND sh.shipper_id IS NOT NULL"
                 + "    UNION"
                 + "    SELECT si.created_by FROM StockImport si JOIN Store s ON si.store_id = s.store_id WHERE s.owner_id = ? AND si.created_by IS NOT NULL"
                 + ") AND (role = 'shipper' OR role = 'warehouse_manager')";
-        return getAccountsBySql(sql, ownerId, ownerId, ownerId, ownerId, ownerId);
+        return getAccountsBySql(sql, ownerId, ownerId, ownerId, ownerId);
     }
 }

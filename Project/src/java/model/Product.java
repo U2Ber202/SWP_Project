@@ -1,58 +1,46 @@
 package model;
 
+import java.util.List;
 
 public class Product {
-   int id;
-     String name;
-     String imageUrl;
-     int price;
-     String tiltle;
-     String description;
-     int sell_ID;
-     int categoryId;
-     int storeId;
-     int quantity;
-     String storeName;
-     String manufacturer;
+    private int id;
+    private String name;
+    private String description;
+    private int categoryId;
+    private int storeId;
+    private int manufacturerId;
+    
+    // Joined data
+    private String storeName;
+    private String categoryName;
+    private String manufacturerName;
+    private List<ProductVariant> variants;
+    
+    // Legacy fields for JSP compatibility
+    private String imageUrl;
+    private int price;
+    private int quantity;
+    private String tiltle; // Legacy sizes string
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public int getPrice() { return price; }
+    public void setPrice(int price) { this.price = price; }
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public String getTiltle() { return tiltle; }
+    public void setTiltle(String tiltle) { this.tiltle = tiltle; }
 
     public Product() {
     }
 
-    public Product(int id, String name, String imageUrl, int price, String tiltle, String description, int sell_ID, int categoryId) {
+    public Product(int id, String name, String description, int categoryId, int storeId, int manufacturerId) {
         this.id = id;
         this.name = name;
-        this.imageUrl = imageUrl;
-        this.price = price;
-        this.tiltle = tiltle;
         this.description = description;
-        this.sell_ID = sell_ID;
-        this.categoryId = categoryId;
-    }
-
-    public Product(int id, String name, String imageUrl, int price, String tiltle, String description, int sell_ID, int categoryId, int storeId) {
-        this.id = id;
-        this.name = name;
-        this.imageUrl = imageUrl;
-        this.price = price;
-        this.tiltle = tiltle;
-        this.description = description;
-        this.sell_ID = sell_ID;
         this.categoryId = categoryId;
         this.storeId = storeId;
-    }
-
-    public Product(int id, String name, String imageUrl, int price, String tiltle, String description, int sell_ID, int categoryId, int storeId, int quantity, String storeName) {
-        this.id = id;
-        this.name = name;
-        this.imageUrl = imageUrl;
-        this.price = price;
-        this.tiltle = tiltle;
-        this.description = description;
-        this.sell_ID = sell_ID;
-        this.categoryId = categoryId;
-        this.storeId = storeId;
-        this.quantity = quantity;
-        this.storeName = storeName;
+        this.manufacturerId = manufacturerId;
     }
 
     public int getId() {
@@ -71,44 +59,12 @@ public class Product {
         this.name = name;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public String getTiltle() {
-        return tiltle;
-    }
-
-    public void setTiltle(String tiltle) {
-        this.tiltle = tiltle;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getSell_ID() {
-        return sell_ID;
-    }
-
-    public void setSell_ID(int sell_ID) {
-        this.sell_ID = sell_ID;
     }
 
     public int getCategoryId() {
@@ -127,12 +83,12 @@ public class Product {
         this.storeId = storeId;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getManufacturerId() {
+        return manufacturerId;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setManufacturerId(int manufacturerId) {
+        this.manufacturerId = manufacturerId;
     }
 
     public String getStoreName() {
@@ -143,11 +99,37 @@ public class Product {
         this.storeName = storeName;
     }
 
-    public String getManufacturer() {
-        return manufacturer;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setManufacturer(String manufacturer) {
-        this.manufacturer = manufacturer;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getManufacturerName() {
+        return manufacturerName;
+    }
+
+    public void setManufacturerName(String manufacturerName) {
+        this.manufacturerName = manufacturerName;
+    }
+
+    public List<ProductVariant> getVariants() {
+        return variants;
+    }
+
+    public void setVariants(List<ProductVariant> variants) {
+        this.variants = variants;
+    }
+    
+    // Helper to get representative price (e.g. from first variant)
+    public int getMinPrice() {
+        if (variants == null || variants.isEmpty()) return 0;
+        int min = variants.get(0).getPrice();
+        for (ProductVariant v : variants) {
+            if (v.getPrice() < min) min = v.getPrice();
+        }
+        return min;
     }
 }

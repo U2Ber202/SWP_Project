@@ -32,6 +32,10 @@ public final class RoleHelper {
     }
 
     public static boolean canManageInventory(Account account) {
-        return isWarehouseManager(account);
+        return isAdmin(account) || isOwner(account) || isWarehouseManager(account);
+    }
+
+    public static boolean canManageProduct(Account account) {
+        return isAdmin(account) || isOwner(account);
     }
 }

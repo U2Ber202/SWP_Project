@@ -209,9 +209,9 @@
                                                 </td>
                                                 <td class="text-center pr-4">
                                                     <div class="btn-group">
-                                                        <!--                                            <a href="manager?storeId={s.id}" class="btn btn-sm btn-outline-info mr-2" title="Xem Kho/Sản phẩm"><i class="fa-solid fa-boxes-stacked"></i></a>
-                                            <a href="stockHistory?storeId={s.id}" class="btn btn-sm btn-outline-primary mr-2" title="Xem Lịch sử kho"><i class="fa-solid fa-clock-rotate-left"></i></a>
-                                            <a href="store-front?id=${s.id}" class="btn btn-sm btn-outline-success mr-2" title="Xem Shop công khai"><i class="fa-solid fa-eye"></i></a>-->
+                                                        <a href="manager?storeId=${s.id}" class="btn btn-sm btn-outline-info mr-2" title="Xem Kho/Sản phẩm"><i class="fa-solid fa-boxes-stacked"></i></a>
+                                                        <a href="stockHistory?storeId=${s.id}" class="btn btn-sm btn-outline-primary mr-2" title="Xem Lịch sử kho"><i class="fa-solid fa-clock-rotate-left"></i></a>
+                                                        <a href="store-front?id=${s.id}" class="btn btn-sm btn-outline-success mr-2" title="Xem Shop công khai"><i class="fa-solid fa-eye"></i></a>
                                                         <a href="#toggleStoreModal${s.id}"
                                                             class="btn btn-sm ${s.active ? 'btn-outline-secondary' : 'btn-outline-success'} mr-2" 
                                                             data-toggle="modal" title="${s.active ? 'Ngừng hoạt động' : 'Kích hoạt'}">

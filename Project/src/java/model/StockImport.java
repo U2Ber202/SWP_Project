@@ -4,14 +4,35 @@ public class StockImport {
 
     private int id;
     private int productId;
+    private int variantId;
     private int storeId;
     private String productName;
+    private String colorName;
+    private String size;
     private int importQuantity;
+    private int unitCost;
+    private String batchNumber;
     private String note;
     private String createdAt;
     private String createdDate;
     private String createdTime;
     private String createdByName;
+
+    public int getUnitCost() {
+        return unitCost;
+    }
+
+    public void setUnitCost(int unitCost) {
+        this.unitCost = unitCost;
+    }
+
+    public String getBatchNumber() {
+        return batchNumber;
+    }
+
+    public void setBatchNumber(String batchNumber) {
+        this.batchNumber = batchNumber;
+    }
 
     public int getId() {
         return id;
@@ -83,6 +104,30 @@ public class StockImport {
 
     public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public int getVariantId() {
+        return variantId;
+    }
+
+    public void setVariantId(int variantId) {
+        this.variantId = variantId;
+    }
+
+    public String getColorName() {
+        return colorName;
+    }
+
+    public void setColorName(String colorName) {
+        this.colorName = colorName;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 
     public String getCreatedByName() {

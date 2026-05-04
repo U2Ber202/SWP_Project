@@ -92,8 +92,8 @@ public class ManagerController extends HttpServlet {
                 Account warehouseAccount = accountDAO.createWarehouseManagerAccount(user, pass, email, fullname, phone);
                 if (warehouseAccount == null) {
                     warehouseError = "Không thể tạo tài khoản quản lý kho. Vui lòng thử lại.";
-                } else if (storeDAO.updateStore(store.getId(), store.getName(), store.getOwnerId(), warehouseAccount.getUid())) {
-                    store = storeDAO.getStoreById(store.getId());
+                } else if (storeDAO.updateStore(store.getStoreId(), store.getStoreName(), store.getOwnerId(), warehouseAccount.getUid())) {
+                    store = storeDAO.getStoreById(store.getStoreId());
                     warehouseMessage = "Đã tạo và gán tài khoản quản lý kho cho cửa hàng hiện tại.";
                 } else {
                     warehouseError = "Đã tạo tài khoản nhưng không gán được vào cửa hàng. Vui lòng kiểm tra lại store.";
@@ -108,10 +108,10 @@ public class ManagerController extends HttpServlet {
             String fullname = ValidationUtil.normalize(request.getParameter("shipperFullname"));
             String phone = ValidationUtil.normalize(request.getParameter("shipperPhone"));
 
-            request.setAttribute("shipperFormUser", user);
-            request.setAttribute("shipperFormEmail", email);
-            request.setAttribute("shipperFormFullname", fullname);
-            request.setAttribute("shipperFormPhone", phone);
+            request.setAttribute("warehouseFormUser", user);
+            request.setAttribute("warehouseFormEmail", email);
+            request.setAttribute("warehouseFormFullname", fullname);
+            request.setAttribute("warehouseFormPhone", phone);
 
             if (store == null) {
                 shipperError = "Bạn cần có cửa hàng trước khi tạo shipper.";
@@ -132,8 +132,8 @@ public class ManagerController extends HttpServlet {
                 Account shipperAccount = accountDAO.createShipperAccount(user, pass, email, fullname, phone);
                 if (shipperAccount == null) {
                     shipperError = "Không thể tạo tài khoản shipper. Vui lòng thử lại.";
-                } else if (storeDAO.assignShipperToStore(store.getId(), shipperAccount.getUid())) {
-                    store = storeDAO.getStoreById(store.getId());
+                } else if (storeDAO.assignShipperToStore(store.getStoreId(), shipperAccount.getUid())) {
+                    store = storeDAO.getStoreById(store.getStoreId());
                     shipperMessage = "Tạo tài khoản shipper thành công và đã gán cho cửa hàng hiện tại.";
                 } else {
                     shipperError = "Đã tạo tài khoản shipper nhưng không gán được vào cửa hàng.";
@@ -144,10 +144,16 @@ public class ManagerController extends HttpServlet {
         if (store != null) {
             ProductDAO productDAO = new ProductDAO();
             StockImportDAO stockImportDAO = new StockImportDAO();
-            List<Product> allProducts = productDAO.getProductsByStoreId(store.getId());
-            List<Category> listCategories = new CategoryDAO().getCategoriesByStore(store.getId());
-            List<model.StockImport> allStockImports = stockImportDAO.getStockImportsByStoreId(store.getId());
-            List<model.StockImport> allDailyStockImports = stockImportDAO.getDailyStockSummaryByStoreId(store.getId());
+            dal.ColorDAO colorDAO = new dal.ColorDAO();
+            dal.ManufacturerDAO manufacturerDAO = new dal.ManufacturerDAO();
+            
+            List<Product> allProducts = productDAO.getProductsByStoreId(store.getStoreId());
+            List<Category> listCategories = new CategoryDAO().getCategoriesByStore(store.getStoreId());
+            List<model.Color> listColors = colorDAO.getAll();
+            List<model.Manufacturer> listManufacturers = manufacturerDAO.getAll();
+            
+            List<model.StockImport> allStockImports = stockImportDAO.getStockImportsByStoreId(store.getStoreId());
+            List<model.StockImport> allDailyStockImports = stockImportDAO.getDailyStockSummaryByStoreId(store.getStoreId());
             int productPage = parsePage(request.getParameter("productPage"));
             int stockImportPage = parsePage(request.getParameter("stockImportPage"));
             int dailyStockPage = parsePage(request.getParameter("dailyStockPage"));
@@ -156,6 +162,8 @@ public class ManagerController extends HttpServlet {
             List<model.StockImport> stockImports = paginateList(allStockImports, stockImportPage, pageSize);
             List<model.StockImport> dailyStockImports = paginateList(allDailyStockImports, dailyStockPage, pageSize);
             request.setAttribute("listCategories", listCategories);
+            request.setAttribute("listColors", listColors);
+            request.setAttribute("listManufacturers", listManufacturers);
             request.setAttribute("products", products);
             String stockProductId = ValidationUtil.normalize(request.getParameter("productId"));
             if (ValidationUtil.isBlank(stockProductId) && !allProducts.isEmpty()) {
@@ -171,9 +179,9 @@ public class ManagerController extends HttpServlet {
             request.setAttribute("productTotalPage", getTotalPage(allProducts.size(), pageSize));
             request.setAttribute("stockImportTotalPage", getTotalPage(allStockImports.size(), pageSize));
             request.setAttribute("dailyStockTotalPage", getTotalPage(allDailyStockImports.size(), pageSize));
-            request.setAttribute("storeShippers", accountDAO.getShippersByStoreId(store.getId()));
+            request.setAttribute("storeShippers", accountDAO.getShippersByStoreId(store.getStoreId()));
             request.setAttribute("managedStore", store);
-            request.setAttribute("sizeQuantitiesMap", productDAO.getSizeQuantitiesByStore(store.getId()));
+            request.setAttribute("sizeQuantitiesMap", productDAO.getSizeQuantitiesByStore(store.getStoreId()));
             if (request.getParameter("stockSuccess") != null) {
                 request.setAttribute("stockSuccess", "Nhập kho thành công. Hệ thống đã tự động lưu ngày giờ và người nhập.");
             }

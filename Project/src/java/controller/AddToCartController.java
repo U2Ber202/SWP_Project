@@ -31,37 +31,35 @@ public class AddToCartController extends BaseRequiredAuthenController {
             return;
         }
 
-        Integer productId = ValidationUtil.parsePositiveInt(request.getParameter("productId"));
-        if (productId == null) {
-            session.setAttribute("cartMessage", "Sản phẩm không hợp lệ.");
+        Integer variantId = ValidationUtil.parsePositiveInt(request.getParameter("variantId"));
+        if (variantId == null) {
+            session.setAttribute("cartMessage", "Biến thể sản phẩm không hợp lệ.");
             response.sendRedirect("home");
             return;
         }
 
         ProductDAO productDAO = new ProductDAO();
-        Product product = productDAO.getProductById(productId);
-        if (product == null || product.getQuantity() <= 0) {
-            session.setAttribute("cartMessage", "Sản phẩm đã hết hàng.");
+        model.ProductVariant variant = productDAO.getVariantById(variantId);
+        if (variant == null || variant.getQuantity() <= 0) {
+            session.setAttribute("cartMessage", "Sản phẩm (màu/size này) đã hết hàng.");
             response.sendRedirect("home");
             return;
         }
 
-        if (!productDAO.reserveStock(productId, 1)) {
+        if (!productDAO.reserveStock(variantId, 1)) {
             session.setAttribute("cartMessage", "Số lượng còn lại không đủ.");
             response.sendRedirect("home");
             return;
         }
 
         Map<Integer, Cart> carts = CartService.getCartMap(session);
-        if (carts.containsKey(productId)) {
-            Cart cart = carts.get(productId);
+        if (carts.containsKey(variantId)) {
+            Cart cart = carts.get(variantId);
             cart.setQuantity(cart.getQuantity() + 1);
-            cart.setProduct(productDAO.getProductById(productId));
             cart.refreshTimeout();
         } else {
-            Product reservedProduct = productDAO.getProductById(productId);
-            Cart cart = new Cart(reservedProduct, 1);
-            carts.put(productId, cart);
+            Cart cart = new Cart(variant, 1);
+            carts.put(variantId, cart);
         }
 
         CartService.clearPendingVnpay(session);

@@ -13,15 +13,26 @@ public class Satistic {
     private int totalSales;
     private int totalOrdersMonth;
     private int totalSalesMonth;
+    private long totalInCost;
+    private long totalInCostMonth;
 
     public Satistic() {
     }
 
-    public Satistic(int totalOrders, int totalSales, int totalOrdersMonth, int totalSalesMonth) {
-        this.totalOrders = totalOrders;
-        this.totalSales = totalSales;
-        this.totalOrdersMonth = totalOrdersMonth;
-        this.totalSalesMonth = totalSalesMonth;
+    public long getTotalInCost() {
+        return totalInCost;
+    }
+
+    public void setTotalInCost(long totalInCost) {
+        this.totalInCost = totalInCost;
+    }
+
+    public long getTotalInCostMonth() {
+        return totalInCostMonth;
+    }
+
+    public void setTotalInCostMonth(long totalInCostMonth) {
+        this.totalInCostMonth = totalInCostMonth;
     }
 
     public int getTotalOrders() {
@@ -56,4 +67,11 @@ public class Satistic {
         this.totalSalesMonth = totalSalesMonth;
     }
     
+    public long getProfit() {
+        return totalSales - totalInCost;
+    }
+    
+    public long getProfitMonth() {
+        return totalSalesMonth - totalInCostMonth;
+    }
 }

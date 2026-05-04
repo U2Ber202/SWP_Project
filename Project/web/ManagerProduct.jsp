@@ -36,12 +36,12 @@
                             padding-bottom: 40px;
                         }
 
-                        .card { 
+                        .card {
                             background: var(--card-bg) !important;
                             backdrop-filter: none !important;
                             border: 1px solid var(--border) !important;
                             border-radius: 20px;
-                            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
                             overflow: hidden;
                         }
 
@@ -199,7 +199,8 @@
                                         </h2>
                                         <c:if test="${not empty managedStore}">
                                             <div class="helper-text mt-2">Kho hiện tại:
-                                                <strong>${managedStore.name}</strong> - ID ${managedStore.id}</div>
+                                                <strong>${managedStore.name}</strong> - ID ${managedStore.id}
+                                            </div>
                                         </c:if>
                                     </div>
                                     <a class="btn btn-outline-light shadow-sm" href="home">
@@ -208,7 +209,7 @@
                                 </div>
 
 
-                                <c:if test="${sessionScope.acc.role == 'owner'}">
+                                <c:if test="${sessionScope.acc.role == 'owner' or sessionScope.acc.role == 'admin'}">
                                     <div class="card mb-5">
                                         <div class="card-header">
                                             <i class="fa-solid fa-plus text-warning mr-2"></i>Thêm sản phẩm mới
@@ -245,15 +246,27 @@
                                                         </select>
                                                     </div>
                                                     <div class="form-group col-md-3">
-                                                        <label>Danh sách size</label>
-                                                        <input class="form-control" name="title" value="${formTitle}"
-                                                            placeholder="VD: 34,35,36" required>
+                                                         <label>Danh sách size</label>
+                                                         <input class="form-control" name="title" value="${formTitle}"
+                                                             placeholder="VD: 34,35,36" required>
+                                                     </div>
+                                                     <div class="form-group col-md-3">
+                                                         <label>Chọn Màu</label>
+                                                        <select class="form-control" name="colorId" required>
+                                                            <option value="" disabled selected>-- Chọn màu --</option>
+                                                            <c:forEach items="${listColors}" var="col">
+                                                                <option value="${col.id}">${col.colorName}</option>
+                                                            </c:forEach>
+                                                        </select>
                                                     </div>
                                                     <div class="form-group col-md-3">
                                                         <label>Xuất xứ / Hãng</label>
-                                                        <input name="manufacturer" class="form-control"
-                                                            value="${formManufacturer}"
-                                                            placeholder="Ví dụ: US-UK, Chinese, Vietnam..." required>
+                                                        <select class="form-control" name="manufacturerId" required>
+                                                            <option value="" disabled selected>-- Chọn hãng --</option>
+                                                            <c:forEach items="${listManufacturers}" var="m">
+                                                                <option value="${m.id}">${m.name} (${m.country})</option>
+                                                            </c:forEach>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -269,21 +282,9 @@
                                     </div>
                                 </c:if>
 
-                                
-                                <c:if test="${sessionScope.acc.role == 'owner'}">
-                                    <div class="card mb-5">
-                                        <div class="card-header">
-                                            <i class="fa-solid fa-eye text-info mr-2"></i>Phân quyền kho
-                                        </div>
-                                        <div class="card-body p-4">
-                                            <div class="muted-box">
-                                                Owner không can thiệp trực tiếp vào kho. Việc nhập kho và cập nhật tồn
-                                                theo size được thực hiện bởi role <strong>warehouse_manager</strong>.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </c:if>
-                                <c:if test="${sessionScope.acc.role == 'warehouse_manager'}">
+
+
+                                <c:if test="${sessionScope.acc.role == 'warehouse_manager' or sessionScope.acc.role == 'owner' or sessionScope.acc.role == 'admin'}">
                                     <div class="card mb-5">
                                         <div class="card-header">
                                             <i class="fa-solid fa-warehouse text-info mr-2"></i>Nhập kho theo size
@@ -292,27 +293,44 @@
                                             <form action="stock-import" method="post" id="stockImportForm">
                                                 <input type="hidden" name="storeId" value="${managedStore.id}">
                                                 <div class="form-row">
-                                                    <div class="form-group col-md-6">
-                                                        <label>Sản phẩm cần nhập</label>
-                                                        <select class="form-control" name="productId"
-                                                            id="stockProductSelect" required>
-                                                            <option value="" disabled ${empty stockProductId
-                                                                ? 'selected' : '' }>-- Chọn sản phẩm --</option>
-                                                            <c:forEach items="${allProducts}" var="item">
-                                                                <option value="${item.id}"
-                                                                    data-sizes="${fn:escapeXml(item.tiltle)}"
-                                                                    ${stockProductId==item.id ? 'selected' : '' }>
-                                                                    #${item.id} - ${item.name} (${item.tiltle}) - tồn
-                                                                    hiện tại: ${item.quantity} đôi</option>
-                                                            </c:forEach>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group col-md-6">
-                                                        <label>Ghi chú lô hàng</label>
-                                                        <input class="form-control" name="note" value="${stockNote}"
-                                                            placeholder="VD: nhập kho đầu cá">
-                                                    </div>
-                                                </div>
+                                                     <div class="form-group col-md-3">
+                                                         <label>Sản phẩm</label>
+                                                         <select class="form-control" name="productId"
+                                                             id="stockProductSelect" required>
+                                                             <option value="" disabled ${empty stockProductId
+                                                                 ? 'selected' : '' }>-- Chọn sản phẩm --</option>
+                                                             <c:forEach items="${allProducts}" var="item">
+                                                                 <option value="${item.id}"
+                                                                     data-sizes="${fn:escapeXml(item.tiltle)}"
+                                                                     ${stockProductId==item.id ? 'selected' : '' }>
+                                                                     #${item.id} - ${item.name}</option>
+                                                             </c:forEach>
+                                                         </select>
+                                                     </div>
+                                                     <div class="form-group col-md-3">
+                                                         <label>Màu sắc</label>
+                                                         <select class="form-control" name="colorId" id="stockColorSelect" required>
+                                                             <c:forEach items="${listColors}" var="col">
+                                                                 <option value="${col.id}">${col.colorName}</option>
+                                                             </c:forEach>
+                                                         </select>
+                                                     </div>
+                                                     <div class="form-group col-md-2">
+                                                         <label>Giá nhập (đ)</label>
+                                                         <input class="form-control" type="number" min="0" name="unitCost" 
+                                                             placeholder="VD: 500000" required>
+                                                     </div>
+                                                     <div class="form-group col-md-2">
+                                                         <label>Số lô (Batch)</label>
+                                                         <input class="form-control" name="batchNumber" 
+                                                             placeholder="VD: LOT2024-01" required>
+                                                     </div>
+                                                     <div class="form-group col-md-4">
+                                                         <label>Ghi chú lô hàng</label>
+                                                         <input class="form-control" name="note" value="${stockNote}"
+                                                             placeholder="VD: nhập kho đầu cá">
+                                                     </div>
+                                                 </div>
                                                 <label class="mb-3">Số lượng theo size</label>
                                                 <c:set var="selectedProductSizes" value="" />
                                                 <c:forEach items="${allProducts}" var="item">
@@ -375,25 +393,39 @@
                                                                     đôi</span></div>
                                                             <div class="small text-muted-custom mt-1"
                                                                 style="font-size: 0.75rem; max-width: 150px;">
-                                                                <c:set var="sqMap" value="${sizeQuantitiesMap[p.id]}" />
+                                                                <c:set var="productColorMap" value="${sizeQuantitiesMap[p.id]}" />
                                                                 <c:forEach items="${fn:split(p.tiltle, ',')}" var="sz">
                                                                     <c:set var="trimmedSz" value="${fn:trim(sz)}" />
+                                                                    <c:set var="totalSizeQty" value="0" />
+                                                                    <c:forEach items="${productColorMap}" var="colorEntry">
+                                                                        <c:if test="${not empty colorEntry.value[trimmedSz]}">
+                                                                            <c:set var="totalSizeQty" value="${totalSizeQty + colorEntry.value[trimmedSz]}" />
+                                                                        </c:if>
+                                                                    </c:forEach>
                                                                     <span class="mr-2" style="white-space: nowrap;">
                                                                         <strong>S${trimmedSz}:</strong>
                                                                         <span
-                                                                            class="${(sqMap[trimmedSz] != null && sqMap[trimmedSz] > 0) ? 'text-info' : 'text-danger'}">
-                                                                            ${sqMap[trimmedSz] != null ?
-                                                                            sqMap[trimmedSz] : 0}
+                                                                            class="${totalSizeQty > 0 ? 'text-info' : 'text-danger'}">
+                                                                            ${totalSizeQty}
                                                                         </span>
                                                                     </span>
                                                                 </c:forEach>
                                                             </div>
                                                         </td>
                                                         <td class="small text-warning font-weight-bold">
-                                                            ${p.manufacturer}</td>
-                                                        <td class="text-muted-custom small">${p.tiltle}</td>
+                                                            ${p.manufacturerName}</td>
+                                                        <td class="text-muted-custom small">
+                                                            <c:choose>
+                                                                <c:when test="${not empty p.variants}">
+                                                                    ${p.variants[0].size} (Màu: ${p.variants[0].colorName})
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="badge badge-secondary">Chưa có variant</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
                                                         <td class="text-right pr-4">
-                                                            <c:if test="${sessionScope.acc.role == 'owner'}">
+                                                            <c:if test="${sessionScope.acc.role == 'owner' or sessionScope.acc.role == 'admin'}">
                                                                 <a class="action-icon edit" href="load?pid=${p.id}"><i
                                                                         class="fa-solid fa-pen-to-square"></i></a>
                                                                 <a class="action-icon delete" href="delete?pid=${p.id}"
@@ -443,9 +475,14 @@
                                                 <table class="table table-hover mb-0">
                                                     <thead>
                                                         <tr>
+                                                            <th class="pl-4">ID</th>
                                                             <th>Sản phẩm</th>
+                                                            <th>Màu sắc</th>
+                                                            <th>Size</th>
                                                             <th>Số lượng</th>
-                                                            <th>Chi tiết</th>
+                                                            <th>Giá nhập (đ)</th>
+                                                            <th>Số lô</th>
+                                                            <th>Ghi chú</th>
                                                             <th>Ngày giờ</th>
                                                             <th>Nhân viên</th>
                                                         </tr>
@@ -453,18 +490,21 @@
                                                     <tbody>
                                                         <c:forEach items="${stockImports}" var="item">
                                                             <tr>
-                                                                <td>${item.productName}</td>
-                                                                <td class="font-weight-bold text-info">
-                                                                    ${item.importQuantity} đôi</td>
+                                                                <td class="pl-4 font-weight-bold">#${item.variantId}</td>
+                                                                <td class="font-weight-bold text-main">${item.productName}</td>
+                                                                <td><span class="badge badge-info px-2">${not empty item.colorName ? item.colorName : 'N/A'}</span></td>
+                                                                <td><span class="badge badge-warning px-2">${not empty item.size ? item.size : 'N/A'}</span></td>
+                                                                <td class="font-weight-bold text-info">${item.importQuantity} đôi</td>
+                                                                <td><fmt:formatNumber value="${item.unitCost}" pattern="#,###"/></td>
+                                                                <td><span class="badge badge-secondary">${item.batchNumber}</span></td>
                                                                 <td>${item.note}</td>
                                                                 <td class="small">${item.createdAt}</td>
-                                                                <td class="font-weight-bold text-warning">
-                                                                    ${item.createdByName}</td>
+                                                                <td class="font-weight-bold text-warning">${item.createdByName}</td>
                                                             </tr>
                                                         </c:forEach>
                                                         <c:if test="${empty stockImports}">
                                                             <tr>
-                                                                <td colspan="5"
+                                                                <td colspan="10"
                                                                     class="text-center py-4 text-muted-custom">Chưa có
                                                                     lịch sử nhập kho</td>
                                                             </tr>
@@ -562,72 +602,78 @@
                             <script>
                                 // Chuyen du lieu ton kho size sang JS
                                 const sizeStockData = {
-                <c:forEach items="${sizeQuantitiesMap}" var="entry" varStatus="status">
+                                <c:forEach items="${sizeQuantitiesMap}" var="entry" varStatus="status">
                                     "${entry.key}": {
-                                    <c:forEach items="${entry.value}" var="szEntry" varStatus="szStatus">
-                                        "${szEntry.key}": ${szEntry.value}${not szStatus.last ? ',' : ''}
+                                    <c:forEach items="${entry.value}" var="colorEntry" varStatus="colorStatus">
+                                        "${colorEntry.key}": {
+                                        <c:forEach items="${colorEntry.value}" var="szEntry" varStatus="szStatus">
+                                            "${szEntry.key}": ${szEntry.value}${not szStatus.last ? ',' : ''}
+                                        </c:forEach>
+                                        }${not colorStatus.last ? ',' : ''}
                                     </c:forEach>
-                                }${not status.last ? ',' : '' }
-                </c:forEach>
-            };
+                                    }${not status.last ? ',' : ''}
+                                 </c:forEach>
+                                };
 
                                 (function () {
-                                    const productSelect = document.getElementById('stockProductSelect');
-                                    const sizeGrid = document.getElementById('sizeGrid');
-                                    if (!productSelect || !sizeGrid) {
-                                        return;
-                                    }
-
-                                    const existingValues = {};
-                                    sizeGrid.querySelectorAll('input[name^="size_"]').forEach(function (input) {
-                                        existingValues[input.name.replace('size_', '')] = input.value;
-                                    });
-
-                                    function renderSizeInputs() {
-                                        const selectedOption = productSelect.options[productSelect.selectedIndex];
-                                        const pid = productSelect.value;
-                                        const sizesAttr = selectedOption ? selectedOption.getAttribute('data-sizes') || '' : '';
-                                        const sizes = sizesAttr.split(',').map(function (size) {
-                                            return size.trim();
-                                        }).filter(function (size) {
-                                            return size.length > 0;
-                                        });
-
-                                        sizeGrid.innerHTML = '';
-                                        const currentStock = sizeStockData[pid] || {};
-
-                                        sizes.forEach(function (size) {
-                                            const wrapper = document.createElement('div');
-                                            wrapper.className = 'mb-3';
-
-                                            const label = document.createElement('div');
-                                            label.className = 'small helper-text mb-1';
-                                            const qty = currentStock[size] || 0;
-                                            label.innerHTML = 'Size ' + size + ' (Hiện có: <span class="' + (qty > 0 ? 'text-info' : 'text-danger') + '">' + qty + '</span>)';
-
-                                            const input = document.createElement('input');
-                                            input.className = 'form-control';
-                                            input.type = 'number';
-                                            input.min = '0';
-                                            input.name = 'size_' + size;
-                                            input.placeholder = '+ Nhập thêm số lượng';
-                                            input.value = Object.prototype.hasOwnProperty.call(existingValues, size) ? existingValues[size] : '';
-                                            input.addEventListener('input', function () {
-                                                existingValues[size] = input.value;
-                                            });
-
-                                            wrapper.appendChild(label);
-                                            wrapper.appendChild(input);
-                                            sizeGrid.appendChild(wrapper);
-                                        });
-                                    }
-
-                                    productSelect.addEventListener('change', renderSizeInputs);
-                                    renderSizeInputs();
+                                     const productSelect = document.getElementById('stockProductSelect');
+                                     const colorSelect = document.getElementById('stockColorSelect');
+                                     const sizeGrid = document.getElementById('sizeGrid');
+                                     if (!productSelect || !colorSelect || !sizeGrid) {
+                                         return;
+                                     }
+ 
+                                     const existingValues = {};
+                                     sizeGrid.querySelectorAll('input[name^="size_"]').forEach(function (input) {
+                                         existingValues[input.name.replace('size_', '')] = input.value;
+                                     });
+ 
+                                     function renderSizeInputs() {
+                                         const selectedOption = productSelect.options[productSelect.selectedIndex];
+                                         const pid = productSelect.value;
+                                         const cid = colorSelect.value;
+                                         const sizesAttr = selectedOption ? selectedOption.getAttribute('data-sizes') || '' : '';
+                                         const sizes = sizesAttr.split(',').map(function (size) {
+                                             return size.trim();
+                                         }).filter(function (size) {
+                                             return size.length > 0;
+                                         });
+ 
+                                         sizeGrid.innerHTML = '';
+                                         const productStock = sizeStockData[pid] || {};
+                                         const currentStock = productStock[cid] || {};
+ 
+                                         sizes.forEach(function (size) {
+                                             const wrapper = document.createElement('div');
+                                             wrapper.className = 'mb-3';
+ 
+                                             const label = document.createElement('div');
+                                             label.className = 'small helper-text mb-1';
+                                             const qty = currentStock[size] || 0;
+                                             label.innerHTML = 'Size ' + size + ' (Màu hiện tại: <span class="' + (qty > 0 ? 'text-info' : 'text-danger') + '">' + qty + '</span>)';
+ 
+                                             const input = document.createElement('input');
+                                             input.className = 'form-control';
+                                             input.type = 'number';
+                                             input.min = '0';
+                                             input.name = 'size_' + size;
+                                             input.placeholder = '+ Nhập thêm số lượng';
+                                             input.value = Object.prototype.hasOwnProperty.call(existingValues, size) ? existingValues[size] : '';
+                                             input.addEventListener('input', function () {
+                                                 existingValues[size] = input.value;
+                                             });
+ 
+                                             wrapper.appendChild(label);
+                                             wrapper.appendChild(input);
+                                             sizeGrid.appendChild(wrapper);
+                                         });
+                                     }
+ 
+                                     productSelect.addEventListener('change', renderSizeInputs);
+                                     colorSelect.addEventListener('change', renderSizeInputs);
+                                     renderSizeInputs();
                                 })();
                             </script>
                 </body>
 
                 </html>
-
-

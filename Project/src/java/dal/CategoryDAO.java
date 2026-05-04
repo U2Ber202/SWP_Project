@@ -19,7 +19,6 @@ public class CategoryDAO extends DBContext {
         category.setCid(rs.getInt("cid"));
         category.setCname(rs.getString("cname"));
         category.setStoreId(rs.getInt("store_id"));
-        category.setManufacturer(rs.getString("manufacturer"));
         return category;
     }
 
@@ -31,16 +30,15 @@ public class CategoryDAO extends DBContext {
         return getCategoriesBySql("SELECT * FROM Category WHERE store_id = ?", storeId);
     }
 
-    public void insertCategory(String name, String manufacturer, int storeId) {
-        String sql = "INSERT INTO [Category] ([cname], [manufacturer], [store_id]) VALUES (?, ?, ?)";
+    public void insertCategory(String name, int storeId) {
+        String sql = "INSERT INTO [Category] ([cname], [store_id]) VALUES (?, ?)";
         try (Connection connection = getConnection();
                 PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, name);
-            stm.setString(2, manufacturer);
             if (storeId > 0) {
-                stm.setInt(3, storeId);
+                stm.setInt(2, storeId);
             } else {
-                stm.setNull(3, java.sql.Types.INTEGER);
+                stm.setNull(2, java.sql.Types.INTEGER);
             }
             stm.executeUpdate();
         } catch (SQLException ex) {
@@ -57,13 +55,13 @@ public class CategoryDAO extends DBContext {
     }
 
     public void updateCategory(Category category) {
-        executeUpdate("UPDATE [Category] SET [cname] = ?, [manufacturer] = ? WHERE cid = ?",
-                category.getCname(), category.getManufacturer(), category.getCid());
+        executeUpdate("UPDATE [Category] SET [cname] = ? WHERE cid = ?",
+                category.getCname(), category.getCid());
     }
 
     public void updateCategoryByStore(Category category, int storeId) {
-        executeUpdate("UPDATE [Category] SET [cname] = ?, [manufacturer] = ? WHERE cid = ? AND store_id = ?",
-                category.getCname(), category.getManufacturer(), category.getCid(), storeId);
+        executeUpdate("UPDATE [Category] SET [cname] = ? WHERE cid = ? AND store_id = ?",
+                category.getCname(), category.getCid(), storeId);
     }
 
     public void deleteCategoryById(int id) {
