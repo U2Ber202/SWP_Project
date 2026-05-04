@@ -275,7 +275,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Ví dụ: Nguyễn Văn A" value="${name}" required>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Ví dụ: Nguyễn Văn A" value="${not empty name ? name : defaultName}" required>
                                     </div>
                                 </div>
                                 
@@ -285,7 +285,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="phone" name="phone" pattern="^0[0-9]{9}$" title="Vui lòng nhập đúng 10 chữ số bắt đầu bằng số 0" placeholder="09xxxxxxx" value="${phone}" required>
+                                        <input type="text" class="form-control" id="phone" name="phone" pattern="^0[0-9]{9}$" title="Vui lòng nhập đúng 10 chữ số bắt đầu bằng số 0" placeholder="09xxxxxxx" value="${not empty phone ? phone : defaultPhone}" required>
                                     </div>
                                 </div>
                                 
@@ -295,7 +295,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
                                         </div>
-                                        <input type="text" class="form-control" id="address" name="address" placeholder="Số nhà, đường, phường/xã, quận/huyện..." value="${address}" required>
+                                        <input type="text" class="form-control" id="address" name="address" placeholder="Số nhà, đường, phường/xã, quận/huyện..." value="${not empty address ? address : defaultAddress}" required>
                                     </div>
                                 </div>
                                 

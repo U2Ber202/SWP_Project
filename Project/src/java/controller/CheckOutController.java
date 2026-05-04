@@ -75,7 +75,11 @@ public class CheckOutController extends HttpServlet {
         
         int totalVat = (int) Math.round(totalMoney * 0.10);
         int finalTotal = totalMoney - totalDiscount + totalVat;
-        
+
+        request.setAttribute("defaultName", acc.getFullname());
+        request.setAttribute("defaultPhone", acc.getPhone());
+        request.setAttribute("defaultAddress", acc.getAddress());
+
         request.setAttribute("storeVouchers", storeVouchers);
         request.setAttribute("totalMoney", totalMoney);
         request.setAttribute("totalDiscount", totalDiscount);
