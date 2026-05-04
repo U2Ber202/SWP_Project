@@ -23,7 +23,7 @@ public class SignupController extends HttpServlet {
 
         request.setAttribute("formUser", user);
         request.setAttribute("formEmail", email);
-
+       //validate blank feild
         if (ValidationUtil.isBlank(user) || ValidationUtil.isBlank(pass)
                 || ValidationUtil.isBlank(repass) || ValidationUtil.isBlank(email)) {
             request.setAttribute("mess", "Vui lòng nhập đầy đủ thông tin.");
